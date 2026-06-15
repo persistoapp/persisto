@@ -7,59 +7,59 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#050505;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
-.phone{width:100%;max-width:390px;background:#0a0a0a;border-radius:32px;overflow:hidden;min-height:720px;display:flex;flex-direction:column;border:1px solid #1a1a1a}
+body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;overflow:hidden;min-height:720px;display:flex;flex-direction:column;border:1px solid #16213e}
 .screen{display:none;flex-direction:column;min-height:720px}
 .screen.active{display:flex}
 .s-pad{padding:28px 24px 0}
-.logo-text{font-size:26px;font-weight:600;color:#fff;letter-spacing:-1px}
-.logo-text span{color:#1D9E75}
-.tagline{font-size:11px;color:#444;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
-.big-headline{font-size:30px;font-weight:600;line-height:1.15;color:#fff;margin:24px 0 8px}
-.sub{font-size:14px;color:#666;line-height:1.6;margin-bottom:24px}
+.logo-text{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
+.logo-text span{color:#00d4aa}
+.tagline{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
+.big-headline{font-size:30px;font-weight:700;line-height:1.15;color:#fff;margin:24px 0 8px}
+.sub{font-size:14px;color:#6b7db3;line-height:1.6;margin-bottom:24px}
 .arch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-.arch-card{background:#111;border:1px solid #222;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s;text-align:left}
-.arch-card:hover,.arch-card.sel{border-color:#1D9E75;background:#0d1f18}
-.arch-card i{font-size:22px;color:#1D9E75;display:block;margin-bottom:10px}
+.arch-card{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s;text-align:left}
+.arch-card:hover,.arch-card.sel{border-color:#00d4aa;background:#0d1f2d}
+.arch-card i{font-size:22px;color:#00d4aa;display:block;margin-bottom:10px}
 .arch-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}
-.arch-sub{font-size:11px;color:#555}
+.arch-sub{font-size:11px;color:#4a5580}
 .divider{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
-.divider-line{flex:1;height:0.5px;background:#1e1e1e}
-.divider-text{font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px}
-textarea{width:100%;background:#111;border:1px solid #222;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6}
-textarea:focus{border-color:#1D9E75}
-textarea::placeholder{color:#333}
-.btn-go{width:100%;padding:16px;background:#1D9E75;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
+.divider-line{flex:1;height:0.5px;background:#1e2d4a}
+.divider-text{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
+textarea{width:100%;background:#16213e;border:1px solid #1e2d4a;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6}
+textarea:focus{border-color:#00d4aa}
+textarea::placeholder{color:#2a3a5a}
+.btn-go{width:100%;padding:16px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
 .btn-go:hover{opacity:0.88}
 .btn-go:disabled{opacity:0.25;cursor:not-allowed}
-.btn-ghost{width:100%;padding:14px;background:transparent;color:#555;border:1px solid #1e1e1e;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
+.btn-ghost{width:100%;padding:14px;background:transparent;color:#4a5580;border:1px solid #1e2d4a;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
 .bottom-pad{padding:20px 24px 36px;margin-top:auto}
-.q-num{font-size:11px;color:#1D9E75;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+.q-num{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .q-text{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
-.prog-wrap{height:2px;background:#111;margin:16px 0 24px;border-radius:2px}
-.prog-bar{height:2px;background:#1D9E75;border-radius:2px;transition:width 0.4s ease}
-.spinner{width:24px;height:24px;border:2px solid #1a1a1a;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.7s linear infinite}
+.prog-wrap{height:2px;background:#16213e;margin:16px 0 24px;border-radius:2px}
+.prog-bar{height:2px;background:#00d4aa;border-radius:2px;transition:width 0.4s ease}
+.spinner{width:24px;height:24px;border:2px solid #1e2d4a;border-top-color:#00d4aa;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .center-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px}
-.loader-ring{width:72px;height:72px;background:#111;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.loader-ring{width:72px;height:72px;background:#16213e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
 .loader-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
-.loader-sub{font-size:13px;color:#444;line-height:1.6}
-.score-pill{display:inline-flex;align-items:center;gap:6px;background:#0d1f18;color:#1D9E75;border:1px solid #1D9E75;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
-.profile-summary{font-size:14px;color:#888;line-height:1.7;margin-bottom:20px}
-.task-block{background:#111;border:1px solid #1e1e1e;border-radius:16px;padding:18px;margin-bottom:12px}
-.task-label{font-size:10px;color:#1D9E75;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
+.loader-sub{font-size:13px;color:#4a5580;line-height:1.6}
+.score-pill{display:inline-flex;align-items:center;gap:6px;background:#0d1f2d;color:#00d4aa;border:1px solid #00d4aa;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
+.profile-summary{font-size:14px;color:#6b7db3;line-height:1.7;margin-bottom:20px}
+.task-block{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px;margin-bottom:12px}
+.task-label{font-size:10px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
 .task-title{font-size:18px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:8px}
-.task-desc{font-size:13px;color:#777;line-height:1.6}
+.task-desc{font-size:13px;color:#6b7db3;line-height:1.6}
 .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-.stat-box{background:#111;border-radius:12px;padding:14px;text-align:center}
-.stat-n{font-size:26px;font-weight:600;color:#fff}
-.stat-l{font-size:11px;color:#444;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.stat-box{background:#16213e;border-radius:12px;padding:14px;text-align:center}
+.stat-n{font-size:26px;font-weight:700;color:#fff}
+.stat-l{font-size:11px;color:#4a5580;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
 .emoji-row{display:flex;gap:12px;justify-content:center;margin:20px 0}
-.emoji-btn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e1e1e;background:#111;cursor:pointer;transition:all 0.15s}
-.emoji-btn:hover,.emoji-btn.sel{border-color:#1D9E75;background:#0d1f18;transform:scale(1.1)}
-.done-ring{width:64px;height:64px;background:#0d1f18;border:1px solid #1D9E75;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.done-ring i{font-size:26px;color:#1D9E75}
-.err{background:#110a0a;color:#E24B4A;border:1px solid #2a1010;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
+.emoji-btn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e2d4a;background:#16213e;cursor:pointer;transition:all 0.15s}
+.emoji-btn:hover,.emoji-btn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
+.done-ring{width:64px;height:64px;background:#0d1f2d;border:1px solid #00d4aa;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.done-ring i{font-size:26px;color:#00d4aa}
+.err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
 .scroll-content{flex:1;overflow-y:auto;padding:16px 24px}
 </style>
 </head>
@@ -147,7 +147,7 @@ textarea::placeholder{color:#333}
       <div class="profile-summary" id="prof-summary"></div>
       <div class="task-block">
         <div class="task-label">Approccio consigliato</div>
-        <div class="task-desc" id="prof-approach" style="color:#aaa;font-size:14px"></div>
+        <div class="task-desc" id="prof-approach" style="color:#8892b0;font-size:14px"></div>
       </div>
     </div>
     <div class="bottom-pad">
@@ -159,7 +159,7 @@ textarea::placeholder{color:#333}
     <div class="s-pad" style="padding-bottom:0">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="logo-text">Per<span>sisto</span></div>
-        <div style="font-size:12px;color:#444;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
+        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
       </div>
       <div class="stats-row" style="margin-top:20px">
         <div class="stat-box"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
@@ -172,7 +172,7 @@ textarea::placeholder{color:#333}
         <div class="task-title" id="task-title"></div>
         <div class="task-desc" id="task-desc"></div>
       </div>
-      <div class="task-block" style="background:transparent;border-color:#151515">
+      <div class="task-block" style="background:transparent;border-color:#16213e">
         <div class="task-label">Perché questo</div>
         <div class="task-desc" id="task-why" style="font-size:12px"></div>
       </div>
@@ -187,8 +187,8 @@ textarea::placeholder{color:#333}
   <div class="screen" id="sc-reflection">
     <div class="center-content">
       <div class="done-ring"><i class="ti ti-check"></i></div>
-      <div style="font-size:22px;font-weight:600;color:#fff;margin-bottom:8px">+1% completato</div>
-      <div style="font-size:14px;color:#555;margin-bottom:24px;line-height:1.6" id="refl-q"></div>
+      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
+      <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6" id="refl-q"></div>
       <div class="emoji-row" id="emoji-row"></div>
       <div id="refl-err"></div>
     </div>
@@ -200,8 +200,8 @@ textarea::placeholder{color:#333}
   <div class="screen" id="sc-done">
     <div class="center-content">
       <div class="done-ring"><i class="ti ti-star"></i></div>
-      <div style="font-size:24px;font-weight:600;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
-      <div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:24px;max-width:280px" id="done-msg"></div>
+      <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
+      <div style="font-size:13px;color:#4a5580;line-height:1.7;margin-bottom:24px;max-width:280px" id="done-msg"></div>
       <div class="stats-row" style="width:100%">
         <div class="stat-box"><div class="stat-n" id="done-score">0</div><div class="stat-l">Punteggio</div></div>
         <div class="stat-box"><div class="stat-n">1</div><div class="stat-l">Giorno 1 ✓</div></div>
@@ -233,27 +233,26 @@ function selectArch(a){
 
 function onFreeText(){
   S.freeText=document.getElementById('free-text').value.trim();
-  if(S.freeText){
-    document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));
-    S.arch=null;
-  }
+  if(S.freeText){document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));S.arch=null;}
   updateBtn();
 }
 
 function updateBtn(){document.getElementById('btn-start').disabled=!(S.arch||S.freeText);}
 
 async function callAI(system,userMsg){
-  const res=await fetch('/api/chat',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system,messages:[{role:'user',content:userMsg}]})
-  });
+  const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages:[{role:'user',content:userMsg}]})});
   const data=await res.json();
   if(!res.ok)throw new Error(data.error||'Errore API');
   return data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 }
 
-function safeJSON(t){return JSON.parse(t.replace(/```json|```/g,'').trim());}
+function safeJSON(t){
+  const clean=t.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+  const start=clean.indexOf('{');
+  const end=clean.lastIndexOf('}');
+  if(start===-1||end===-1)throw new Error('No JSON found');
+  return JSON.parse(clean.slice(start,end+1));
+}
 
 async function startFlow(){
   const context=S.freeText||(S.arch?`migliorare ${ARCH_DESC[S.arch]}`:'');
@@ -262,7 +261,7 @@ async function startFlow(){
   document.getElementById('welcome-err').innerHTML='';
   try{
     const numQ=S.freeText?5:3;
-    const sys=`Sei un coach di crescita personale. L'utente vuole lavorare su: "${context}". Genera ${numQ} domande brevi e dirette per capire il suo punto di partenza reale. Domande specifiche sulla situazione attuale, non sull'obiettivo. Rispondi SOLO con JSON valido: {"questions":["...","..."]}`;
+    const sys=`Sei un coach di crescita personale. L'utente vuole lavorare su: "${context}". Genera ${numQ} domande brevi e dirette per capire il suo punto di partenza reale. Rispondi SOLO con JSON, nessun testo prima o dopo: {"questions":["domanda1","domanda2"]}`;
     const raw=await callAI(sys,`Contesto: ${context}`);
     const p=safeJSON(raw);
     S.questions=p.questions.slice(0,numQ);
@@ -270,7 +269,7 @@ async function startFlow(){
     showQ();
   }catch(e){
     ss('welcome');
-    document.getElementById('welcome-err').innerHTML='<div class="err">Connessione fallita. Controlla la connessione e riprova.</div>';
+    document.getElementById('welcome-err').innerHTML='<div class="err">Connessione fallita. Riprova tra un momento.</div>';
   }
 }
 
@@ -280,8 +279,7 @@ function showQ(){
   document.getElementById('q-text').textContent=S.questions[S.currentQ];
   document.getElementById('q-ans').value='';
   document.getElementById('onb-err').innerHTML='';
-  const pct=Math.round((S.currentQ/S.questions.length)*100);
-  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('prog').style.width=Math.round((S.currentQ/S.questions.length)*100)+'%';
 }
 
 async function nextQ(){
@@ -298,8 +296,8 @@ async function genProfile(){
   ss('analyzing');
   const qa=S.answers.map(x=>`D: ${x.q}\nR: ${x.a}`).join('\n\n');
   try{
-    const sys=`Sei un coach esperto. Analizza le risposte e genera: baseline score realistico tra 15 e 65, summary del profilo in 2-3 frasi dirette e oneste, area di miglioramento in 3-4 parole, approccio consigliato in 1 frase concreta, e 30 task giornalieri progressivi (i primi devono essere molto semplici e raggiungibili). Rispondi SOLO con JSON: {"baseline_score":number,"area":"string","summary":"string","approach":"string","tasks":[{"title":"string","description":"string","why":"string"}]}`;
-    const raw=await callAI(sys,`Obiettivo: ${S.context}\n\n${qa}`);
+    const sys=`Sei un coach esperto. Analizza le risposte e genera un piano. Rispondi SOLO con JSON valido, nessun testo prima o dopo il JSON. Formato esatto: {"baseline_score":42,"area":"Produttività e focus","summary":"Testo qui.","approach":"Testo qui.","tasks":[{"title":"Titolo task","description":"Descrizione.","why":"Motivazione."}]} Genera esattamente 30 task progressivi partendo da quelli molto semplici. Il baseline_score deve essere tra 15 e 65.`;
+    const raw=await callAI(sys,`Obiettivo: ${S.context}\n\nRisposte:\n${qa}`);
     const p=safeJSON(raw);
     S.profile=p;S.tasks=p.tasks||[];
     document.getElementById('prof-area').textContent=p.area||'Il tuo profilo';
@@ -308,12 +306,7 @@ async function genProfile(){
     document.getElementById('prof-approach').textContent=p.approach||'';
     document.getElementById('home-score').textContent=p.baseline_score||0;
     document.getElementById('done-score').textContent=(p.baseline_score||0)+1;
-    if(S.tasks[0]){
-      const t=S.tasks[0];
-      document.getElementById('task-title').textContent=t.title||'';
-      document.getElementById('task-desc').textContent=t.description||'';
-      document.getElementById('task-why').textContent=t.why||'';
-    }
+    if(S.tasks[0]){const t=S.tasks[0];document.getElementById('task-title').textContent=t.title||'';document.getElementById('task-desc').textContent=t.description||'';document.getElementById('task-why').textContent=t.why||'';}
     ss('profile');
   }catch(e){
     ss('onboarding');
@@ -326,7 +319,7 @@ function showHome(){ss('home');}
 async function markDone(){
   const t=S.tasks[0]||{};
   try{
-    const sys=`Sei un coach. Task completato: "${t.title}". Genera 1 domanda reflection brevissima (max 10 parole) e 3 emoji risposta emotiva adatte. Rispondi SOLO con JSON: {"question":"string","emojis":["e1","e2","e3"]}`;
+    const sys=`Coach. Task completato: "${t.title}". Rispondi SOLO con JSON: {"question":"Domanda breve max 10 parole?","emojis":["😊","😐","😓"]}`;
     const raw=await callAI(sys,`Task: ${t.title}`);
     const p=safeJSON(raw);
     document.getElementById('refl-q').textContent=p.question||'Come ti sei sentito?';
@@ -335,21 +328,15 @@ async function markDone(){
     document.getElementById('refl-q').textContent='Come ti sei sentito dopo il task?';
     renderEmoji(['😊','😐','😓']);
   }
-  S.emoji=null;
-  document.getElementById('btn-refl').disabled=true;
+  S.emoji=null;document.getElementById('btn-refl').disabled=true;
   ss('reflection');
 }
 
 function renderEmoji(arr){
   const row=document.getElementById('emoji-row');row.innerHTML='';
   arr.forEach(e=>{
-    const b=document.createElement('button');
-    b.className='emoji-btn';b.textContent=e;
-    b.onclick=()=>{
-      document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));
-      b.classList.add('sel');S.emoji=e;
-      document.getElementById('btn-refl').disabled=false;
-    };
+    const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;
+    b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};
     row.appendChild(b);
   });
 }
@@ -357,7 +344,7 @@ function renderEmoji(arr){
 async function saveRefl(){
   const t=S.tasks[0]||{};
   try{
-    const sys=`Coach diretto. L'utente ha completato il primo task e ha risposto con ${S.emoji}. Scrivi 2 frasi motivazionali dirette, concrete, senza retorica. Solo il testo, nient'altro.`;
+    const sys=`Coach diretto. Task: "${t.title}", risposta emotiva: ${S.emoji}. Scrivi 2 frasi motivazionali concrete. Solo testo, nient'altro.`;
     const msg=await callAI(sys,`Task: ${t.title}. Emozione: ${S.emoji}`);
     document.getElementById('done-msg').textContent=msg.trim();
   }catch(e){
