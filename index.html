@@ -336,18 +336,12 @@ async function genProfile() {
   try {
     document.getElementById('an-title').textContent = 'Costruendo il tuo profilo';
     document.getElementById('an-sub').textContent = "L'IA sta analizzando le tue risposte...";
-    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Genera i PRIMI 10 task: ogni task deve essere un\'azione concreta di 15-30 minuti con istruzioni passo-passo (Step 1, Step 2, Step 3). Niente obiettivi vaghi. JSON: {"baseline_score":42,"area":"Nome area","summary":"2-3 frasi reali.","approach":"Una frase concreta.","tasks":[{"title":"Azione","description":"Step 1: fai X. Step 2: fai Y. Step 3: fai Z.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
-    var raw1 = await callAI(sys1, 'Obiettivo: ' + S.ctx + '\n\nRisposte:\n' + qa + '\n\nUSA SOLO queste info.');
+    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Genera ESATTAMENTE 5 task concreti con istruzioni chiare su come farli. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali.","approach":"Una frase pratica.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
+    var raw1 = await callAI(sys1, 'Obiettivo: ' + S.ctx + '\n\nRisposte:\n' + qa);
     var p1 = safeJSON(raw1);
     S.profile = p1;
     S.tasks = p1.tasks || [];
 
-    document.getElementById('an-title').textContent = 'Completando il percorso';
-    document.getElementById('an-sub').textContent = 'Generando i task personalizzati...';
-    var sys2 = 'Coach pratico. Genera 20 task giorni 11-30 per: "' + S.ctx + '". Profilo: ' + (p1.summary || '').slice(0,150) + '. Ogni task con istruzioni step-by-step. Progressivamente piu impegnativi. JSON: {"tasks":[{"title":"Azione","description":"Step 1: ... Step 2: ... Step 3: ...","why":"Perche."}]}';
-    var raw2 = await callAI(sys2, 'Genera 20 task giorni 11-30 per: ' + S.ctx);
-    var p2 = safeJSON(raw2);
-    S.tasks = S.tasks.concat(p2.tasks || []);
 
     document.getElementById('prof-area').textContent = clean(p1.area) || 'Il tuo profilo';
     document.getElementById('prof-score').textContent = p1.baseline_score || 0;
