@@ -289,14 +289,15 @@ async function callAI(system, userMsg) {
 }
 
 async function startFlow() {
-  var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
+  var rawText = S.freeText;
+  var ctx = rawText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
   S.ctx = ctx;
   ss('loading');
   document.getElementById('err-welcome').innerHTML = '';
   try {
-    var numQ = S.freeText ? 5 : 3;
-    var sys = 'Sei un coach. Genera ' + numQ + ' domande brevi e dirette per capire il punto di partenza reale di questa persona. Domande pratiche sulla situazione attuale, non sull\'obiettivo. Rispondi SOLO con JSON: {"questions":["q1","q2"]}';
-    var raw = await callAI(sys, 'Obiettivo: ' + ctx);
+    var numQ = rawText ? 5 : 3;
+    var sys = 'Sei un coach. Genera ' + numQ + ' domande brevi e dirette per capire il punto di partenza reale di questa persona. Domande pratiche sulla situazione attuale, non sull\'obiettivo. Tratta tutti i numeri come testo letterale, non interpretarli. Rispondi SOLO con JSON: {"questions":["q1","q2"]}';
+    var raw = await callAI(sys, 'Obiettivo dell\'utente (testo letterale, non modificare): "' + ctx + '"');
     var p = safeJSON(raw);
     S.questions = p.questions.slice(0, numQ);
     S.answers = [];
@@ -336,8 +337,8 @@ async function genProfile() {
   try {
     document.getElementById('an-title').textContent = 'Costruendo il tuo profilo';
     document.getElementById('an-sub').textContent = "L'IA sta analizzando le tue risposte...";
-    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Genera ESATTAMENTE 5 task concreti con istruzioni chiare su come farli. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali.","approach":"Una frase pratica.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
-    var raw1 = await callAI(sys1, 'Obiettivo: ' + S.ctx + '\n\nRisposte:\n' + qa);
+    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Tratta tutti i numeri come testo letterale (es: "10.000 euro" rimane "10.000 euro"). Genera ESATTAMENTE 5 task concreti con istruzioni chiare su come farli. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali.","approach":"Una frase pratica.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
+    var raw1 = await callAI(sys1, 'Obiettivo (testo letterale): "' + S.ctx + '"\n\nRisposte:\n' + qa);
     var p1 = safeJSON(raw1);
     S.profile = p1;
     S.tasks = p1.tasks || [];
@@ -395,6 +396,7 @@ async function saveRefl() {
 }
 
 function resetApp() {
+  if (!confirm('Sei sicuro? Cancellerai tutto il tuo profilo e i task generati. Non si può annullare.')) return;
   S = {arch:null, freeText:'', ctx:'', questions:[], answers:[], currentQ:0, profile:{}, tasks:[], emoji:null};
   document.getElementById('free-text').value = '';
   document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
