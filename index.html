@@ -201,6 +201,7 @@ select option{background:#1a1a2e;color:#fff}
     <div class="field" id="field-figli-custody" style="display:none">
       <div class="field-label">I figli vivono con te</div>
       <div class="chips" id="chips-custody">
+        <div class="chip" onclick="selChip('custody','no',this)">No, vivono altrove</div>
         <div class="chip" onclick="selChip('custody','fulltime',this)">Full time</div>
         <div class="chip" onclick="selChip('custody','parttime',this)">Part time (settimane alterne o simili)</div>
       </div>
@@ -552,7 +553,7 @@ select option{background:#1a1a2e;color:#fff}
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
       <div style="display:flex;gap:8px">
-        <button class="icon-btn" onclick="ss('edit-profile')" title="Modifica profilo"><i class="ti ti-user"></i></button>
+        <button class="icon-btn" onclick="showEditProfile()" title="Modifica profilo"><i class="ti ti-user"></i></button>
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
