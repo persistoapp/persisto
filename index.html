@@ -231,7 +231,16 @@ function onFreeText(){
   updateBtn();
 }
 
-function updateBtn(){document.getElementById('btn-start').disabled=!(S.arch||S.freeText);}
+function updateBtn(){
+  const txt=document.getElementById('free-text').value.trim();
+  S.freeText=txt;
+  document.getElementById('btn-start').disabled=!(S.arch||txt);
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('free-text').addEventListener('input', onFreeText);
+  document.getElementById('free-text').addEventListener('keyup', onFreeText);
+  document.getElementById('free-text').addEventListener('change', onFreeText);
+});
 
 async function callAI(system,userMsg){
   const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages:[{role:'user',content:userMsg}]})});
