@@ -7,352 +7,407 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:20px}
 .phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;overflow:hidden;min-height:720px;display:flex;flex-direction:column;border:1px solid #16213e}
 .screen{display:none;flex-direction:column;min-height:720px}
 .screen.active{display:flex}
 .s-pad{padding:28px 24px 0}
-.logo-text{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
-.logo-text span{color:#00d4aa}
-.tagline{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
-.big-headline{font-size:30px;font-weight:700;line-height:1.15;color:#fff;margin:24px 0 8px}
+.logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
+.logo span{color:#00d4aa}
+.tag{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
+.h1{font-size:30px;font-weight:700;line-height:1.15;color:#fff;margin:24px 0 8px}
 .sub{font-size:14px;color:#6b7db3;line-height:1.6;margin-bottom:24px}
-.arch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-.arch-card{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s;text-align:left}
-.arch-card:hover,.arch-card.sel{border-color:#00d4aa;background:#0d1f2d}
-.arch-card i{font-size:22px;color:#00d4aa;display:block;margin-bottom:10px}
-.arch-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}
-.arch-sub{font-size:11px;color:#4a5580}
-.divider{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
-.divider-line{flex:1;height:0.5px;background:#1e2d4a}
-.divider-text{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.acard{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s}
+.acard:hover,.acard.sel{border-color:#00d4aa;background:#0d1f2d}
+.acard i{font-size:22px;color:#00d4aa;display:block;margin-bottom:10px}
+.acard-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}
+.acard-sub{font-size:11px;color:#4a5580}
+.div{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
+.div-line{flex:1;height:0.5px;background:#1e2d4a}
+.div-text{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
 textarea{width:100%;background:#16213e;border:1px solid #1e2d4a;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6}
 textarea:focus{border-color:#00d4aa}
 textarea::placeholder{color:#2a3a5a}
-.btn-go{width:100%;padding:16px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
-.btn-go:hover{opacity:0.88}
-.btn-go:disabled{opacity:0.25;cursor:not-allowed}
+.btn{width:100%;padding:16px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
+.btn:hover{opacity:0.88}
+.btn:disabled{opacity:0.25;cursor:not-allowed}
 .btn-ghost{width:100%;padding:14px;background:transparent;color:#4a5580;border:1px solid #1e2d4a;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
-.bottom-pad{padding:20px 24px 36px;margin-top:auto}
-.q-num{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
-.q-text{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
-.prog-wrap{height:2px;background:#16213e;margin:16px 0 24px;border-radius:2px}
-.prog-bar{height:2px;background:#00d4aa;border-radius:2px;transition:width 0.4s ease}
-.spinner{width:24px;height:24px;border:2px solid #1e2d4a;border-top-color:#00d4aa;border-radius:50%;animation:spin 0.7s linear infinite}
+.bot{padding:20px 24px 36px;margin-top:auto}
+.qnum{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+.qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
+.prog{height:2px;background:#16213e;margin:16px 0 24px;border-radius:2px}
+.progbar{height:2px;background:#00d4aa;border-radius:2px;transition:width 0.4s}
+.spin{width:24px;height:24px;border:2px solid #1e2d4a;border-top-color:#00d4aa;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.center-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px}
-.loader-ring{width:72px;height:72px;background:#16213e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
-.loader-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
-.loader-sub{font-size:13px;color:#4a5580;line-height:1.6}
-.score-pill{display:inline-flex;align-items:center;gap:6px;background:#0d1f2d;color:#00d4aa;border:1px solid #00d4aa;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
-.profile-summary{font-size:14px;color:#6b7db3;line-height:1.7;margin-bottom:20px}
-.task-block{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px;margin-bottom:12px}
-.task-label{font-size:10px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
-.task-title{font-size:18px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:8px}
-.task-desc{font-size:13px;color:#6b7db3;line-height:1.6}
-.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-.stat-box{background:#16213e;border-radius:12px;padding:14px;text-align:center}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px}
+.ring{width:72px;height:72px;background:#16213e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.ring2{width:64px;height:64px;background:#0d1f2d;border:1px solid #00d4aa;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.ring2 i{font-size:26px;color:#00d4aa}
+.ltitle{font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
+.lsub{font-size:13px;color:#4a5580;line-height:1.6}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#0d1f2d;color:#00d4aa;border:1px solid #00d4aa;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
+.psum{font-size:14px;color:#6b7db3;line-height:1.7;margin-bottom:20px}
+.tblock{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px;margin-bottom:12px}
+.tlabel{font-size:10px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
+.ttitle{font-size:18px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:8px}
+.tdesc{font-size:13px;color:#6b7db3;line-height:1.6}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat{background:#16213e;border-radius:12px;padding:14px;text-align:center}
 .stat-n{font-size:26px;font-weight:700;color:#fff}
 .stat-l{font-size:11px;color:#4a5580;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
-.emoji-row{display:flex;gap:12px;justify-content:center;margin:20px 0}
-.emoji-btn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e2d4a;background:#16213e;cursor:pointer;transition:all 0.15s}
-.emoji-btn:hover,.emoji-btn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
-.done-ring{width:64px;height:64px;background:#0d1f2d;border:1px solid #00d4aa;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.done-ring i{font-size:26px;color:#00d4aa}
+.emrow{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e2d4a;background:#16213e;cursor:pointer;transition:all 0.15s}
+.embtn:hover,.embtn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
 .err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
-.scroll-content{flex:1;overflow-y:auto;padding:16px 24px}
+.scroll{flex:1;overflow-y:auto;padding:16px 24px}
 </style>
 </head>
 <body>
 <div class="phone">
 
-  <div class="screen active" id="sc-welcome">
-    <div class="s-pad">
-      <div class="logo-text">Per<span>sisto</span></div>
-      <div class="tagline">+1% ogni giorno</div>
-      <div class="big-headline">Su cosa vuoi lavorare?</div>
-      <div class="sub">Scegli un'area o scrivi cosa vuoi cambiare.</div>
-      <div class="arch-grid">
-        <div class="arch-card" id="arch-corpo" onclick="selectArch('corpo')">
-          <i class="ti ti-barbell"></i>
-          <div class="arch-label">Corpo</div>
-          <div class="arch-sub">Forma, energia, salute</div>
-        </div>
-        <div class="arch-card" id="arch-mente" onclick="selectArch('mente')">
-          <i class="ti ti-brain"></i>
-          <div class="arch-label">Mente</div>
-          <div class="arch-sub">Focus, stress, abitudini</div>
-        </div>
-        <div class="arch-card" id="arch-relazioni" onclick="selectArch('relazioni')">
-          <i class="ti ti-heart"></i>
-          <div class="arch-label">Relazioni</div>
-          <div class="arch-sub">Coppia, famiglia, amici</div>
-        </div>
-        <div class="arch-card" id="arch-lavoro" onclick="selectArch('lavoro')">
-          <i class="ti ti-rocket"></i>
-          <div class="arch-label">Lavoro</div>
-          <div class="arch-sub">Carriera, soldi, crescita</div>
-        </div>
+<div class="screen active" id="sc-welcome">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="tag">+1% ogni giorno</div>
+    <div class="h1">Su cosa vuoi lavorare?</div>
+    <div class="sub">Scegli un'area o scrivi cosa vuoi cambiare.</div>
+    <div class="grid">
+      <div class="acard" id="arch-corpo" onclick="selArch('corpo')">
+        <i class="ti ti-barbell"></i>
+        <div class="acard-label">Corpo</div>
+        <div class="acard-sub">Forma, energia, salute</div>
       </div>
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">oppure scrivi tu</div>
-        <div class="divider-line"></div>
+      <div class="acard" id="arch-mente" onclick="selArch('mente')">
+        <i class="ti ti-brain"></i>
+        <div class="acard-label">Mente</div>
+        <div class="acard-sub">Focus, stress, abitudini</div>
       </div>
-      <textarea id="free-text" rows="3" placeholder="Es: voglio smettere di procrastinare..." oninput="onFreeText()" onkeyup="onFreeText()" onchange="onFreeText()" onpaste="setTimeout(onFreeText,0)"></textarea>
-      <div id="welcome-err"></div>
+      <div class="acard" id="arch-relazioni" onclick="selArch('relazioni')">
+        <i class="ti ti-heart"></i>
+        <div class="acard-label">Relazioni</div>
+        <div class="acard-sub">Coppia, famiglia, amici</div>
+      </div>
+      <div class="acard" id="arch-lavoro" onclick="selArch('lavoro')">
+        <i class="ti ti-rocket"></i>
+        <div class="acard-label">Lavoro</div>
+        <div class="acard-sub">Carriera, soldi, crescita</div>
+      </div>
     </div>
-    <div class="bottom-pad">
-      <button class="btn-go" id="btn-start" onclick="startFlow()" disabled>Inizia</button>
+    <div class="div">
+      <div class="div-line"></div>
+      <div class="div-text">oppure scrivi tu</div>
+      <div class="div-line"></div>
     </div>
+    <textarea id="free-text" rows="3" placeholder="Es: voglio guadagnare 10.000 euro al mese..."></textarea>
+    <div id="err-welcome"></div>
   </div>
+  <div class="bot">
+    <button class="btn" id="btn-start" onclick="startFlow()" disabled>Inizia</button>
+  </div>
+</div>
 
-  <div class="screen" id="sc-loading">
-    <div class="center-content">
-      <div class="loader-ring"><div class="spinner"></div></div>
-      <div class="loader-title">Sto ascoltando...</div>
-      <div class="loader-sub">L'IA sta preparando le domande giuste per te</div>
-    </div>
+<div class="screen" id="sc-loading">
+  <div class="center">
+    <div class="ring"><div class="spin"></div></div>
+    <div class="ltitle">Sto ascoltando...</div>
+    <div class="lsub">L'IA sta preparando le domande giuste per te</div>
   </div>
+</div>
 
-  <div class="screen" id="sc-onboarding">
-    <div class="s-pad">
-      <div class="logo-text">Per<span>sisto</span></div>
-      <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
-      <div class="q-num" id="q-num">Domanda 1 di 3</div>
-      <div class="q-text" id="q-text"></div>
-      <textarea id="q-ans" rows="4" placeholder="Scrivi qui..."></textarea>
-      <div id="onb-err"></div>
-    </div>
-    <div class="bottom-pad">
-      <button class="btn-go" onclick="nextQ()">Avanti</button>
-    </div>
+<div class="screen" id="sc-onboarding">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="prog"><div class="progbar" id="progbar" style="width:0%"></div></div>
+    <div class="qnum" id="qnum">Domanda 1 di 3</div>
+    <div class="qtext" id="qtext"></div>
+    <textarea id="qans" rows="4" placeholder="Scrivi qui..."></textarea>
+    <div id="err-onb"></div>
   </div>
+  <div class="bot">
+    <button class="btn" onclick="nextQ()">Avanti</button>
+  </div>
+</div>
 
-  <div class="screen" id="sc-analyzing">
-    <div class="center-content">
-      <div class="loader-ring"><div class="spinner"></div></div>
-      <div class="loader-title" id="analyzing-title">Costruendo il tuo profilo</div>
-      <div class="loader-sub" id="analyzing-sub">L'IA sta elaborando le tue risposte...</div>
-    </div>
+<div class="screen" id="sc-analyzing">
+  <div class="center">
+    <div class="ring"><div class="spin"></div></div>
+    <div class="ltitle" id="an-title">Costruendo il tuo profilo</div>
+    <div class="lsub" id="an-sub">L'IA sta elaborando le tue risposte...</div>
   </div>
+</div>
 
-  <div class="screen" id="sc-profile">
-    <div class="s-pad" style="padding-bottom:0">
-      <div class="logo-text">Per<span>sisto</span></div>
-      <div class="big-headline" style="font-size:22px;margin-top:20px" id="prof-area">Il tuo profilo</div>
-    </div>
-    <div class="scroll-content">
-      <div class="score-pill"><i class="ti ti-trending-up"></i> Baseline: <span id="prof-score">0</span>/100</div>
-      <div class="profile-summary" id="prof-summary"></div>
-      <div class="task-block">
-        <div class="task-label">Approccio consigliato</div>
-        <div class="task-desc" id="prof-approach" style="color:#8892b0;font-size:14px"></div>
-      </div>
-    </div>
-    <div class="bottom-pad">
-      <button class="btn-go" onclick="showHome()">Vedi il task di oggi</button>
+<div class="screen" id="sc-profile">
+  <div class="s-pad" style="padding-bottom:0">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="h1" style="font-size:22px;margin-top:20px" id="prof-area">Il tuo profilo</div>
+  </div>
+  <div class="scroll">
+    <div class="pill"><i class="ti ti-trending-up"></i> Baseline: <span id="prof-score">0</span>/100</div>
+    <div class="psum" id="prof-sum"></div>
+    <div class="tblock">
+      <div class="tlabel">Approccio consigliato</div>
+      <div class="tdesc" id="prof-app" style="color:#8892b0;font-size:14px"></div>
     </div>
   </div>
+  <div class="bot">
+    <button class="btn" onclick="showHome()">Vedi il task di oggi</button>
+  </div>
+</div>
 
-  <div class="screen" id="sc-home">
-    <div class="s-pad" style="padding-bottom:0">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="logo-text">Per<span>sisto</span></div>
-        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
-      </div>
-      <div class="stats-row" style="margin-top:20px">
-        <div class="stat-box"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
-        <div class="stat-box"><div class="stat-n">1</div><div class="stat-l">Streak</div></div>
-      </div>
+<div class="screen" id="sc-home">
+  <div class="s-pad" style="padding-bottom:0">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
     </div>
-    <div class="scroll-content">
-      <div class="task-block">
-        <div class="task-label">Task di oggi</div>
-        <div class="task-title" id="task-title"></div>
-        <div class="task-desc" id="task-desc"></div>
-      </div>
-      <div class="task-block" style="background:transparent;border-color:#16213e">
-        <div class="task-label">Perché questo</div>
-        <div class="task-desc" id="task-why" style="font-size:12px"></div>
-      </div>
-    </div>
-    <div class="bottom-pad">
-      <button class="btn-go" onclick="markDone()">
-        <i class="ti ti-check"></i> L'ho fatto!
-      </button>
+    <div class="stats" style="margin-top:20px">
+      <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
+      <div class="stat"><div class="stat-n">1</div><div class="stat-l">Streak</div></div>
     </div>
   </div>
+  <div class="scroll">
+    <div class="tblock">
+      <div class="tlabel">Task di oggi</div>
+      <div class="ttitle" id="task-title"></div>
+      <div class="tdesc" id="task-desc"></div>
+    </div>
+    <div class="tblock" style="background:transparent;border-color:#16213e">
+      <div class="tlabel">Come farlo</div>
+      <div class="tdesc" id="task-why" style="font-size:12px"></div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="markDone()"><i class="ti ti-check"></i> L'ho fatto!</button>
+  </div>
+</div>
 
-  <div class="screen" id="sc-reflection">
-    <div class="center-content">
-      <div class="done-ring"><i class="ti ti-check"></i></div>
-      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
-      <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6" id="refl-q"></div>
-      <div class="emoji-row" id="emoji-row"></div>
-    </div>
-    <div class="bottom-pad">
-      <button class="btn-go" id="btn-refl" onclick="saveRefl()" disabled>Salva</button>
+<div class="screen" id="sc-reflection">
+  <div class="center">
+    <div class="ring2"><i class="ti ti-check"></i></div>
+    <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
+    <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6">Come ti sei sentito completando questo task?</div>
+    <div class="emrow">
+      <button class="embtn" onclick="selEmoji(this,'🔥')">🔥</button>
+      <button class="embtn" onclick="selEmoji(this,'💪')">💪</button>
+      <button class="embtn" onclick="selEmoji(this,'😅')">😅</button>
     </div>
   </div>
+  <div class="bot">
+    <button class="btn" id="btn-refl" onclick="saveRefl()" disabled>Salva</button>
+  </div>
+</div>
 
-  <div class="screen" id="sc-done">
-    <div class="center-content">
-      <div class="done-ring"><i class="ti ti-star"></i></div>
-      <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
-      <div style="font-size:13px;color:#4a5580;line-height:1.7;margin-bottom:24px;max-width:280px" id="done-msg"></div>
-      <div class="stats-row" style="width:100%">
-        <div class="stat-box"><div class="stat-n" id="done-score">0</div><div class="stat-l">Punteggio</div></div>
-        <div class="stat-box"><div class="stat-n">1</div><div class="stat-l">Giorno 1 ✓</div></div>
-      </div>
-    </div>
-    <div class="bottom-pad">
-      <button class="btn-ghost" onclick="resetApp()">Ricomincia da capo</button>
+<div class="screen" id="sc-done">
+  <div class="center">
+    <div class="ring2"><i class="ti ti-star"></i></div>
+    <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
+    <div style="font-size:13px;color:#4a5580;line-height:1.7;margin-bottom:24px;max-width:280px" id="done-msg"></div>
+    <div class="stats" style="width:100%">
+      <div class="stat"><div class="stat-n" id="done-score">0</div><div class="stat-l">Punteggio</div></div>
+      <div class="stat"><div class="stat-n">1</div><div class="stat-l">Giorno 1 ✓</div></div>
     </div>
   </div>
+  <div class="bot">
+    <button class="btn-ghost" onclick="resetApp()">Ricomincia da capo</button>
+  </div>
+</div>
 
 </div>
 
 <script>
-const ARCH_DESC={corpo:"forma fisica, energia e salute",mente:"focus mentale, gestione dello stress e abitudini cognitive",relazioni:"relazioni interpersonali, coppia o famiglia",lavoro:"produttività, carriera e crescita professionale"};
-let S={arch:null,freeText:"",questions:[],answers:[],currentQ:0,profile:{},tasks:[],emoji:null};
+var ARCH = {
+  corpo: 'forma fisica, energia e salute',
+  mente: 'focus mentale, gestione dello stress e abitudini cognitive',
+  relazioni: 'relazioni interpersonali, coppia o famiglia',
+  lavoro: 'produttività, carriera e crescita professionale'
+};
 
-function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+id).classList.add('active');}
+var S = {arch:null, freeText:'', ctx:'', questions:[], answers:[], currentQ:0, profile:{}, tasks:[], emoji:null};
 
-function selectArch(a){
-  document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));
-  if(S.arch===a){S.arch=null;}else{S.arch=a;document.getElementById('arch-'+a).classList.add('sel');document.getElementById('free-text').value='';S.freeText='';}
+function ss(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('sc-'+id).classList.add('active');
+}
+
+function selArch(a) {
+  document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
+  if (S.arch === a) {
+    S.arch = null;
+  } else {
+    S.arch = a;
+    document.getElementById('arch-'+a).classList.add('sel');
+    document.getElementById('free-text').value = '';
+    S.freeText = '';
+  }
   updateBtn();
 }
 
-function onFreeText(){
-  S.freeText=document.getElementById('free-text').value.trim();
-  if(S.freeText){document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));S.arch=null;}
+function onFreeText() {
+  var val = document.getElementById('free-text').value.trim();
+  S.freeText = val;
+  if (val) {
+    document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
+    S.arch = null;
+  }
   updateBtn();
 }
 
-function updateBtn(){
-  const txt=document.getElementById('free-text').value.trim();
-  S.freeText=txt;
-  document.getElementById('btn-start').disabled=!(S.arch||txt);
+function updateBtn() {
+  var val = document.getElementById('free-text').value.trim();
+  document.getElementById('btn-start').disabled = !(S.arch || val);
 }
-document.addEventListener('DOMContentLoaded', function(){
-  document.getElementById('free-text').addEventListener('input', onFreeText);
-  document.getElementById('free-text').addEventListener('keyup', onFreeText);
-  document.getElementById('free-text').addEventListener('change', onFreeText);
+
+document.addEventListener('DOMContentLoaded', function() {
+  var ta = document.getElementById('free-text');
+  ta.addEventListener('input', onFreeText);
+  ta.addEventListener('keyup', onFreeText);
+  ta.addEventListener('change', onFreeText);
 });
 
-async function callAI(system,userMsg){
-  const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages:[{role:'user',content:userMsg}]})});
-  const data=await res.json();
-  if(!res.ok)throw new Error(data.error||'Errore API');
-  return data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+function clean(t) {
+  return (t || '').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+\s*/gm,'').trim();
 }
 
-function safeJSON(t){
-  const clean=t.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
-  const start=clean.indexOf('{');
-  const end=clean.lastIndexOf('}');
-  if(start===-1||end===-1)throw new Error('No JSON');
-  return JSON.parse(clean.slice(start,end+1));
+function safeJSON(t) {
+  var s = t.replace(/```json/g,'').replace(/```/g,'').trim();
+  var a = s.indexOf('{');
+  var b = s.lastIndexOf('}');
+  if (a === -1 || b === -1) throw new Error('No JSON');
+  return JSON.parse(s.slice(a, b+1));
 }
 
-async function startFlow(){
-  const context=S.freeText||(S.arch?`migliorare ${ARCH_DESC[S.arch]}`:'');
-  S.context=context;
+async function callAI(system, userMsg) {
+  var res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({system: system, messages: [{role:'user', content: userMsg}]})
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Errore API');
+  return data.content.filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
+}
+
+async function startFlow() {
+  var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
+  S.ctx = ctx;
   ss('loading');
-  document.getElementById('welcome-err').innerHTML='';
-  try{
-    const numQ=S.freeText?5:3;
-    const sys=`Sei un coach. L'utente vuole: "${context}". Genera ${numQ} domande brevi per capire il suo punto di partenza. Rispondi SOLO con JSON senza testo aggiuntivo: {"questions":["q1","q2"]}`;
-    const raw=await callAI(sys,`Contesto: ${context}`);
-    const p=safeJSON(raw);
-    S.questions=p.questions.slice(0,numQ);
-    S.answers=[];S.currentQ=0;
+  document.getElementById('err-welcome').innerHTML = '';
+  try {
+    var numQ = S.freeText ? 5 : 3;
+    var sys = 'Sei un coach. Genera ' + numQ + ' domande brevi e dirette per capire il punto di partenza reale di questa persona. Domande pratiche sulla situazione attuale, non sull\'obiettivo. Rispondi SOLO con JSON: {"questions":["q1","q2"]}';
+    var raw = await callAI(sys, 'Obiettivo: ' + ctx);
+    var p = safeJSON(raw);
+    S.questions = p.questions.slice(0, numQ);
+    S.answers = [];
+    S.currentQ = 0;
     showQ();
-  }catch(e){
+  } catch(e) {
     ss('welcome');
-    document.getElementById('welcome-err').innerHTML='<div class="err">Connessione fallita. Riprova.</div>';
+    document.getElementById('err-welcome').innerHTML = '<div class="err">Connessione fallita. Riprova.</div>';
   }
 }
 
-function showQ(){
+function showQ() {
   ss('onboarding');
-  document.getElementById('q-num').textContent=`Domanda ${S.currentQ+1} di ${S.questions.length}`;
-  document.getElementById('q-text').textContent=S.questions[S.currentQ];
-  document.getElementById('q-ans').value='';
-  document.getElementById('onb-err').innerHTML='';
-  document.getElementById('prog').style.width=Math.round((S.currentQ/S.questions.length)*100)+'%';
+  document.getElementById('qnum').textContent = 'Domanda ' + (S.currentQ+1) + ' di ' + S.questions.length;
+  document.getElementById('qtext').textContent = S.questions[S.currentQ];
+  document.getElementById('qans').value = '';
+  document.getElementById('err-onb').innerHTML = '';
+  document.getElementById('progbar').style.width = Math.round((S.currentQ / S.questions.length) * 100) + '%';
 }
 
-async function nextQ(){
-  const a=document.getElementById('q-ans').value.trim();
-  if(!a){document.getElementById('onb-err').innerHTML='<div class="err">Scrivi una risposta per continuare.</div>';return;}
-  document.getElementById('onb-err').innerHTML='';
-  S.answers.push({q:S.questions[S.currentQ],a});
+async function nextQ() {
+  var a = document.getElementById('qans').value.trim();
+  if (!a) {
+    document.getElementById('err-onb').innerHTML = '<div class="err">Scrivi una risposta per continuare.</div>';
+    return;
+  }
+  document.getElementById('err-onb').innerHTML = '';
+  S.answers.push({q: S.questions[S.currentQ], a: a});
   S.currentQ++;
-  if(S.currentQ<S.questions.length){showQ();return;}
+  if (S.currentQ < S.questions.length) { showQ(); return; }
   await genProfile();
 }
 
-async function genProfile(){
+async function genProfile() {
   ss('analyzing');
-  const qa=S.answers.map(x=>`D: ${x.q}\nR: ${x.a}`).join('\n\n');
+  var qa = S.answers.map(function(x){ return 'D: ' + x.q + '\nR: ' + x.a; }).join('\n\n');
+  try {
+    document.getElementById('an-title').textContent = 'Costruendo il tuo profilo';
+    document.getElementById('an-sub').textContent = "L'IA sta analizzando le tue risposte...";
+    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Genera i PRIMI 10 task: ogni task deve essere un\'azione concreta di 15-30 minuti con istruzioni passo-passo (Step 1, Step 2, Step 3). Niente obiettivi vaghi. JSON: {"baseline_score":42,"area":"Nome area","summary":"2-3 frasi reali.","approach":"Una frase concreta.","tasks":[{"title":"Azione","description":"Step 1: fai X. Step 2: fai Y. Step 3: fai Z.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
+    var raw1 = await callAI(sys1, 'Obiettivo: ' + S.ctx + '\n\nRisposte:\n' + qa + '\n\nUSA SOLO queste info.');
+    var p1 = safeJSON(raw1);
+    S.profile = p1;
+    S.tasks = p1.tasks || [];
 
-  try{
-    // CHIAMATA 1: profilo + primo task
-    document.getElementById('analyzing-title').textContent='Costruendo il tuo profilo';
-    document.getElementById('analyzing-sub').textContent="L'IA sta analizzando le tue risposte...";
-    const sys1=`Sei un coach pratico. Analizza le risposte e genera profilo basato SOLO su quanto scritto. Genera i PRIMI 10 task: ogni task deve essere un'azione di 15-30 minuti con istruzioni passo-passo su COME farla, non solo cosa fare. Esempio di task ben fatto: title="Scrivi la lista dei tuoi 10 potenziali clienti", description="Apri un foglio o notes. Scrivi 10 nomi di persone reali o tipi di persone che potrebbero pagare per quello che vuoi offrire. Per ognuno: nome/tipo, problema che hanno, quanto potrebbe valere risolverlo.", why="Senza sapere chi vuoi servire non puoi vendere nulla. Questo ti da un punto di partenza concreto." STESSO formato per tutti i task. Niente obiettivi vaghi, solo azioni concrete con istruzioni chiare. JSON: {"baseline_score":42,"area":"Nome area","summary":"2-3 frasi reali sulla situazione.","approach":"Una frase concreta.","tasks":[{"title":"Titolo azione","description":"Step 1: fai X. Step 2: fai Y. Step 3: fai Z.","why":"Perche questo task specifico per questa persona."}]} baseline_score 15-65.`;
-    const raw1=await callAI(sys1,`Obiettivo: ${S.context}\n\nRisposte onboarding:\n${qa}\n\nIMPORTANTE: task con istruzioni step-by-step su COME fare, non solo cosa fare.`);
-    const p1=safeJSON(raw1);
-    S.profile=p1; S.tasks=p1.tasks||[];
-    document.getElementById('analyzing-title').textContent='Completando il percorso';
-    document.getElementById('analyzing-sub').textContent='Generando i task personalizzati...';
-    const sys2=`Coach pratico. Genera 20 task giorni 11-30 per: "${S.context}". Profilo utente: ${(p1.summary||'').slice(0,150)}. Ogni task deve avere istruzioni passo-passo su COME farlo (Step 1, Step 2, Step 3). Task progressivamente piu impegnativi. Niente consigli generici. JSON: {"tasks":[{"title":"Titolo","description":"Step 1: ... Step 2: ... Step 3: ...","why":"Perche."}]}`;
-    const raw2=await callAI(sys2,`Genera 20 task giorni 11-30 con istruzioni pratiche per: ${S.context}`);
-    const p2=safeJSON(raw2);
-    S.tasks=[...S.tasks,...(p2.tasks||[])];
-    function smd(t){return (t||'').replace(/[*#]+/g,'').trim();}
-    document.getElementById('prof-area').textContent=smd(p1.area)||'Il tuo profilo';
-    document.getElementById('prof-score').textContent=p1.baseline_score||0;
-    document.getElementById('prof-summary').textContent=smd(p1.summary)||'';
-    document.getElementById('prof-approach').textContent=smd(p1.approach)||'';
-    document.getElementById('home-score').textContent=p1.baseline_score||0;
-    document.getElementById('done-score').textContent=(p1.baseline_score||0)+1;
-    if(S.tasks[0]){const t=S.tasks[0];document.getElementById('task-title').textContent=smd(t.title)||'';document.getElementById('task-desc').textContent=smd(t.description)||'';document.getElementById('task-why').textContent=smd(t.why)||'';}
+    document.getElementById('an-title').textContent = 'Completando il percorso';
+    document.getElementById('an-sub').textContent = 'Generando i task personalizzati...';
+    var sys2 = 'Coach pratico. Genera 20 task giorni 11-30 per: "' + S.ctx + '". Profilo: ' + (p1.summary || '').slice(0,150) + '. Ogni task con istruzioni step-by-step. Progressivamente piu impegnativi. JSON: {"tasks":[{"title":"Azione","description":"Step 1: ... Step 2: ... Step 3: ...","why":"Perche."}]}';
+    var raw2 = await callAI(sys2, 'Genera 20 task giorni 11-30 per: ' + S.ctx);
+    var p2 = safeJSON(raw2);
+    S.tasks = S.tasks.concat(p2.tasks || []);
+
+    document.getElementById('prof-area').textContent = clean(p1.area) || 'Il tuo profilo';
+    document.getElementById('prof-score').textContent = p1.baseline_score || 0;
+    document.getElementById('prof-sum').textContent = clean(p1.summary) || '';
+    document.getElementById('prof-app').textContent = clean(p1.approach) || '';
+    document.getElementById('home-score').textContent = p1.baseline_score || 0;
+    document.getElementById('done-score').textContent = (p1.baseline_score || 0) + 1;
+
+    if (S.tasks[0]) {
+      var t = S.tasks[0];
+      document.getElementById('task-title').textContent = clean(t.title) || '';
+      document.getElementById('task-desc').textContent = clean(t.description) || '';
+      document.getElementById('task-why').textContent = clean(t.why) || '';
+    }
     ss('profile');
-  }catch(e){ss('onboarding');document.getElementById('onb-err').innerHTML='<div class="err">Errore nella generazione. Riprova.</div>';}
+  } catch(e) {
+    ss('onboarding');
+    document.getElementById('err-onb').innerHTML = '<div class="err">Errore nella generazione. Riprova.</div>';
+  }
 }
 
-function showHome(){ss('home');}
+function showHome() { ss('home'); }
 
-function smd(t){return (t||'').replace(/[*#]+/g,'').trim();}
+function selEmoji(btn, e) {
+  document.querySelectorAll('.embtn').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  S.emoji = e;
+  document.getElementById('btn-refl').disabled = false;
+}
 
-function markDone(){
-  document.getElementById('refl-q').textContent='Come ti sei sentito completando questo task?';
-  const emojis=['🔥','💪','😅'];
-  const row=document.getElementById('emoji-row');row.innerHTML='';
-  emojis.forEach(e=>{const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};row.appendChild(b);});
-  S.emoji=null;document.getElementById('btn-refl').disabled=true;
+function markDone() {
+  S.emoji = null;
+  document.getElementById('btn-refl').disabled = true;
+  document.querySelectorAll('.embtn').forEach(function(b){ b.classList.remove('sel'); });
   ss('reflection');
 }
 
-function renderEmoji(arr){
-  const row=document.getElementById('emoji-row');row.innerHTML='';
-  arr.forEach(e=>{const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};row.appendChild(b);});
-}
-
-async function saveRefl(){
-  const t=S.tasks[0]||{};
-  const moods={'🔥':'motivato e carico','💪':'determinato e fiero','😅':'faticoso ma soddisfatto'};
-  const mood=moods[S.emoji]||'positivo';
-  try{
-    const profCtx=smd((S.profile.summary||'').slice(0,200));
-    const sys=`Coach diretto. Contesto utente: ${profCtx}. Task completato oggi: "${smd(t.title||'')}". Si e sentito: ${mood}. Scrivi ESATTAMENTE 2 frasi brevi di testo normale basate sulla sua situazione reale. Niente asterischi, niente titoli. Solo 2 frasi umane e concrete.`;
-    const msg=await callAI(sys,`Task: ${smd(t.title||'')}. Umore: ${mood}. Profilo: ${profCtx}`);
-    document.getElementById('done-msg').textContent=smd(msg.trim());
-  }catch(e){document.getElementById('done-msg').textContent='Hai fatto il primo passo. Torna domani per continuare.';}
+async function saveRefl() {
+  var t = S.tasks[0] || {};
+  var moods = {'🔥':'motivato e carico', '💪':'determinato e fiero', '😅':'faticoso ma soddisfatto'};
+  var mood = moods[S.emoji] || 'positivo';
+  var profCtx = clean((S.profile.summary || '').slice(0, 200));
+  try {
+    var sys = 'Coach diretto. Utente: ' + profCtx + '. Task completato: "' + clean(t.title||'') + '". Si e sentito: ' + mood + '. Scrivi ESATTAMENTE 2 frasi brevi di testo normale basate sulla sua situazione. Niente asterischi, niente titoli.';
+    var msg = await callAI(sys, 'Task: ' + clean(t.title||'') + '. Umore: ' + mood);
+    document.getElementById('done-msg').textContent = clean(msg.trim());
+  } catch(e) {
+    document.getElementById('done-msg').textContent = 'Hai fatto il primo passo. Torna domani per continuare.';
+  }
   ss('done');
 }
 
+function resetApp() {
+  S = {arch:null, freeText:'', ctx:'', questions:[], answers:[], currentQ:0, profile:{}, tasks:[], emoji:null};
+  document.getElementById('free-text').value = '';
+  document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('err-welcome').innerHTML = '';
+  ss('welcome');
+}
+</script>
+</body>
+</html>
