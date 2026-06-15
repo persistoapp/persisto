@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Persisto — +1% al giorno</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:20px}
@@ -15,8 +16,8 @@ body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
 .logo span{color:#00d4aa}
 .tag{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
-.h1{font-size:30px;font-weight:700;line-height:1.15;color:#fff;margin:24px 0 8px}
-.sub{font-size:14px;color:#6b7db3;line-height:1.6;margin-bottom:24px}
+.h1{font-size:28px;font-weight:700;line-height:1.15;color:#fff;margin:20px 0 8px}
+.sub{font-size:14px;color:#6b7db3;line-height:1.6;margin-bottom:20px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .acard{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s}
 .acard:hover,.acard.sel{border-color:#00d4aa;background:#0d1f2d}
@@ -26,13 +27,20 @@ body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
 .div{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
 .div-line{flex:1;height:0.5px;background:#1e2d4a}
 .div-text{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
-textarea{width:100%;background:#16213e;border:1px solid #1e2d4a;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6}
-textarea:focus{border-color:#00d4aa}
-textarea::placeholder{color:#2a3a5a}
+input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:#16213e;border:1px solid #1e2d4a;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6;appearance:none;-webkit-appearance:none}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:#00d4aa}
+input::placeholder,textarea::placeholder{color:#2a3a5a}
+select option{background:#1a1a2e;color:#fff}
+.field{margin-bottom:14px}
+.field-label{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0}
+.chip{padding:8px 14px;border-radius:20px;border:1px solid #1e2d4a;background:#16213e;color:#6b7db3;font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.chip:hover,.chip.sel{border-color:#00d4aa;background:#0d1f2d;color:#00d4aa}
 .btn{width:100%;padding:16px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
 .btn:hover{opacity:0.88}
 .btn:disabled{opacity:0.25;cursor:not-allowed}
 .btn-ghost{width:100%;padding:14px;background:transparent;color:#4a5580;border:1px solid #1e2d4a;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
+.btn-link{background:none;border:none;color:#00d4aa;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
 .bot{padding:20px 24px 36px;margin-top:auto}
 .qnum{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
@@ -61,15 +69,491 @@ textarea::placeholder{color:#2a3a5a}
 .embtn:hover,.embtn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
 .err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
 .scroll{flex:1;overflow-y:auto;padding:16px 24px}
+.prof-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #16213e}
+.prof-row:last-child{border-bottom:none}
+.prof-key{font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
+.prof-val{font-size:13px;color:#fff;font-weight:500;text-align:right;max-width:60%}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.icon-btn{background:none;border:none;color:#4a5580;cursor:pointer;font-size:18px;padding:4px}
+.icon-btn:hover{color:#00d4aa}
+.step-indicator{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
 </style>
 </head>
 <body>
 <div class="phone">
 
-<div class="screen active" id="sc-welcome">
+<!-- LOGIN -->
+<div class="screen active" id="sc-login">
   <div class="s-pad">
     <div class="logo">Per<span>sisto</span></div>
     <div class="tag">+1% ogni giorno</div>
+    <div class="h1">Bentornato</div>
+    <div class="sub">Accedi per continuare il tuo percorso.</div>
+    <div class="field">
+      <div class="field-label">Email</div>
+      <input type="email" id="login-email" placeholder="la tua@email.com">
+    </div>
+    <div class="field">
+      <div class="field-label">Password</div>
+      <input type="password" id="login-pass" placeholder="••••••••">
+    </div>
+    <div id="err-login"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="doLogin()">Accedi</button>
+    <button class="btn-ghost" onclick="ss('register')">Non hai un account? Registrati</button>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="screen" id="sc-register">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="tag">+1% ogni giorno</div>
+    <div class="h1">Crea il tuo account</div>
+    <div class="sub">Inizia il tuo percorso di crescita.</div>
+    <div class="field">
+      <div class="field-label">Email</div>
+      <input type="email" id="reg-email" placeholder="la tua@email.com">
+    </div>
+    <div class="field">
+      <div class="field-label">Password</div>
+      <input type="password" id="reg-pass" placeholder="minimo 6 caratteri">
+    </div>
+    <div id="err-register"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="doRegister()">Registrati</button>
+    <button class="btn-ghost" onclick="ss('login')">Hai già un account? Accedi</button>
+  </div>
+</div>
+
+<!-- VERIFICA EMAIL -->
+<div class="screen" id="sc-verify">
+  <div class="center">
+    <div class="ring2"><i class="ti ti-mail"></i></div>
+    <div class="ltitle">Controlla la tua email</div>
+    <div class="lsub">Ti abbiamo mandato un link di conferma. Cliccalo e poi torna qui.</div>
+    <div style="margin-top:24px">
+      <button class="btn-ghost" style="width:auto;padding:10px 24px" onclick="ss('login')">Ho confermato, accedi</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 1: Identità -->
+<div class="screen" id="sc-demo1">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 1 di 5</div>
+    <div class="prog"><div class="progbar" style="width:20%"></div></div>
+    <div class="h1" style="font-size:22px">Chi sei</div>
+    <div class="sub">Queste info non le richiediamo mai più.</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Età</div>
+      <div class="chips" id="chips-eta">
+        <div class="chip" onclick="selChip('eta','under25',this)">Under 25</div>
+        <div class="chip" onclick="selChip('eta','25-35',this)">25–35</div>
+        <div class="chip" onclick="selChip('eta','36-45',this)">36–45</div>
+        <div class="chip" onclick="selChip('eta','46+',this)">46+</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Sesso</div>
+      <div class="chips" id="chips-sesso">
+        <div class="chip" onclick="selChip('sesso','donna',this)">Donna</div>
+        <div class="chip" onclick="selChip('sesso','uomo',this)">Uomo</div>
+        <div class="chip" onclick="selChip('sesso','altro',this)">Altro</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Dove vivi</div>
+      <input type="text" id="demo-luogo" placeholder="Es: Roma, Milano, piccola città...">
+    </div>
+    <div class="field">
+      <div class="field-label">Situazione sentimentale</div>
+      <div class="chips" id="chips-sentimentale">
+        <div class="chip" onclick="selChip('sentimentale','single',this)">Single</div>
+        <div class="chip" onclick="selChip('sentimentale','coppia-non-convivente',this)">Coppia (non convivente)</div>
+        <div class="chip" onclick="selChip('sentimentale','coppia-convivente',this)">Coppia (convivente)</div>
+        <div class="chip" onclick="selChip('sentimentale','sposato',this)">Sposato/a</div>
+        <div class="chip" onclick="selChip('sentimentale','separato',this)">Separato/a</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Figli</div>
+      <div class="chips" id="chips-figli">
+        <div class="chip" onclick="selChip('figli','no',this)">Nessuno</div>
+        <div class="chip" onclick="selChip('figli','1',this)">1</div>
+        <div class="chip" onclick="selChip('figli','2',this)">2</div>
+        <div class="chip" onclick="selChip('figli','3',this)">3</div>
+        <div class="chip" onclick="selChip('figli','4+',this)">4+</div>
+      </div>
+    </div>
+    <div class="field" id="field-figli-eta" style="display:none">
+      <div class="field-label">Età dei figli (approssimativa)</div>
+      <input type="text" id="demo-figli-eta" placeholder="Es: 3, 7, 15 anni">
+    </div>
+    <div class="field" id="field-figli-custody" style="display:none">
+      <div class="field-label">I figli vivono con te</div>
+      <div class="chips" id="chips-custody">
+        <div class="chip" onclick="selChip('custody','fulltime',this)">Full time</div>
+        <div class="chip" onclick="selChip('custody','parttime',this)">Part time (settimane alterne o simili)</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Supporto familiare / rete di aiuto</div>
+      <div class="chips" id="chips-supporto">
+        <div class="chip" onclick="selChip('supporto','nessuno',this)">Nessuno, faccio tutto da solo/a</div>
+        <div class="chip" onclick="selChip('supporto','parziale',this)">Qualcuno mi aiuta ogni tanto</div>
+        <div class="chip" onclick="selChip('supporto','buono',this)">Ho una buona rete intorno</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Persone a carico oltre ai figli</div>
+      <div class="chips" id="chips-carico">
+        <div class="chip" onclick="selChip('carico','no',this)">No</div>
+        <div class="chip" onclick="selChip('carico','si',this)">Sì (genitori, parenti)</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(1)">Avanti</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 2: Lavoro -->
+<div class="screen" id="sc-demo2">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 2 di 5</div>
+    <div class="prog"><div class="progbar" style="width:40%"></div></div>
+    <div class="h1" style="font-size:22px">Lavoro e soldi</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Che lavoro fai</div>
+      <input type="text" id="demo-lavoro" placeholder="Es: closing sales, insegnante, imprenditrice...">
+    </div>
+    <div class="field">
+      <div class="field-label">Tipo di rapporto lavorativo</div>
+      <div class="chips" id="chips-tipolavoro">
+        <div class="chip" onclick="selChip('tipolavoro','dipendente',this)">Dipendente</div>
+        <div class="chip" onclick="selChip('tipolavoro','freelance',this)">Freelance</div>
+        <div class="chip" onclick="selChip('tipolavoro','imprenditore',this)">Imprenditore/a</div>
+        <div class="chip" onclick="selChip('tipolavoro','disoccupato',this)">Non lavoro</div>
+        <div class="chip" onclick="selChip('tipolavoro','studente',this)">Studente</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Ore di lavoro al giorno (in media)</div>
+      <div class="chips" id="chips-orelavoro">
+        <div class="chip" onclick="selChip('orelavoro','meno4',this)">Meno di 4</div>
+        <div class="chip" onclick="selChip('orelavoro','4-6',this)">4–6 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','6-8',this)">6–8 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','8-10',this)">8–10 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','piu10',this)">Più di 10</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Dove lavori</div>
+      <div class="chips" id="chips-luogolavoro">
+        <div class="chip" onclick="selChip('luogolavoro','casa',this)">Da casa</div>
+        <div class="chip" onclick="selChip('luogolavoro','ufficio',this)">In ufficio</div>
+        <div class="chip" onclick="selChip('luogolavoro','ibrido',this)">Ibrido</div>
+        <div class="chip" onclick="selChip('luogolavoro','giro',this)">In giro / trasferte</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Reddito</div>
+      <div class="chips" id="chips-reddito">
+        <div class="chip" onclick="selChip('reddito','fisso',this)">Fisso</div>
+        <div class="chip" onclick="selChip('reddito','variabile',this)">Variabile</div>
+        <div class="chip" onclick="selChip('reddito','entrambi',this)">Entrambi</div>
+        <div class="chip" onclick="selChip('reddito','nessuno',this)">Nessuno al momento</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Fascia di reddito mensile attuale</div>
+      <div class="chips" id="chips-fascia">
+        <div class="chip" onclick="selChip('fascia','0',this)">0 / non lavoro</div>
+        <div class="chip" onclick="selChip('fascia','sotto1000',this)">Sotto 1.000€</div>
+        <div class="chip" onclick="selChip('fascia','1000-2500',this)">1.000–2.500€</div>
+        <div class="chip" onclick="selChip('fascia','2500-5000',this)">2.500–5.000€</div>
+        <div class="chip" onclick="selChip('fascia','5000-10000',this)">5.000–10.000€</div>
+        <div class="chip" onclick="selChip('fascia','oltre10000',this)">Oltre 10.000€</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Soddisfazione del lavoro attuale</div>
+      <div class="chips" id="chips-soddisfazione">
+        <div class="chip" onclick="selChip('soddisfazione','no',this)">Per niente</div>
+        <div class="chip" onclick="selChip('soddisfazione','poco',this)">Poco</div>
+        <div class="chip" onclick="selChip('soddisfazione','abbastanza',this)">Abbastanza</div>
+        <div class="chip" onclick="selChip('soddisfazione','molto',this)">Molto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Energia a fine giornata lavorativa</div>
+      <div class="chips" id="chips-energia-lavoro">
+        <div class="chip" onclick="selChip('energialavoro','a-pezzi',this)">A pezzi, zero energie</div>
+        <div class="chip" onclick="selChip('energialavoro','stanco',this)">Stanco ma funziono</div>
+        <div class="chip" onclick="selChip('energialavoro','ok',this)">Abbastanza ok</div>
+        <div class="chip" onclick="selChip('energialavoro','carico',this)">Ancora carico/a</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Pressioni finanziarie attive</div>
+      <div class="chips" id="chips-debiti">
+        <div class="chip" onclick="selChip('debiti','no',this)">No, situazione stabile</div>
+        <div class="chip" onclick="selChip('debiti','leggero',this)">Qualche preoccupazione</div>
+        <div class="chip" onclick="selChip('debiti','si',this)">Sì, debiti o difficoltà serie</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Hai già un business o vuoi crearne uno?</div>
+      <div class="chips" id="chips-business">
+        <div class="chip" onclick="selChip('business','no',this)">No e non mi interessa</div>
+        <div class="chip" onclick="selChip('business','voglio',this)">Voglio crearne uno</div>
+        <div class="chip" onclick="selChip('business','hocreato',this)">Ne ho già uno</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(2)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo1')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 3: Tempo e Routine -->
+<div class="screen" id="sc-demo3">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 3 di 5</div>
+    <div class="prog"><div class="progbar" style="width:60%"></div></div>
+    <div class="h1" style="font-size:22px">Tempo e routine</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">A che ora ti svegli</div>
+      <div class="chips" id="chips-sveglia">
+        <div class="chip" onclick="selChip('sveglia','prima5',this)">Prima delle 5</div>
+        <div class="chip" onclick="selChip('sveglia','5-6',this)">5:00–6:00</div>
+        <div class="chip" onclick="selChip('sveglia','6-7',this)">6:00–7:00</div>
+        <div class="chip" onclick="selChip('sveglia','7-8',this)">7:00–8:00</div>
+        <div class="chip" onclick="selChip('sveglia','dopo8',this)">Dopo le 8</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">A che ora vai a dormire</div>
+      <div class="chips" id="chips-nanna">
+        <div class="chip" onclick="selChip('nanna','prima22',this)">Prima delle 22</div>
+        <div class="chip" onclick="selChip('nanna','22-23',this)">22:00–23:00</div>
+        <div class="chip" onclick="selChip('nanna','23-24',this)">23:00–00:00</div>
+        <div class="chip" onclick="selChip('nanna','dopo24',this)">Dopo mezzanotte</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Tempo libero reale al giorno</div>
+      <div class="chips" id="chips-tempol">
+        <div class="field-label" style="font-size:10px;margin-bottom:4px;color:#2a3a5a">(quello vero, non quello che vorresti)</div>
+        <div class="chip" onclick="selChip('tempolibero','quasi-niente',this)">Quasi zero</div>
+        <div class="chip" onclick="selChip('tempolibero','meno30',this)">Meno di 30 min</div>
+        <div class="chip" onclick="selChip('tempolibero','30-60',this)">30–60 min</div>
+        <div class="chip" onclick="selChip('tempolibero','1-2h',this)">1–2 ore</div>
+        <div class="chip" onclick="selChip('tempolibero','piu2h',this)">Più di 2 ore</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Chi gestisce la casa</div>
+      <div class="chips" id="chips-casa">
+        <div class="chip" onclick="selChip('casa','io-tutto',this)">Io, tutto</div>
+        <div class="chip" onclick="selChip('casa','diviso',this)">Diviso col partner</div>
+        <div class="chip" onclick="selChip('casa','aiuto',this)">Ho aiuto (colf, collaboratori)</div>
+        <div class="chip" onclick="selChip('casa','mix',this)">Mix di tutto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Momenti della giornata solo tuoi</div>
+      <div class="chips" id="chips-momentosolо">
+        <div class="chip" onclick="selChip('momentosolo','mattina',this)">Mattina presto</div>
+        <div class="chip" onclick="selChip('momentosolo','pausa',this)">Pausa pranzo</div>
+        <div class="chip" onclick="selChip('momentosolo','sera',this)">Sera tardi</div>
+        <div class="chip" onclick="selChip('momentosolo','nessuno',this)">Quasi mai</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Weekend</div>
+      <div class="chips" id="chips-weekend">
+        <div class="chip" onclick="selChip('weekend','libero',this)">Li tengo liberi</div>
+        <div class="chip" onclick="selChip('weekend','lavoro',this)">Lavoro anche nel weekend</div>
+        <div class="chip" onclick="selChip('weekend','mix',this)">Mix, dipende</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(3)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo2')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 4: Corpo e Salute -->
+<div class="screen" id="sc-demo4">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 4 di 5</div>
+    <div class="prog"><div class="progbar" style="width:80%"></div></div>
+    <div class="h1" style="font-size:22px">Corpo e mente</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Salute fisica generale</div>
+      <div class="chips" id="chips-salute">
+        <div class="chip" onclick="selChip('salute','male',this)">Non benissimo</div>
+        <div class="chip" onclick="selChip('salute','cosi-cosi',this)">Così così</div>
+        <div class="chip" onclick="selChip('salute','bene',this)">Bene</div>
+        <div class="chip" onclick="selChip('salute','ottimo',this)">Ottimo</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Attività fisica</div>
+      <div class="chips" id="chips-sport">
+        <div class="chip" onclick="selChip('sport','mai',this)">Mai</div>
+        <div class="chip" onclick="selChip('sport','raramente',this)">Raramente</div>
+        <div class="chip" onclick="selChip('sport','1-2',this)">1–2 volte/settimana</div>
+        <div class="chip" onclick="selChip('sport','3-4',this)">3–4 volte/settimana</div>
+        <div class="chip" onclick="selChip('sport','tutti-giorni',this)">Tutti i giorni</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come mangi</div>
+      <div class="chips" id="chips-alimentazione">
+        <div class="chip" onclick="selChip('alimentazione','salto-pasti',this)">Salto pasti spesso</div>
+        <div class="chip" onclick="selChip('alimentazione','male',this)">Male, mangio di fretta</div>
+        <div class="chip" onclick="selChip('alimentazione','abbastanza',this)">Abbastanza bene</div>
+        <div class="chip" onclick="selChip('alimentazione','bene',this)">Bene, ci faccio attenzione</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Limitazioni fisiche che condizionano la vita</div>
+      <div class="chips" id="chips-limitazioni">
+        <div class="chip" onclick="selChip('limitazioni','no',this)">Nessuna</div>
+        <div class="chip" onclick="selChip('limitazioni','lievi',this)">Qualcosa di lieve</div>
+        <div class="chip" onclick="selChip('limitazioni','importanti',this)">Sì, condizionano molto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Qualità del sonno</div>
+      <div class="chips" id="chips-sonno">
+        <div class="chip" onclick="selChip('sonno','pessimo',this)">Pessima, mi sveglio stanco/a</div>
+        <div class="chip" onclick="selChip('sonno','irregolare',this)">Irregolare</div>
+        <div class="chip" onclick="selChip('sonno','ok',this)">Ok</div>
+        <div class="chip" onclick="selChip('sonno','ottimo',this)">Ottima</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come gestisci lo stress</div>
+      <div class="chips" id="chips-stress">
+        <div class="chip" onclick="selChip('stress','male',this)">Male, mi travolge</div>
+        <div class="chip" onclick="selChip('stress','tengo-duro',this)">Tengo duro ma fatico</div>
+        <div class="chip" onclick="selChip('stress','bene',this)">Abbastanza bene</div>
+        <div class="chip" onclick="selChip('stress','ottimo',this)">Ho strategie che funzionano</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Energia mentale in questo periodo</div>
+      <div class="chips" id="chips-energiamente">
+        <div class="chip" onclick="selChip('energiamente','esaurita',this)">Esaurita</div>
+        <div class="chip" onclick="selChip('energiamente','bassa',this)">Bassa</div>
+        <div class="chip" onclick="selChip('energiamente','media',this)">Media</div>
+        <div class="chip" onclick="selChip('energiamente','alta',this)">Alta</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Ti consideri</div>
+      <div class="chips" id="chips-organizzazione">
+        <div class="chip" onclick="selChip('organizzazione','caotica',this)">Caotica/o, vivo nell'improvvisazione</div>
+        <div class="chip" onclick="selChip('organizzazione','medio',this)">Nel mezzo</div>
+        <div class="chip" onclick="selChip('organizzazione','organizzata',this)">Organizzata/o</div>
+        <div class="chip" onclick="selChip('organizzazione','maniacale',this)">Maniacalmente organizzata/o</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Procrastini?</div>
+      <div class="chips" id="chips-procrastinazione">
+        <div class="chip" onclick="selChip('procrastinazione','sempre',this)">Sempre, è il mio sport</div>
+        <div class="chip" onclick="selChip('procrastinazione','spesso',this)">Spesso</div>
+        <div class="chip" onclick="selChip('procrastinazione','poco',this)">Poco</div>
+        <div class="chip" onclick="selChip('procrastinazione','mai',this)">Quasi mai</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come reagisci ai fallimenti</div>
+      <div class="chips" id="chips-fallimenti">
+        <div class="chip" onclick="selChip('fallimenti','mi-crollo',this)">Mi crollo e smetto</div>
+        <div class="chip" onclick="selChip('fallimenti','ci-metto',this)">Ci metto tempo a rialzarmi</div>
+        <div class="chip" onclick="selChip('fallimenti','imparo',this)">Mi rialzo e imparo</div>
+        <div class="chip" onclick="selChip('fallimenti','carburante',this)">Li uso come carburante</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(4)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo3')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 5: Contesto libero -->
+<div class="screen" id="sc-demo5">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 5 di 5</div>
+    <div class="prog"><div class="progbar" style="width:95%"></div></div>
+    <div class="h1" style="font-size:22px">Il tuo contesto</div>
+    <div class="sub">Scrivi liberamente, questa è la parte più importante.</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">La tua situazione attuale in 2-3 righe</div>
+      <textarea id="demo-situazione" rows="3" placeholder="Es: lavoro 10h al giorno, ho 4 figli, zero tempo per me, il caos è la mia normalità..."></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Le tue paure vere rispetto al cambiamento</div>
+      <textarea id="demo-paure" rows="3" placeholder="Es: ho paura di iniziare e mollare di nuovo, di non avere tempo, di deludere me stessa..."></textarea>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="saveProfile()">Salva il profilo</button>
+    <button class="btn-ghost" onclick="ss('demo4')">Indietro</button>
+  </div>
+</div>
+
+<!-- WELCOME (dopo login, profilo già compilato) -->
+<div class="screen" id="sc-welcome">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="icon-btn" onclick="ss('edit-profile')" title="Modifica profilo"><i class="ti ti-user"></i></button>
+        <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
     <div class="h1">Su cosa vuoi lavorare?</div>
     <div class="sub">Scegli un'area o scrivi cosa vuoi cambiare.</div>
     <div class="grid">
@@ -107,6 +591,53 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- OBIETTIVO SPECIFICO -->
+<div class="screen" id="sc-obiettivo">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="prog"><div class="progbar" style="width:0%"></div></div>
+    <div class="h1" style="font-size:22px">Il tuo obiettivo</div>
+    <div class="sub">Prima di tutto dimmi: come vuoi raggiungere questo obiettivo specificamente?</div>
+    <div class="field">
+      <div class="field-label">Come pensi di arrivarci</div>
+      <textarea id="obj-come" rows="3" placeholder="Es: voglio fare i 10.000€ al mese come closer nel settore formazione online..."></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Hai già provato? Come è andata?</div>
+      <div class="chips" id="chips-tentativo">
+        <div class="chip" onclick="selChip('tentativo','mai',this)">Non ho mai provato</div>
+        <div class="chip" onclick="selChip('tentativo','provato-male',this)">Ho provato, non ha funzionato</div>
+        <div class="chip" onclick="selChip('tentativo','provato-parziale',this)">Ho iniziato ma ho mollato</div>
+        <div class="chip" onclick="selChip('tentativo','in-corso',this)">Sto già lavorandoci</div>
+      </div>
+    </div>
+    <div class="field" id="field-cosa-bloccato" style="display:none">
+      <div class="field-label">Cosa ti ha bloccato</div>
+      <textarea id="obj-bloccato" rows="2" placeholder="Sii onesta, non fare la versione bella..."></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Risultato concreto che definisce il successo</div>
+      <input type="text" id="obj-risultato" placeholder="Es: 10.000€ netti al mese, -10kg, correre 5km">
+    </div>
+    <div class="field">
+      <div class="field-label">Entro quando</div>
+      <div class="chips" id="chips-scadenza">
+        <div class="chip" onclick="selChip('scadenza','1mese',this)">1 mese</div>
+        <div class="chip" onclick="selChip('scadenza','3mesi',this)">3 mesi</div>
+        <div class="chip" onclick="selChip('scadenza','6mesi',this)">6 mesi</div>
+        <div class="chip" onclick="selChip('scadenza','1anno',this)">1 anno</div>
+        <div class="chip" onclick="selChip('scadenza','oltre',this)">Oltre 1 anno</div>
+      </div>
+    </div>
+    <div id="err-obiettivo"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="startOnboarding()">Avanti</button>
+    <button class="btn-ghost" onclick="ss('welcome')">Indietro</button>
+  </div>
+</div>
+
+<!-- LOADING -->
 <div class="screen" id="sc-loading">
   <div class="center">
     <div class="ring"><div class="spin"></div></div>
@@ -115,6 +646,7 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- ONBOARDING DOMANDE AI -->
 <div class="screen" id="sc-onboarding">
   <div class="s-pad">
     <div class="logo">Per<span>sisto</span></div>
@@ -129,6 +661,7 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- ANALYZING -->
 <div class="screen" id="sc-analyzing">
   <div class="center">
     <div class="ring"><div class="spin"></div></div>
@@ -137,6 +670,7 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- PROFILO RISULTATO -->
 <div class="screen" id="sc-profile">
   <div class="s-pad" style="padding-bottom:0">
     <div class="logo">Per<span>sisto</span></div>
@@ -155,11 +689,15 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- HOME -->
 <div class="screen" id="sc-home">
   <div class="s-pad" style="padding-bottom:0">
-    <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
-      <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
+        <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+      </div>
     </div>
     <div class="stats" style="margin-top:20px">
       <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
@@ -173,15 +711,17 @@ textarea::placeholder{color:#2a3a5a}
       <div class="tdesc" id="task-desc"></div>
     </div>
     <div class="tblock" style="background:transparent;border-color:#16213e">
-      <div class="tlabel">Come farlo</div>
+      <div class="tlabel">Perché questo task</div>
       <div class="tdesc" id="task-why" style="font-size:12px"></div>
     </div>
   </div>
   <div class="bot">
     <button class="btn" onclick="markDone()"><i class="ti ti-check"></i> L'ho fatto!</button>
+    <button class="btn-ghost" onclick="resetFlow()">Nuovo obiettivo</button>
   </div>
 </div>
 
+<!-- REFLECTION -->
 <div class="screen" id="sc-reflection">
   <div class="center">
     <div class="ring2"><i class="ti ti-check"></i></div>
@@ -198,6 +738,7 @@ textarea::placeholder{color:#2a3a5a}
   </div>
 </div>
 
+<!-- DONE -->
 <div class="screen" id="sc-done">
   <div class="center">
     <div class="ring2"><i class="ti ti-star"></i></div>
@@ -209,13 +750,38 @@ textarea::placeholder{color:#2a3a5a}
     </div>
   </div>
   <div class="bot">
-    <button class="btn-ghost" onclick="resetApp()">Ricomincia da capo</button>
+    <button class="btn-ghost" onclick="resetFlow()">Nuovo obiettivo</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILO -->
+<div class="screen" id="sc-edit-profile">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="h1" style="font-size:22px;margin-top:20px">Il tuo profilo</div>
+    <div class="sub">Modifica le tue info in qualsiasi momento.</div>
+  </div>
+  <div class="scroll" id="edit-profile-content">
+    <div style="text-align:center;padding:40px 0;color:#4a5580">Caricamento...</div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="goToEditFull()">Modifica tutto il profilo</button>
+    <button class="btn-ghost" onclick="ss('welcome')">Chiudi</button>
   </div>
 </div>
 
 </div>
 
 <script>
+// ─── SUPABASE ───────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://asnghdsiwfyiqnvljmf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_MhxlV9kHfukREFKcn2wBWg_mOxMlHxh';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── STATO ──────────────────────────────────────────────────────────────────
 var ARCH = {
   corpo: 'forma fisica, energia e salute',
   mente: 'focus mentale, gestione dello stress e abitudini cognitive',
@@ -223,20 +789,271 @@ var ARCH = {
   lavoro: 'produttività, carriera e crescita professionale'
 };
 
-var S = {arch:null, freeText:'', ctx:'', questions:[], answers:[], currentQ:0, profile:{}, tasks:[], emoji:null};
+var S = {
+  arch: null, freeText: '', ctx: '',
+  questions: [], answers: [], currentQ: 0,
+  profile: {}, tasks: [], emoji: null,
+  demoData: {}, objData: {},
+  user: null, userProfile: null
+};
 
+var CHIPS = {};
+
+// ─── UTILS ──────────────────────────────────────────────────────────────────
 function ss(id) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById('sc-'+id).classList.add('active');
+  document.getElementById('sc-' + id).classList.add('active');
 }
 
+function clean(t) {
+  return (t || '').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+\s*/gm,'').trim();
+}
+
+function safeJSON(t) {
+  var s = t.replace(/```json/g,'').replace(/```/g,'').trim();
+  var a = s.indexOf('{'); var b = s.lastIndexOf('}');
+  if (a === -1 || b === -1) throw new Error('No JSON');
+  return JSON.parse(s.slice(a, b+1));
+}
+
+function selChip(key, val, el) {
+  var group = el.parentElement;
+  group.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  CHIPS[key] = val;
+  // mostra campi condizionali
+  if (key === 'figli') {
+    var hasFigli = val !== 'no';
+    document.getElementById('field-figli-eta').style.display = hasFigli ? 'block' : 'none';
+    document.getElementById('field-figli-custody').style.display = hasFigli ? 'block' : 'none';
+  }
+  if (key === 'tentativo') {
+    var hadTry = val === 'provato-male' || val === 'provato-parziale';
+    document.getElementById('field-cosa-bloccato').style.display = hadTry ? 'block' : 'none';
+  }
+}
+
+async function callAI(system, userMsg) {
+  var res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({system: system, messages: [{role:'user', content: userMsg}]})
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Errore API');
+  return data.content.filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
+}
+
+function buildProfileContext() {
+  var p = S.userProfile || {};
+  var lines = [];
+  if (p.eta) lines.push('Età: ' + p.eta);
+  if (p.sesso) lines.push('Sesso: ' + p.sesso);
+  if (p.situazione_familiare) lines.push('Situazione sentimentale: ' + p.situazione_familiare);
+  if (p.figli_numero) lines.push('Figli: ' + p.figli_numero + (p.figli_eta ? ' (età: ' + p.figli_eta + ')' : ''));
+  if (p.supporto_familiare) lines.push('Supporto familiare: ' + p.supporto_familiare);
+  if (p.lavoro_attuale) lines.push('Lavoro: ' + p.lavoro_attuale);
+  if (p.tipo_lavoro) lines.push('Tipo rapporto: ' + p.tipo_lavoro);
+  if (p.ore_lavoro_giorno) lines.push('Ore lavoro/giorno: ' + p.ore_lavoro_giorno);
+  if (p.reddito_fascia) lines.push('Reddito attuale: ' + p.reddito_fascia);
+  if (p.energia_fine_giornata) lines.push('Energia fine giornata: ' + p.energia_fine_giornata);
+  if (p.tempo_libero_giorno) lines.push('Tempo libero reale: ' + p.tempo_libero_giorno);
+  if (p.gestione_casa) lines.push('Gestione casa: ' + p.gestione_casa);
+  if (p.salute_generale) lines.push('Salute: ' + p.salute_generale);
+  if (p.attivita_fisica) lines.push('Sport: ' + p.attivita_fisica);
+  if (p.qualita_sonno) lines.push('Sonno: ' + p.qualita_sonno);
+  if (p.energia_mentale) lines.push('Energia mentale: ' + p.energia_mentale);
+  if (p.organizzazione) lines.push('Organizzazione: ' + p.organizzazione);
+  if (p.procrastinazione) lines.push('Procrastinazione: ' + p.procrastinazione);
+  if (p.reazione_fallimenti) lines.push('Reazione fallimenti: ' + p.reazione_fallimenti);
+  if (p.gestione_stress) lines.push('Gestione stress: ' + p.gestione_stress);
+  if (p.situazione_attuale) lines.push('Situazione attuale: ' + p.situazione_attuale);
+  if (p.paure_cambiamento) lines.push('Paure: ' + p.paure_cambiamento);
+  return lines.join('\n');
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  document.getElementById('err-login').innerHTML = '';
+  if (!email || !pass) {
+    document.getElementById('err-login').innerHTML = '<div class="err">Inserisci email e password.</div>';
+    return;
+  }
+  var {data, error} = await sb.auth.signInWithPassword({email: email, password: pass});
+  if (error) {
+    document.getElementById('err-login').innerHTML = '<div class="err">' + error.message + '</div>';
+    return;
+  }
+  S.user = data.user;
+  await afterLogin();
+}
+
+async function doRegister() {
+  var email = document.getElementById('reg-email').value.trim();
+  var pass = document.getElementById('reg-pass').value;
+  document.getElementById('err-register').innerHTML = '';
+  if (!email || !pass) {
+    document.getElementById('err-register').innerHTML = '<div class="err">Inserisci email e password.</div>';
+    return;
+  }
+  var {data, error} = await sb.auth.signUp({email: email, password: pass});
+  if (error) {
+    document.getElementById('err-register').innerHTML = '<div class="err">' + error.message + '</div>';
+    return;
+  }
+  ss('verify');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  S.user = null; S.userProfile = null;
+  ss('login');
+}
+
+async function afterLogin() {
+  // controlla se ha già il profilo
+  var {data, error} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
+  if (data && data.eta) {
+    S.userProfile = data;
+    ss('welcome');
+  } else {
+    ss('demo1');
+  }
+}
+
+// ─── PROFILO DEMOGRAFICO ─────────────────────────────────────────────────────
+function nextDemo(step) {
+  if (step === 1) {
+    S.demoData.eta = CHIPS.eta || '';
+    S.demoData.sesso = CHIPS.sesso || '';
+    S.demoData.luogo = document.getElementById('demo-luogo').value.trim();
+    S.demoData.situazione_familiare = CHIPS.sentimentale || '';
+    S.demoData.figli_numero = CHIPS.figli || '';
+    S.demoData.figli_eta = document.getElementById('demo-figli-eta').value.trim();
+    S.demoData.custody = CHIPS.custody || '';
+    S.demoData.supporto_familiare = CHIPS.supporto || '';
+    S.demoData.carico = CHIPS.carico || '';
+    ss('demo2');
+  } else if (step === 2) {
+    S.demoData.lavoro_attuale = document.getElementById('demo-lavoro').value.trim();
+    S.demoData.tipo_lavoro = CHIPS.tipolavoro || '';
+    S.demoData.ore_lavoro_giorno = CHIPS.orelavoro || '';
+    S.demoData.luogo_lavoro = CHIPS.luogolavoro || '';
+    S.demoData.reddito_tipo = CHIPS.reddito || '';
+    S.demoData.reddito_fascia = CHIPS.fascia || '';
+    S.demoData.soddisfazione_lavoro = CHIPS.soddisfazione || '';
+    S.demoData.energia_fine_giornata = CHIPS.energialavoro || '';
+    S.demoData.debiti = CHIPS.debiti || '';
+    S.demoData.business = CHIPS.business || '';
+    ss('demo3');
+  } else if (step === 3) {
+    S.demoData.sveglia = CHIPS.sveglia || '';
+    S.demoData.ora_nanna = CHIPS.nanna || '';
+    S.demoData.tempo_libero_giorno = CHIPS.tempolibero || '';
+    S.demoData.gestione_casa = CHIPS.casa || '';
+    S.demoData.momento_solo = CHIPS.momentosolo || '';
+    S.demoData.weekend_lavoro = CHIPS.weekend || '';
+    ss('demo4');
+  } else if (step === 4) {
+    S.demoData.salute_generale = CHIPS.salute || '';
+    S.demoData.attivita_fisica = CHIPS.sport || '';
+    S.demoData.alimentazione = CHIPS.alimentazione || '';
+    S.demoData.limitazioni_fisiche = CHIPS.limitazioni || '';
+    S.demoData.qualita_sonno = CHIPS.sonno || '';
+    S.demoData.gestione_stress = CHIPS.stress || '';
+    S.demoData.energia_mentale = CHIPS.energiamente || '';
+    S.demoData.organizzazione = CHIPS.organizzazione || '';
+    S.demoData.procrastinazione = CHIPS.procrastinazione || '';
+    S.demoData.reazione_fallimenti = CHIPS.fallimenti || '';
+    ss('demo5');
+  }
+}
+
+async function saveProfile() {
+  S.demoData.situazione_attuale = document.getElementById('demo-situazione').value.trim();
+  S.demoData.paure_cambiamento = document.getElementById('demo-paure').value.trim();
+
+  var payload = {
+    id: S.user.id,
+    email: S.user.email,
+    eta: S.demoData.eta,
+    sesso: S.demoData.sesso,
+    situazione_familiare: S.demoData.situazione_familiare,
+    figli_numero: S.demoData.figli_numero ? parseInt(S.demoData.figli_numero) || null : null,
+    figli_eta: S.demoData.figli_eta,
+    convivente: S.demoData.situazione_familiare === 'coppia-convivente' || S.demoData.situazione_familiare === 'sposato',
+    supporto_familiare: S.demoData.supporto_familiare,
+    lavoro_attuale: S.demoData.lavoro_attuale,
+    tipo_lavoro: S.demoData.tipo_lavoro,
+    ore_lavoro_giorno: S.demoData.ore_lavoro_giorno,
+    luogo_lavoro: S.demoData.luogo_lavoro,
+    reddito_tipo: S.demoData.reddito_tipo,
+    reddito_fascia: S.demoData.reddito_fascia,
+    soddisfazione_lavoro: S.demoData.soddisfazione_lavoro,
+    energia_fine_giornata: S.demoData.energia_fine_giornata,
+    debiti: S.demoData.debiti === 'si',
+    sveglia: S.demoData.sveglia,
+    ora_nanna: S.demoData.ora_nanna,
+    gestione_casa: S.demoData.gestione_casa,
+    tempo_libero_giorno: S.demoData.tempo_libero_giorno,
+    weekend_lavoro: S.demoData.weekend_lavoro === 'lavoro',
+    salute_generale: S.demoData.salute_generale,
+    attivita_fisica: S.demoData.attivita_fisica,
+    alimentazione: S.demoData.alimentazione,
+    limitazioni_fisiche: S.demoData.limitazioni_fisiche,
+    qualita_sonno: S.demoData.qualita_sonno,
+    gestione_stress: S.demoData.gestione_stress,
+    energia_mentale: S.demoData.energia_mentale,
+    organizzazione: S.demoData.organizzazione,
+    procrastinazione: S.demoData.procrastinazione,
+    reazione_fallimenti: S.demoData.reazione_fallimenti,
+    situazione_attuale: S.demoData.situazione_attuale,
+    paure_cambiamento: S.demoData.paure_cambiamento,
+    updated_at: new Date().toISOString()
+  };
+
+  var {error} = await sb.from('profiles').upsert(payload);
+  if (error) {
+    alert('Errore salvataggio: ' + error.message);
+    return;
+  }
+  S.userProfile = payload;
+  ss('welcome');
+}
+
+function goToEditFull() {
+  CHIPS = {};
+  ss('demo1');
+}
+
+function showEditProfile() {
+  var p = S.userProfile || {};
+  var html = '';
+  var rows = [
+    ['Età', p.eta], ['Sesso', p.sesso], ['Situazione', p.situazione_familiare],
+    ['Figli', p.figli_numero], ['Lavoro', p.lavoro_attuale], ['Tipo lavoro', p.tipo_lavoro],
+    ['Ore/giorno', p.ore_lavoro_giorno], ['Reddito', p.reddito_fascia],
+    ['Tempo libero', p.tempo_libero_giorno], ['Sport', p.attivita_fisica],
+    ['Energia mentale', p.energia_mentale], ['Sonno', p.qualita_sonno]
+  ];
+  rows.forEach(function(r) {
+    if (r[1]) html += '<div class="prof-row"><span class="prof-key">' + r[0] + '</span><span class="prof-val">' + r[1] + '</span></div>';
+  });
+  if (p.situazione_attuale) html += '<div class="tblock" style="margin-top:12px"><div class="tlabel">Situazione attuale</div><div class="tdesc">' + p.situazione_attuale + '</div></div>';
+  document.getElementById('edit-profile-content').innerHTML = html || '<div style="color:#4a5580;text-align:center;padding:20px">Nessun dato salvato.</div>';
+  ss('edit-profile');
+}
+
+// ─── FLUSSO OBIETTIVO ────────────────────────────────────────────────────────
 function selArch(a) {
   document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
   if (S.arch === a) {
     S.arch = null;
   } else {
     S.arch = a;
-    document.getElementById('arch-'+a).classList.add('sel');
+    document.getElementById('arch-' + a).classList.add('sel');
     document.getElementById('free-text').value = '';
     S.freeText = '';
   }
@@ -260,46 +1077,55 @@ function updateBtn() {
 
 document.addEventListener('DOMContentLoaded', function() {
   var ta = document.getElementById('free-text');
-  ta.addEventListener('input', onFreeText);
-  ta.addEventListener('keyup', onFreeText);
-  ta.addEventListener('change', onFreeText);
+  if (ta) {
+    ta.addEventListener('input', onFreeText);
+    ta.addEventListener('keyup', onFreeText);
+  }
+  // check sessione attiva
+  sb.auth.getSession().then(function(r) {
+    if (r.data && r.data.session) {
+      S.user = r.data.session.user;
+      afterLogin();
+    } else {
+      ss('login');
+    }
+  });
 });
 
-function clean(t) {
-  return (t || '').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+\s*/gm,'').trim();
-}
-
-function safeJSON(t) {
-  var s = t.replace(/```json/g,'').replace(/```/g,'').trim();
-  var a = s.indexOf('{');
-  var b = s.lastIndexOf('}');
-  if (a === -1 || b === -1) throw new Error('No JSON');
-  return JSON.parse(s.slice(a, b+1));
-}
-
-async function callAI(system, userMsg) {
-  var res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({system: system, messages: [{role:'user', content: userMsg}]})
-  });
-  var data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Errore API');
-  return data.content.filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
-}
-
-async function startFlow() {
-  var rawText = S.freeText;
-  var ctx = rawText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
+function startFlow() {
+  var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
   S.ctx = ctx;
+  CHIPS.tentativo = null;
+  document.getElementById('obj-come').value = '';
+  document.getElementById('obj-risultato').value = '';
+  document.getElementById('field-cosa-bloccato').style.display = 'none';
+  document.getElementById('err-obiettivo').innerHTML = '';
+  ss('obiettivo');
+}
+
+async function startOnboarding() {
+  var come = document.getElementById('obj-come').value.trim();
+  var risultato = document.getElementById('obj-risultato').value.trim();
+  if (!come) {
+    document.getElementById('err-obiettivo').innerHTML = '<div class="err">Dimmi come pensi di raggiungere l\'obiettivo.</div>';
+    return;
+  }
+  S.objData = {
+    come: come,
+    tentativo: CHIPS.tentativo || 'mai',
+    bloccato: document.getElementById('obj-bloccato').value.trim(),
+    risultato: risultato,
+    scadenza: CHIPS.scadenza || 'non specificata'
+  };
   ss('loading');
   document.getElementById('err-welcome').innerHTML = '';
   try {
-    var numQ = rawText ? 5 : 3;
-    var sys = 'Sei un coach. Genera ' + numQ + ' domande brevi e dirette per capire il punto di partenza reale di questa persona. Domande pratiche sulla situazione attuale, non sull\'obiettivo. Tratta tutti i numeri come testo letterale, non interpretarli. Rispondi SOLO con JSON: {"questions":["q1","q2"]}';
-    var raw = await callAI(sys, 'Obiettivo dell\'utente (testo letterale, non modificare): "' + ctx + '"');
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nTentativo precedente: ' + S.objData.tentativo + (S.objData.bloccato ? ' — cosa l\'ha bloccato: "' + S.objData.bloccato + '"' : '') + '\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
+    var sys = 'Sei un coach diretto e chirurgico. Hai già il profilo completo della persona. Genera ESATTAMENTE 4 domande brevi e specifiche per capire il punto di partenza REALE rispetto a questo obiettivo specifico. NON chiedere cose già note dal profilo. NON chiedere come vuole raggiungere l\'obiettivo (già risposto). Domande sulla situazione attuale specifica rispetto all\'obiettivo dichiarato. Rispondi SOLO con JSON: {"questions":["q1","q2","q3","q4"]}\n\nPROFILO PERSONA:\n' + profCtx;
+    var raw = await callAI(sys, objCtx);
     var p = safeJSON(raw);
-    S.questions = p.questions.slice(0, numQ);
+    S.questions = p.questions.slice(0, 4);
     S.answers = [];
     S.currentQ = 0;
     showQ();
@@ -337,12 +1163,29 @@ async function genProfile() {
   try {
     document.getElementById('an-title').textContent = 'Costruendo il tuo profilo';
     document.getElementById('an-sub').textContent = "L'IA sta analizzando le tue risposte...";
-    var sys1 = 'Sei un coach pratico. Analizza le risposte e genera un profilo basato SOLO su quanto scritto. Tratta tutti i numeri come testo letterale (es: "10.000 euro" rimane "10.000 euro"). Genera ESATTAMENTE 5 task concreti con istruzioni chiare su come farli. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali.","approach":"Una frase pratica.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task."}]} baseline_score tra 15 e 65.';
-    var raw1 = await callAI(sys1, 'Obiettivo (testo letterale): "' + S.ctx + '"\n\nRisposte:\n' + qa);
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
+    var sys1 = 'Sei un coach pratico e diretto. Hai il profilo completo della persona e le sue risposte alle domande di onboarding. Genera un piano PERSONALIZZATO basato ESATTAMENTE su chi è questa persona — età, figli, tempo disponibile, lavoro, situazione di vita. NON essere generico. Tratta tutti i numeri come testo letterale. Genera ESATTAMENTE 5 task concreti e realistici per questa persona specifica. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali su questa persona specifica.","approach":"Una frase pratica adatta alla sua situazione.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task per questa persona specifica."}]} baseline_score tra 15 e 65.\n\nPROFILO PERSONA:\n' + profCtx;
+    var raw1 = await callAI(sys1, objCtx + '\n\nRisposte onboarding:\n' + qa);
     var p1 = safeJSON(raw1);
     S.profile = p1;
     S.tasks = p1.tasks || [];
 
+    // salva obiettivo su Supabase
+    if (S.user) {
+      await sb.from('obiettivi').insert({
+        user_id: S.user.id,
+        obiettivo_testo: S.ctx,
+        area: p1.area,
+        tentativo_precedente: S.objData.tentativo,
+        cosa_ha_bloccato: S.objData.bloccato,
+        risultato_concreto: S.objData.risultato,
+        scadenza: S.objData.scadenza,
+        profile_json: S.profile,
+        tasks_json: S.tasks,
+        baseline_score: p1.baseline_score
+      });
+    }
 
     document.getElementById('prof-area').textContent = clean(p1.area) || 'Il tuo profilo';
     document.getElementById('prof-score').textContent = p1.baseline_score || 0;
@@ -384,9 +1227,9 @@ async function saveRefl() {
   var t = S.tasks[0] || {};
   var moods = {'🔥':'motivato e carico', '💪':'determinato e fiero', '😅':'faticoso ma soddisfatto'};
   var mood = moods[S.emoji] || 'positivo';
-  var profCtx = clean((S.profile.summary || '').slice(0, 200));
+  var profCtx = buildProfileContext().slice(0, 300);
   try {
-    var sys = 'Coach diretto. Utente: ' + profCtx + '. Task completato: "' + clean(t.title||'') + '". Si e sentito: ' + mood + '. Scrivi ESATTAMENTE 2 frasi brevi di testo normale basate sulla sua situazione. Niente asterischi, niente titoli.';
+    var sys = 'Coach diretto. Profilo persona:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". Si è sentito/a: ' + mood + '. Scrivi ESATTAMENTE 2 frasi brevi personalizzate per questa persona specifica. Niente asterischi, niente titoli.';
     var msg = await callAI(sys, 'Task: ' + clean(t.title||'') + '. Umore: ' + mood);
     document.getElementById('done-msg').textContent = clean(msg.trim());
   } catch(e) {
@@ -395,9 +1238,11 @@ async function saveRefl() {
   ss('done');
 }
 
-function resetApp() {
-  if (!confirm('Sei sicuro? Cancellerai tutto il tuo profilo e i task generati. Non si può annullare.')) return;
-  S = {arch:null, freeText:'', ctx:'', questions:[], answers:[], currentQ:0, profile:{}, tasks:[], emoji:null};
+function resetFlow() {
+  S.arch = null; S.freeText = ''; S.ctx = '';
+  S.questions = []; S.answers = []; S.currentQ = 0;
+  S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
+  CHIPS.tentativo = null; CHIPS.scadenza = null;
   document.getElementById('free-text').value = '';
   document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
   document.getElementById('btn-start').disabled = true;
