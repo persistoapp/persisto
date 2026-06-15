@@ -359,7 +359,7 @@ async function genProfile() {
     ss('profile');
   } catch(e) {
     ss('onboarding');
-    document.getElementById('err-onb').innerHTML = '<div class="err">Errore nella generazione. Riprova.</div>';
+    document.getElementById('err-onb').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
   }
 }
 
