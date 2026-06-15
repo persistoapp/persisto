@@ -132,8 +132,8 @@ textarea::placeholder{color:#2a3a5a}
   <div class="screen" id="sc-analyzing">
     <div class="center-content">
       <div class="loader-ring"><div class="spinner"></div></div>
-      <div class="loader-title">Costruendo il tuo percorso</div>
-      <div class="loader-sub">30 task personalizzati in arrivo...</div>
+      <div class="loader-title" id="analyzing-title">Costruendo il tuo profilo</div>
+      <div class="loader-sub" id="analyzing-sub">L'IA sta elaborando le tue risposte...</div>
     </div>
   </div>
 
@@ -190,7 +190,6 @@ textarea::placeholder{color:#2a3a5a}
       <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
       <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6" id="refl-q"></div>
       <div class="emoji-row" id="emoji-row"></div>
-      <div id="refl-err"></div>
     </div>
     <div class="bottom-pad">
       <button class="btn-go" id="btn-refl" onclick="saveRefl()" disabled>Salva</button>
@@ -222,12 +221,7 @@ function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remo
 
 function selectArch(a){
   document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));
-  if(S.arch===a){S.arch=null;}else{
-    S.arch=a;
-    document.getElementById('arch-'+a).classList.add('sel');
-    document.getElementById('free-text').value='';
-    S.freeText='';
-  }
+  if(S.arch===a){S.arch=null;}else{S.arch=a;document.getElementById('arch-'+a).classList.add('sel');document.getElementById('free-text').value='';S.freeText='';}
   updateBtn();
 }
 
@@ -250,7 +244,7 @@ function safeJSON(t){
   const clean=t.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
   const start=clean.indexOf('{');
   const end=clean.lastIndexOf('}');
-  if(start===-1||end===-1)throw new Error('No JSON found');
+  if(start===-1||end===-1)throw new Error('No JSON');
   return JSON.parse(clean.slice(start,end+1));
 }
 
@@ -261,7 +255,7 @@ async function startFlow(){
   document.getElementById('welcome-err').innerHTML='';
   try{
     const numQ=S.freeText?5:3;
-    const sys=`Sei un coach di crescita personale. L'utente vuole lavorare su: "${context}". Genera ${numQ} domande brevi e dirette per capire il suo punto di partenza reale. Rispondi SOLO con JSON, nessun testo prima o dopo: {"questions":["domanda1","domanda2"]}`;
+    const sys=`Sei un coach. L'utente vuole: "${context}". Genera ${numQ} domande brevi per capire il suo punto di partenza. Rispondi SOLO con JSON senza testo aggiuntivo: {"questions":["q1","q2"]}`;
     const raw=await callAI(sys,`Contesto: ${context}`);
     const p=safeJSON(raw);
     S.questions=p.questions.slice(0,numQ);
@@ -269,7 +263,7 @@ async function startFlow(){
     showQ();
   }catch(e){
     ss('welcome');
-    document.getElementById('welcome-err').innerHTML='<div class="err">Connessione fallita. Riprova tra un momento.</div>';
+    document.getElementById('welcome-err').innerHTML='<div class="err">Connessione fallita. Riprova.</div>';
   }
 }
 
@@ -295,22 +289,43 @@ async function nextQ(){
 async function genProfile(){
   ss('analyzing');
   const qa=S.answers.map(x=>`D: ${x.q}\nR: ${x.a}`).join('\n\n');
+
   try{
-    const sys=`Sei un coach esperto. Analizza le risposte e genera un piano. Rispondi SOLO con JSON valido, nessun testo prima o dopo il JSON. Formato esatto: {"baseline_score":42,"area":"Produttività e focus","summary":"Testo qui.","approach":"Testo qui.","tasks":[{"title":"Titolo task","description":"Descrizione.","why":"Motivazione."}]} Genera esattamente 30 task progressivi partendo da quelli molto semplici. Il baseline_score deve essere tra 15 e 65.`;
-    const raw=await callAI(sys,`Obiettivo: ${S.context}\n\nRisposte:\n${qa}`);
-    const p=safeJSON(raw);
-    S.profile=p;S.tasks=p.tasks||[];
-    document.getElementById('prof-area').textContent=p.area||'Il tuo profilo';
-    document.getElementById('prof-score').textContent=p.baseline_score||0;
-    document.getElementById('prof-summary').textContent=p.summary||'';
-    document.getElementById('prof-approach').textContent=p.approach||'';
-    document.getElementById('home-score').textContent=p.baseline_score||0;
-    document.getElementById('done-score').textContent=(p.baseline_score||0)+1;
-    if(S.tasks[0]){const t=S.tasks[0];document.getElementById('task-title').textContent=t.title||'';document.getElementById('task-desc').textContent=t.description||'';document.getElementById('task-why').textContent=t.why||'';}
+    // CHIAMATA 1: profilo + primo task
+    document.getElementById('analyzing-title').textContent='Costruendo il tuo profilo';
+    document.getElementById('analyzing-sub').textContent="L'IA sta analizzando le tue risposte...";
+    const sys1=`Sei un coach. Analizza le risposte e genera profilo + i PRIMI 10 task. Rispondi SOLO con JSON valido: {"baseline_score":42,"area":"Nome area","summary":"Testo profilo 2-3 frasi.","approach":"Una frase approccio.","tasks":[{"title":"Titolo","description":"Descrizione breve.","why":"Motivazione breve."}]} Il baseline_score deve essere tra 15 e 65. I task devono essere semplici e progressivi.`;
+    const raw1=await callAI(sys1,`Obiettivo: ${S.context}\n\n${qa}`);
+    const p1=safeJSON(raw1);
+
+    S.profile=p1;
+    S.tasks=p1.tasks||[];
+
+    // CHIAMATA 2: altri 20 task
+    document.getElementById('analyzing-title').textContent='Completando il percorso';
+    document.getElementById('analyzing-sub').textContent='Generando i 30 task personalizzati...';
+    const sys2=`Sei un coach. Genera i task dal giorno 11 al 30 per qualcuno che lavora su: "${S.context}" con baseline ${p1.baseline_score}/100. I task devono essere progressivamente più impegnativi dei primi 10. Rispondi SOLO con JSON: {"tasks":[{"title":"Titolo","description":"Descrizione.","why":"Motivazione."}]}`;
+    const raw2=await callAI(sys2,`Obiettivo: ${S.context}. Genera esattamente 20 task dal giorno 11 al 30.`);
+    const p2=safeJSON(raw2);
+    S.tasks=[...S.tasks,...(p2.tasks||[])];
+
+    document.getElementById('prof-area').textContent=p1.area||'Il tuo profilo';
+    document.getElementById('prof-score').textContent=p1.baseline_score||0;
+    document.getElementById('prof-summary').textContent=p1.summary||'';
+    document.getElementById('prof-approach').textContent=p1.approach||'';
+    document.getElementById('home-score').textContent=p1.baseline_score||0;
+    document.getElementById('done-score').textContent=(p1.baseline_score||0)+1;
+
+    if(S.tasks[0]){
+      const t=S.tasks[0];
+      document.getElementById('task-title').textContent=t.title||'';
+      document.getElementById('task-desc').textContent=t.description||'';
+      document.getElementById('task-why').textContent=t.why||'';
+    }
     ss('profile');
   }catch(e){
     ss('onboarding');
-    document.getElementById('onb-err').innerHTML='<div class="err">Errore nella generazione del percorso. Riprova.</div>';
+    document.getElementById('onb-err').innerHTML='<div class="err">Errore nella generazione. Riprova.</div>';
   }
 }
 
@@ -319,7 +334,7 @@ function showHome(){ss('home');}
 async function markDone(){
   const t=S.tasks[0]||{};
   try{
-    const sys=`Coach. Task completato: "${t.title}". Rispondi SOLO con JSON: {"question":"Domanda breve max 10 parole?","emojis":["😊","😐","😓"]}`;
+    const sys=`Coach. Task: "${t.title}". Rispondi SOLO con JSON: {"question":"Domanda max 10 parole?","emojis":["😊","😐","😓"]}`;
     const raw=await callAI(sys,`Task: ${t.title}`);
     const p=safeJSON(raw);
     document.getElementById('refl-q').textContent=p.question||'Come ti sei sentito?';
@@ -344,7 +359,7 @@ function renderEmoji(arr){
 async function saveRefl(){
   const t=S.tasks[0]||{};
   try{
-    const sys=`Coach diretto. Task: "${t.title}", risposta emotiva: ${S.emoji}. Scrivi 2 frasi motivazionali concrete. Solo testo, nient'altro.`;
+    const sys=`Coach. Task: "${t.title}", emozione: ${S.emoji}. Scrivi 2 frasi motivazionali dirette. Solo testo.`;
     const msg=await callAI(sys,`Task: ${t.title}. Emozione: ${S.emoji}`);
     document.getElementById('done-msg').textContent=msg.trim();
   }catch(e){
