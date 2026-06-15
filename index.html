@@ -99,7 +99,7 @@ textarea::placeholder{color:#2a3a5a}
         <div class="divider-text">oppure scrivi tu</div>
         <div class="divider-line"></div>
       </div>
-      <textarea id="free-text" rows="3" placeholder="Es: voglio smettere di procrastinare..." oninput="onFreeText()"></textarea>
+      <textarea id="free-text" rows="3" placeholder="Es: voglio smettere di procrastinare..." oninput="onFreeText()" onkeyup="onFreeText()" onchange="onFreeText()" onpaste="setTimeout(onFreeText,0)"></textarea>
       <div id="welcome-err"></div>
     </div>
     <div class="bottom-pad">
