@@ -294,88 +294,56 @@ async function genProfile(){
     // CHIAMATA 1: profilo + primo task
     document.getElementById('analyzing-title').textContent='Costruendo il tuo profilo';
     document.getElementById('analyzing-sub').textContent="L'IA sta analizzando le tue risposte...";
-    const sys1=`Sei un coach. Analizza le risposte e genera profilo + i PRIMI 10 task. Rispondi SOLO con JSON valido: {"baseline_score":42,"area":"Nome area","summary":"Testo profilo 2-3 frasi.","approach":"Una frase approccio.","tasks":[{"title":"Titolo","description":"Descrizione breve.","why":"Motivazione breve."}]} Il baseline_score deve essere tra 15 e 65. I task devono essere semplici e progressivi.`;
-    const raw1=await callAI(sys1,`Obiettivo: ${S.context}\n\n${qa}`);
+    const sys1=`Sei un coach pratico. Analizza le risposte e genera profilo basato SOLO su quanto scritto. Genera i PRIMI 10 task: ogni task deve essere un'azione di 15-30 minuti con istruzioni passo-passo su COME farla, non solo cosa fare. Esempio di task ben fatto: title="Scrivi la lista dei tuoi 10 potenziali clienti", description="Apri un foglio o notes. Scrivi 10 nomi di persone reali o tipi di persone che potrebbero pagare per quello che vuoi offrire. Per ognuno: nome/tipo, problema che hanno, quanto potrebbe valere risolverlo.", why="Senza sapere chi vuoi servire non puoi vendere nulla. Questo ti da un punto di partenza concreto." STESSO formato per tutti i task. Niente obiettivi vaghi, solo azioni concrete con istruzioni chiare. JSON: {"baseline_score":42,"area":"Nome area","summary":"2-3 frasi reali sulla situazione.","approach":"Una frase concreta.","tasks":[{"title":"Titolo azione","description":"Step 1: fai X. Step 2: fai Y. Step 3: fai Z.","why":"Perche questo task specifico per questa persona."}]} baseline_score 15-65.`;
+    const raw1=await callAI(sys1,`Obiettivo: ${S.context}\n\nRisposte onboarding:\n${qa}\n\nIMPORTANTE: task con istruzioni step-by-step su COME fare, non solo cosa fare.`);
     const p1=safeJSON(raw1);
-
-    S.profile=p1;
-    S.tasks=p1.tasks||[];
-
-    // CHIAMATA 2: altri 20 task
+    S.profile=p1; S.tasks=p1.tasks||[];
     document.getElementById('analyzing-title').textContent='Completando il percorso';
-    document.getElementById('analyzing-sub').textContent='Generando i 30 task personalizzati...';
-    const sys2=`Sei un coach. Genera i task dal giorno 11 al 30 per qualcuno che lavora su: "${S.context}" con baseline ${p1.baseline_score}/100. I task devono essere progressivamente più impegnativi dei primi 10. Rispondi SOLO con JSON: {"tasks":[{"title":"Titolo","description":"Descrizione.","why":"Motivazione."}]}`;
-    const raw2=await callAI(sys2,`Obiettivo: ${S.context}. Genera esattamente 20 task dal giorno 11 al 30.`);
+    document.getElementById('analyzing-sub').textContent='Generando i task personalizzati...';
+    const sys2=`Coach pratico. Genera 20 task giorni 11-30 per: "${S.context}". Profilo utente: ${(p1.summary||'').slice(0,150)}. Ogni task deve avere istruzioni passo-passo su COME farlo (Step 1, Step 2, Step 3). Task progressivamente piu impegnativi. Niente consigli generici. JSON: {"tasks":[{"title":"Titolo","description":"Step 1: ... Step 2: ... Step 3: ...","why":"Perche."}]}`;
+    const raw2=await callAI(sys2,`Genera 20 task giorni 11-30 con istruzioni pratiche per: ${S.context}`);
     const p2=safeJSON(raw2);
     S.tasks=[...S.tasks,...(p2.tasks||[])];
-
-    document.getElementById('prof-area').textContent=p1.area||'Il tuo profilo';
+    function smd(t){return (t||'').replace(/[*#]+/g,'').trim();}
+    document.getElementById('prof-area').textContent=smd(p1.area)||'Il tuo profilo';
     document.getElementById('prof-score').textContent=p1.baseline_score||0;
-    document.getElementById('prof-summary').textContent=p1.summary||'';
-    document.getElementById('prof-approach').textContent=p1.approach||'';
+    document.getElementById('prof-summary').textContent=smd(p1.summary)||'';
+    document.getElementById('prof-approach').textContent=smd(p1.approach)||'';
     document.getElementById('home-score').textContent=p1.baseline_score||0;
     document.getElementById('done-score').textContent=(p1.baseline_score||0)+1;
-
-    if(S.tasks[0]){
-      const t=S.tasks[0];
-      document.getElementById('task-title').textContent=t.title||'';
-      document.getElementById('task-desc').textContent=t.description||'';
-      document.getElementById('task-why').textContent=t.why||'';
-    }
+    if(S.tasks[0]){const t=S.tasks[0];document.getElementById('task-title').textContent=smd(t.title)||'';document.getElementById('task-desc').textContent=smd(t.description)||'';document.getElementById('task-why').textContent=smd(t.why)||'';}
     ss('profile');
-  }catch(e){
-    ss('onboarding');
-    document.getElementById('onb-err').innerHTML='<div class="err">Errore nella generazione. Riprova.</div>';
-  }
+  }catch(e){ss('onboarding');document.getElementById('onb-err').innerHTML='<div class="err">Errore nella generazione. Riprova.</div>';}
 }
 
 function showHome(){ss('home');}
 
-async function markDone(){
-  const t=S.tasks[0]||{};
-  try{
-    const sys=`Coach. Task: "${t.title}". Rispondi SOLO con JSON: {"question":"Domanda max 10 parole?","emojis":["😊","😐","😓"]}`;
-    const raw=await callAI(sys,`Task: ${t.title}`);
-    const p=safeJSON(raw);
-    document.getElementById('refl-q').textContent=p.question||'Come ti sei sentito?';
-    renderEmoji(p.emojis||['😊','😐','😓']);
-  }catch(e){
-    document.getElementById('refl-q').textContent='Come ti sei sentito dopo il task?';
-    renderEmoji(['😊','😐','😓']);
-  }
+function smd(t){return (t||'').replace(/[*#]+/g,'').trim();}
+
+function markDone(){
+  document.getElementById('refl-q').textContent='Come ti sei sentito completando questo task?';
+  const emojis=['🔥','💪','😅'];
+  const row=document.getElementById('emoji-row');row.innerHTML='';
+  emojis.forEach(e=>{const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};row.appendChild(b);});
   S.emoji=null;document.getElementById('btn-refl').disabled=true;
   ss('reflection');
 }
 
 function renderEmoji(arr){
   const row=document.getElementById('emoji-row');row.innerHTML='';
-  arr.forEach(e=>{
-    const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;
-    b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};
-    row.appendChild(b);
-  });
+  arr.forEach(e=>{const b=document.createElement('button');b.className='emoji-btn';b.textContent=e;b.onclick=()=>{document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.emoji=e;document.getElementById('btn-refl').disabled=false;};row.appendChild(b);});
 }
 
 async function saveRefl(){
   const t=S.tasks[0]||{};
+  const moods={'🔥':'motivato e carico','💪':'determinato e fiero','😅':'faticoso ma soddisfatto'};
+  const mood=moods[S.emoji]||'positivo';
   try{
-    const sys=`Coach. Task: "${t.title}", emozione: ${S.emoji}. Scrivi 2 frasi motivazionali dirette. Solo testo.`;
-    const msg=await callAI(sys,`Task: ${t.title}. Emozione: ${S.emoji}`);
-    document.getElementById('done-msg').textContent=msg.trim();
-  }catch(e){
-    document.getElementById('done-msg').textContent='Hai iniziato. Questo è ciò che conta. Torna domani per il prossimo step.';
-  }
+    const profCtx=smd((S.profile.summary||'').slice(0,200));
+    const sys=`Coach diretto. Contesto utente: ${profCtx}. Task completato oggi: "${smd(t.title||'')}". Si e sentito: ${mood}. Scrivi ESATTAMENTE 2 frasi brevi di testo normale basate sulla sua situazione reale. Niente asterischi, niente titoli. Solo 2 frasi umane e concrete.`;
+    const msg=await callAI(sys,`Task: ${smd(t.title||'')}. Umore: ${mood}. Profilo: ${profCtx}`);
+    document.getElementById('done-msg').textContent=smd(msg.trim());
+  }catch(e){document.getElementById('done-msg').textContent='Hai fatto il primo passo. Torna domani per continuare.';}
   ss('done');
 }
 
-function resetApp(){
-  S={arch:null,freeText:'',questions:[],answers:[],currentQ:0,profile:{},tasks:[],emoji:null};
-  document.getElementById('free-text').value='';
-  document.querySelectorAll('.arch-card').forEach(c=>c.classList.remove('sel'));
-  document.getElementById('btn-start').disabled=true;
-  document.getElementById('welcome-err').innerHTML='';
-  ss('welcome');
-}
-</script>
-</body>
-</html>
