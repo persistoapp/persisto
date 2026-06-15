@@ -1026,9 +1026,69 @@ async function saveProfile() {
   ss('welcome');
 }
 
+function preselChip(key, val) {
+  if (!val) return;
+  CHIPS[key] = val;
+  document.querySelectorAll('.chip').forEach(function(el) {
+    var oc = el.getAttribute('onclick') || '';
+    var match = oc.match(/selChip\('([^']+)','([^']+)'/);
+    if (match && match[1] === key) {
+      if (match[2] === String(val)) { el.classList.add('sel'); }
+      else { el.classList.remove('sel'); }
+    }
+  });
+}
+
 function goToEditFull() {
   CHIPS = {};
   ss('demo1');
+  var p = S.userProfile || {};
+  setTimeout(function() {
+    preselChip('eta', p.eta);
+    preselChip('sesso', p.sesso);
+    preselChip('sentimentale', p.situazione_familiare);
+    if (p.figli_numero) {
+      var fn = p.figli_numero >= 4 ? '4+' : String(p.figli_numero);
+      preselChip('figli', fn);
+      document.getElementById('field-figli-eta').style.display = 'block';
+      document.getElementById('field-figli-custody').style.display = 'block';
+      if (p.figli_eta) document.getElementById('demo-figli-eta').value = p.figli_eta;
+    } else {
+      preselChip('figli', 'no');
+    }
+    preselChip('supporto', p.supporto_familiare);
+    preselChip('carico', p.debiti ? 'si' : 'no');
+    if (p.luogo) document.getElementById('demo-luogo').value = p.luogo || '';
+    // step 2
+    preselChip('tipolavoro', p.tipo_lavoro);
+    preselChip('orelavoro', p.ore_lavoro_giorno);
+    preselChip('luogolavoro', p.luogo_lavoro);
+    preselChip('reddito', p.reddito_tipo);
+    preselChip('fascia', p.reddito_fascia);
+    preselChip('soddisfazione', p.soddisfazione_lavoro);
+    preselChip('energialavoro', p.energia_fine_giornata);
+    // step 3
+    preselChip('sveglia', p.sveglia);
+    preselChip('nanna', p.ora_nanna);
+    preselChip('tempolibero', p.tempo_libero_giorno);
+    preselChip('casa', p.gestione_casa);
+    preselChip('weekend', p.weekend_lavoro ? 'lavoro' : 'libero');
+    // step 4
+    preselChip('salute', p.salute_generale);
+    preselChip('sport', p.attivita_fisica);
+    preselChip('alimentazione', p.alimentazione);
+    preselChip('limitazioni', p.limitazioni_fisiche);
+    preselChip('sonno', p.qualita_sonno);
+    preselChip('stress', p.gestione_stress);
+    preselChip('energiamente', p.energia_mentale);
+    preselChip('organizzazione', p.organizzazione);
+    preselChip('procrastinazione', p.procrastinazione);
+    preselChip('fallimenti', p.reazione_fallimenti);
+    if (p.lavoro_attuale) document.getElementById('demo-lavoro').value = p.lavoro_attuale;
+    // step 5
+    if (p.situazione_attuale) document.getElementById('demo-situazione').value = p.situazione_attuale;
+    if (p.paure_cambiamento) document.getElementById('demo-paure').value = p.paure_cambiamento;
+  }, 100);
 }
 
 function showEditProfile() {
