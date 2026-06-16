@@ -786,8 +786,9 @@ select option{background:#1a1a2e;color:#fff}
     <div style="text-align:center;padding:40px 0;color:#4a5580">Caricamento...</div>
   </div>
   <div class="bot">
-    <button class="btn" onclick="goToEditFull()">Modifica tutto il profilo</button>
-    <button class="btn-ghost" onclick="chiudiProfilo()">Chiudi</button>
+    <button class="btn" onclick="goToEditFull()">Modifica profilo</button>
+    <button class="btn-ghost" onclick="chiudiProfilo()" style="margin-top:8px">Chiudi</button>
+    <button class="btn-ghost" onclick="resetFlow()" style="margin-top:8px;color:#ff6b9d;border-color:#2d1a2d">Cambia obiettivo</button>
   </div>
 </div>
 
@@ -814,17 +815,28 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="scroll" id="storico-list"></div>
   <div class="bot" id="storico-bot" style="display:none">
+    <!-- PANNELLO CORREZIONE -->
     <div class="corr-panel" id="corr-panel">
       <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
-      <textarea id="corr-text" rows="3" placeholder="Es: lavoro a provvigione e non posso scegliere i clienti..."></textarea>
+      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
       <div style="display:flex;gap:8px;margin-top:10px">
         <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
         <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
       </div>
       <div id="err-corr"></div>
     </div>
-    <button class="btn" id="btn-completa" onclick="confirmDone()"><i class="ti ti-flag"></i> Segna come completato</button>
-    <button class="btn-ghost" onclick="toggleCorr()">Questo task non va — correggilo</button>
+    <!-- PANNELLO AVANZAMENTO -->
+    <div id="avanz-panel">
+      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
+        <i class="ti ti-check"></i> Ce l'ho fatta
+      </button>
+      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#6b7db3;border-color:#1e2d4a">
+        <i class="ti ti-clock"></i> Dammi un giorno in più
+      </button>
+      <button class="btn-ghost" onclick="toggleCorr()" style="color:#4a5580;border-color:#1e2d4a">
+        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1241,12 +1253,24 @@ function goToEditFull() {
   }, 100);
 }
 
-function chiudiProfilo() {
+async function chiudiProfilo() {
   if (S.tasks && S.tasks.length > 0) {
     aggiornaHome();
     ss('home');
   } else {
-    ss('welcome');
+    // Controlla Supabase prima di mandare alla welcome
+    var {data: obj} = await sb.from('obiettivi')
+      .select('tasks_json')
+      .eq('user_id', S.user.id)
+      .limit(1)
+      .single();
+    if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
+      S.tasks = obj.tasks_json;
+      aggiornaHome();
+      ss('home');
+    } else {
+      ss('welcome');
+    }
   }
 }
 
@@ -1325,11 +1349,44 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
+function avanzamento(tipo) {
+  if (tipo === 'fatto') {
+    if (confirm('Confermi di aver completato il task di oggi?')) {
+      markDone();
+      ss('reflection');
+    }
+  } else if (tipo === 'domani') {
+    // Shifta il percorso di 1 giorno — il task di oggi diventa anche domani
+    var giorno = S.giornoAttuale || 1;
+    var taskOggi = S.tasks[giorno - 1];
+    if (taskOggi) {
+      // Inserisce una copia del task di oggi come nuovo giorno
+      S.tasks.splice(giorno, 0, Object.assign({}, taskOggi, {day: giorno + 1}));
+      // Riallinea i day dei task successivi
+      for (var i = giorno + 1; i < S.tasks.length; i++) {
+        S.tasks[i].day = i + 1;
+      }
+      // Salva su Supabase
+      if (S.user) {
+        sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('user_id', S.user.id);
+      }
+    }
+    if (confirm('Ok! Il task rimane per domani. Vuoi andare avanti lo stesso oggi?')) {
+      // non fa nulla, rimane sul task tab
+    }
+    loadTaskTab();
+  }
+}
+
 function toggleCorr() {
   var p = document.getElementById('corr-panel');
+  var a = document.getElementById('avanz-panel');
   p.classList.toggle('open');
   if (p.classList.contains('open')) {
+    if (a) a.style.display = 'none';
     document.getElementById('corr-text').focus();
+  } else {
+    if (a) a.style.display = 'block';
   }
 }
 
@@ -1337,6 +1394,8 @@ function chiudiCorr() {
   document.getElementById('corr-panel').classList.remove('open');
   document.getElementById('corr-text').value = '';
   document.getElementById('err-corr').innerHTML = '';
+  var a = document.getElementById('avanz-panel');
+  if (a) a.style.display = 'block';
 }
 
 async function correggiTask() {
@@ -1352,10 +1411,11 @@ async function correggiTask() {
   try {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
-    var taskPrecedente = S.tasks[0] ? '"' + S.tasks[0].title + '"' : 'non disponibile';
     var giorno = S.giornoAttuale || 1;
-    var sys = 'Sei un coach diretto. Il task precedente non era adatto. Genera UN SOLO task micro-azione: qualcosa di concreto e fattibile in 30-60 minuti oggi, non un progetto. Una sola azione specifica, non un piano. JSON senza altro testo: {"day":' + giorno + ',"title":"Titolo breve","description":"Cosa fare esattamente in 30-60 minuti.","why":"Perche questo task."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask precedente non adatto: ' + taskPrecedente + '\nCorrezione: "' + correzione + '"';
+    var taskPrecedente = S.tasks[giorno - 1] ? '"' + S.tasks[giorno - 1].title + '"' : 'non disponibile';
+    var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
+    var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
+    var msg = objCtx + '\n\nTask da sostituire: ' + taskPrecedente + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
     console.log('TASK RIGENERATO', task);
@@ -1658,15 +1718,10 @@ async function loadTaskTab() {
     html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + giorno + ' — oggi</div>';
     if (completatoOggi) {
       html += '<span style="font-size:11px;color:#00d4aa;font-weight:600"><i class="ti ti-check"></i> completato</span>';
-    } else {
-      html += '<button onclick="confirmDone()" style="background:#00d4aa;color:#0d0d1a;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap"><i class="ti ti-flag"></i> Fatto</button>';
     }
     html += '</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px" onclick="apriTask(' + idx + ')" style="cursor:pointer">' + clean(oggi.title||'') + '</div>';
+    html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px">' + clean(oggi.title||'') + '</div>';
     html += '<div class="tdesc" style="font-size:12px;white-space:pre-line">' + descFormatted + '</div>';
-    if (!completatoOggi) {
-      html += '<div style="margin-top:10px"><button onclick="toggleCorr()" style="background:none;border:none;color:#4a5580;font-size:11px;cursor:pointer;text-decoration:underline">Questo task non va — correggilo</button></div>';
-    }
     html += '</div>';
   }
   // Prossimi 5 — solo titolo, bloccati, non cliccabili
@@ -1679,10 +1734,17 @@ async function loadTaskTab() {
     html += '</div>';
   }
   list.innerHTML = html;
-  // Pannello correzione sempre disponibile nel DOM, ma nascosto
-  bot.style.display = S.taskCompletato ? 'none' : 'block';
+  var avanzPanel = document.getElementById('avanz-panel');
+  var corrPanel = document.getElementById('corr-panel');
+  if (S.taskCompletato) {
+    bot.style.display = 'none';
+  } else {
+    bot.style.display = 'block';
+    if (avanzPanel) avanzPanel.style.display = 'block';
+    if (corrPanel) corrPanel.classList.remove('open');
+  }
   var btnC = document.getElementById('btn-completa');
-  if (btnC) btnC.style.display = 'none'; // bottone ora inline
+  if (btnC) btnC.style.display = 'none';
 }
 
 function apriTask(idx) {
