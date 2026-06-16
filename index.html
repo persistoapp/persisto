@@ -1444,6 +1444,15 @@ function avanzamento(tipo) {
   if (tipo === 'fatto') {
     if (confirm('Confermi di aver completato il task di oggi?')) {
       markDone();
+      // Popola il task nella schermata reflection
+      var giorno = S.giornoAttuale || 1;
+      var t = S.tasks[giorno - 1] || S.tasks[0] || {};
+      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+      document.getElementById('refl-task-title').textContent = clean(t.title || '');
+      document.getElementById('refl-task-desc').textContent = descFormatted;
+      document.getElementById('refl-task-desc').style.whiteSpace = 'pre-line';
+      document.getElementById('refl-text').value = '';
+      document.getElementById('refl-text').style.borderColor = '';
       ss('reflection');
     }
   } else if (tipo === 'domani') {
