@@ -730,20 +730,6 @@ select option{background:#1a1a2e;color:#fff}
       <div class="tlabel">Perché questo task</div>
       <div class="tdesc" id="task-why" style="font-size:12px"></div>
     </div>
-    <!-- PANNELLO CORREZIONE -->
-    <div class="corr-panel" id="corr-panel">
-      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
-      <textarea id="corr-text" rows="3" placeholder="Es: lavoro a provvigione e non posso scegliere i clienti, ogni mese devo generare fatturato da zero..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
-        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
-      </div>
-      <div id="err-corr"></div>
-    </div>
-  </div>
-  <div class="bot">
-    <button class="btn" onclick="markDone()"><i class="ti ti-check"></i> L'ho fatto!</button>
-    <button class="btn-ghost" onclick="toggleCorr()">Questo task non va — correggilo</button>
   </div>
 </div>
 
@@ -813,10 +799,21 @@ select option{background:#1a1a2e;color:#fff}
       <div class="logo">Per<span>sisto</span></div>
     </div>
     <div class="h1" style="margin-top:20px">I tuoi task</div>
-    <div class="sub">Il tuo percorso finora.</div>
+    <div class="sub" id="tasks-obiettivo-nav" style="margin-bottom:0"></div>
   </div>
-  <div class="scroll" id="storico-list">
-    <div style="text-align:center;padding:40px 0;color:#4a5580">Caricamento...</div>
+  <div class="scroll" id="storico-list"></div>
+  <div class="bot" id="storico-bot" style="display:none">
+    <div class="corr-panel" id="corr-panel">
+      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
+      <textarea id="corr-text" rows="3" placeholder="Es: lavoro a provvigione e non posso scegliere i clienti..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
+        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
+      </div>
+      <div id="err-corr"></div>
+    </div>
+    <button class="btn" id="btn-completa" onclick="confirmDone()"><i class="ti ti-flag"></i> Segna come completato</button>
+    <button class="btn-ghost" onclick="toggleCorr()">Questo task non va — correggilo</button>
   </div>
 </div>
 
@@ -1473,13 +1470,6 @@ function selEmoji(btn, e) {
 
 function markDone() {
   S.taskCompletato = true;
-  // nasconde bottone correzione e disabilita "L'ho fatto"
-  document.getElementById('corr-panel').classList.remove('open');
-  var btnDone = document.querySelector('#sc-home .btn');
-  if (btnDone) { btnDone.disabled = true; btnDone.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
-  var btnCorr = document.querySelector('#sc-home .btn-ghost');
-  if (btnCorr) btnCorr.style.display = 'none';
-  ss('reflection');
 }
 
 async function saveRefl() {
@@ -1528,22 +1518,48 @@ function showTaskDetail(idx) {
 
 async function loadStorico() {
   var list = document.getElementById('storico-list');
-  // Prima mostra i task del percorso attuale
+  var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
-  var html = '';
-  if (tasks.length > 0) {
-    html += '<div class="tlabel" style="padding:0 0 8px">Percorso attuale</div>';
-    tasks.forEach(function(t, i) {
-      var desc = (t.description || '').split('.')[0];
-      if (desc.length > 80) desc = desc.slice(0, 80) + '…';
-      html += '<div class="tblock">';
-      html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
-      html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
-      html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
-      html += '</div>';
-    });
+  var obiettivo = S.ctx || '';
+
+  if (document.getElementById('tasks-obiettivo-nav'))
+    document.getElementById('tasks-obiettivo-nav').textContent = obiettivo ? obiettivo : '';
+
+  if (!tasks.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
+    bot.style.display = 'none';
+    return;
   }
-  list.innerHTML = html || '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.</div>';
+
+  var html = '';
+  tasks.forEach(function(t, i) {
+    var desc = (t.description || '').split('.')[0];
+    if (desc.length > 80) desc = desc.slice(0, 80) + '…';
+    html += '<div class="tblock">';
+    html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
+    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
+    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+
+  // Mostra bottoni solo se task non ancora completato
+  if (!S.taskCompletato) {
+    bot.style.display = 'block';
+    var btnC = document.getElementById('btn-completa');
+    if (btnC) { btnC.disabled = false; btnC.innerHTML = '<i class="ti ti-flag"></i> Segna come completato'; }
+  } else {
+    bot.style.display = 'block';
+    var btnC = document.getElementById('btn-completa');
+    if (btnC) { btnC.disabled = true; btnC.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
+  }
+}
+
+function confirmDone() {
+  if (confirm('Confermi di aver completato il task di oggi?')) {
+    markDone();
+    ss('reflection');
+  }
 }
 
 async function resetFlow() {
@@ -1561,12 +1577,6 @@ async function resetFlow() {
   S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
   S.taskCompletato = false;
   CHIPS.tentativo = null; CHIPS.scadenza = null;
-
-  // Reset UI home
-  var btnDone = document.querySelector('#sc-home .btn');
-  if (btnDone) { btnDone.disabled = false; btnDone.innerHTML = '<i class="ti ti-check"></i> L\'ho fatto!'; }
-  var btnCorr = document.querySelector('#sc-home .btn-ghost');
-  if (btnCorr) btnCorr.style.display = '';
 
   document.getElementById('free-text').value = '';
   document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
