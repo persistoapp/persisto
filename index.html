@@ -881,8 +881,8 @@ function navTo(dest) {
   if (dest === 'home' || dest === 'task-oggi') {
     if (dest === 'task-oggi') {
       document.getElementById('nav-task').classList.add('active');
-      showTaskList();
-      ss('tasks');
+      ss('storico');
+      loadStorico();
     } else {
       document.getElementById('nav-home').classList.add('active');
       ss('home');
@@ -1529,30 +1529,22 @@ function showTaskDetail(idx) {
 
 async function loadStorico() {
   var list = document.getElementById('storico-list');
-  list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Caricamento...</div>';
-  if (!S.user) return;
-  var {data, error} = await sb.from('obiettivi')
-    .select('*')
-    .eq('user_id', S.user.id)
-    .order('created_at', {ascending: false});
-  if (error || !data || data.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580"><i class="ti ti-history" style="font-size:40px;display:block;margin-bottom:12px"></i>Nessun task ancora completato.</div>';
-    return;
-  }
+  // Prima mostra i task del percorso attuale
+  var tasks = S.tasks || [];
   var html = '';
-  data.forEach(function(obj) {
-    var tasks = obj.tasks_json || [];
-    var data_str = obj.created_at ? new Date(obj.created_at).toLocaleDateString('it-IT') : '';
-    html += '<div class="tblock" style="margin-bottom:16px">';
-    html += '<div class="tlabel">' + (obj.area || 'Obiettivo') + ' — ' + data_str + '</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:6px">' + (obj.obiettivo_testo || '') + '</div>';
-    if (tasks[0]) {
-      html += '<div class="tdesc" style="margin-top:8px;font-size:12px;color:#00d4aa">Task generati: ' + tasks.length + '</div>';
-      html += '<div class="tdesc" style="margin-top:4px">' + clean(tasks[0].title || '') + '</div>';
-    }
-    html += '</div>';
-  });
-  list.innerHTML = html;
+  if (tasks.length > 0) {
+    html += '<div class="tlabel" style="padding:0 0 8px">Percorso attuale</div>';
+    tasks.forEach(function(t, i) {
+      var desc = (t.description || '').split('.')[0];
+      if (desc.length > 80) desc = desc.slice(0, 80) + '…';
+      html += '<div class="tblock">';
+      html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
+      html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
+      html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+      html += '</div>';
+    });
+  }
+  list.innerHTML = html || '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.</div>';
 }
 
 function resetFlow() {
