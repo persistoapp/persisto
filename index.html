@@ -799,7 +799,19 @@ select option{background:#1a1a2e;color:#fff}
   </div>
 </div>
 
-<!-- STORICO (placeholder) -->
+<!-- LISTA TASK -->
+<div class="screen has-nav" id="sc-tasks">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">I tuoi task</div>
+    <div class="sub" id="tasks-obiettivo" style="margin-bottom:12px"></div>
+  </div>
+  <div class="scroll" id="tasks-list"></div>
+</div>
+
+<!-- STORICO -->
 <div class="screen has-nav" id="sc-storico">
   <div class="s-pad">
     <div class="topbar">
@@ -867,8 +879,14 @@ function showNav(visible) {
 function navTo(dest) {
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
   if (dest === 'home' || dest === 'task-oggi') {
-    document.getElementById('nav-home').classList.add('active');
-    ss('home');
+    if (dest === 'task-oggi') {
+      document.getElementById('nav-task').classList.add('active');
+      showTaskList();
+      ss('tasks');
+    } else {
+      document.getElementById('nav-home').classList.add('active');
+      ss('home');
+    }
   } else if (dest === 'storico') {
     document.getElementById('nav-storico').classList.add('active');
     ss('storico');
@@ -889,11 +907,12 @@ function ss(id) {
   target.classList.add('active');
   target.style.display = 'flex';
   // nav
-  var navScreens = ['home','reflection','done','storico','edit-profile'];
+  var navScreens = ['home','reflection','done','storico','edit-profile','tasks'];
   showNav(navScreens.indexOf(id) !== -1);
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
   if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); }
   if (id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
+  if (id === 'tasks') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
 }
 
 function clean(t) {
@@ -1475,6 +1494,37 @@ async function saveRefl() {
     document.getElementById('done-msg').textContent = 'Hai fatto il primo passo. Torna domani per continuare.';
   }
   ss('done');
+}
+
+function showTaskList() {
+  var tasks = S.tasks || [];
+  var obiettivo = S.ctx || '';
+  document.getElementById('tasks-obiettivo').textContent = obiettivo ? 'Obiettivo: ' + obiettivo : '';
+  var list = document.getElementById('tasks-list');
+  if (!tasks.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
+    return;
+  }
+  var html = '';
+  tasks.forEach(function(t, i) {
+    var desc = (t.description || '').split('.')[0]; // prima frase sola
+    if (desc.length > 80) desc = desc.slice(0, 80) + '…';
+    html += '<div class="tblock" style="cursor:pointer" onclick="showTaskDetail(' + i + ')">';
+    html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
+    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
+    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function showTaskDetail(idx) {
+  var t = S.tasks[idx] || {};
+  document.getElementById('task-title').textContent = clean(t.title || '');
+  document.getElementById('task-desc').textContent = clean(t.description || '');
+  document.getElementById('task-why').textContent = clean(t.why || '');
+  ss('home');
+  document.getElementById('nav-home').classList.add('active');
 }
 
 async function loadStorico() {
