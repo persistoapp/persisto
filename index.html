@@ -988,13 +988,46 @@ async function doLogout() {
 }
 
 async function afterLogin() {
-  // controlla se ha già il profilo
-  var {data, error} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
-  if (data && data.eta) {
-    S.userProfile = data;
-    ss('welcome');
-  } else {
+  // 1. Controlla profilo demografico
+  var {data: profilo} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
+  if (!profilo || !profilo.eta) {
     ss('demo1');
+    return;
+  }
+  S.userProfile = profilo;
+
+  // 2. Controlla se c'è un obiettivo attivo salvato
+  var {data: obj} = await sb.from('obiettivi')
+    .select('*')
+    .eq('user_id', S.user.id)
+    .order('created_at', {ascending: false})
+    .limit(1)
+    .single();
+
+  if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
+    // Ripristina stato dall'ultimo obiettivo
+    S.ctx = obj.obiettivo_testo || '';
+    S.objData = {
+      come: obj.come || '',
+      tentativo: obj.tentativo_precedente || 'mai',
+      bloccato: obj.cosa_ha_bloccato || '',
+      risultato: obj.risultato_concreto || '',
+      scadenza: obj.scadenza || 'non specificata'
+    };
+    S.profile = obj.profile_json || {};
+    S.tasks = obj.tasks_json || [];
+
+    // Popola la home
+    document.getElementById('home-score').textContent = obj.baseline_score || 0;
+    var t = S.tasks[0];
+    if (t) {
+      document.getElementById('task-title').textContent = clean(t.title) || '';
+      document.getElementById('task-desc').textContent = clean(t.description) || '';
+      document.getElementById('task-why').textContent = clean(t.why) || '';
+    }
+    ss('home');
+  } else {
+    ss('welcome');
   }
 }
 
