@@ -882,6 +882,24 @@ select option{background:#1a1a2e;color:#fff}
   </div>
 </div>
 
+<!-- PERCORSO COMPLETATO -->
+<div class="screen" id="sc-completato">
+  <div class="scroll" style="padding:40px 24px;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🏆</div>
+    <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px">Percorso completato!</div>
+    <div style="font-size:15px;color:#6b7db3;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di crescita costante.<br>Questo è il risultato di chi non smette.</div>
+    <div class="stats" style="margin-bottom:32px">
+      <div class="stat"><div class="stat-n" id="comp-giorni">30</div><div class="stat-l">Giorni ✓</div></div>
+      <div class="stat"><div class="stat-n" style="color:#00d4aa" id="comp-crescita">+34%</div><div class="stat-l">Crescita</div></div>
+    </div>
+    <div style="font-size:13px;color:#4a5580;margin-bottom:32px;font-style:italic" id="comp-obiettivo"></div>
+    <button class="btn" onclick="generaCertificato()" style="margin-bottom:12px">
+      <i class="ti ti-certificate"></i> Scarica il certificato
+    </button>
+    <button class="btn-ghost" onclick="resetFlow()">Inizia un nuovo percorso</button>
+  </div>
+</div>
+
 <!-- BOTTOM NAV — fisso in fondo alla phone -->
 <div class="bnav" id="bottom-nav">
   <div class="bnav-items">
@@ -1169,20 +1187,15 @@ async function afterLogin() {
     S.reflections = obj.reflections || {};
     S.taskExtraOggi = obj.task_extra_oggi || 0;
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
+    S.objDataInizio = obj.created_at || '';
 
-    // Calcola giorno attuale da created_at
-    var dataInizio = new Date(obj.created_at);
-    var oggi = new Date();
-    var diffMs = oggi - dataInizio;
-    var diffGiorni = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    // Il giorno attuale è il primo non ancora completato
-    var giornoCalcolato = diffGiorni + 1; // giorno 1 = primo giorno
-    // Se ha completato più task (extra), avanza il giorno
+    // Giorno attuale = ultimo completato + 1 (non dipende dalla data)
     var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
-    S.giornoAttuale = Math.max(giornoCalcolato, maxCompletato + 1);
-    S.giornoAttuale = Math.min(S.giornoAttuale, 30); // max 30
+    S.giornoAttuale = maxCompletato + 1;
+    S.giornoAttuale = Math.min(S.giornoAttuale, 30);
 
-    // Reset extra se è un nuovo giorno
+    // Reset extra solo se è un nuovo giorno di calendario
+    var oggi = new Date();
     var oggiStr = oggi.toISOString().slice(0, 10);
     if (S.dataUltimoExtra !== oggiStr) {
       S.taskExtraOggi = 0;
@@ -1812,8 +1825,75 @@ function sbloccaProssimoTask() {
 }
 
 function tornaHome() {
+  // Se ha completato il giorno 30, vai alla schermata completamento percorso
+  if (S.giornoAttuale >= 30 && S.giorniCompletati.length >= 30) {
+    ss('completato');
+    return;
+  }
+  // Altrimenti avanza al giorno successivo
+  S.giornoAttuale++;
+  S.taskCompletato = false;
+  var t = S.tasks[S.giornoAttuale - 1];
+  if (t) {
+    document.getElementById('task-title').textContent = clean(t.title) || '';
+    var df = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+    document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+    document.getElementById('task-desc').textContent = df;
+    document.getElementById('task-why').textContent = clean(t.why) || '';
+  }
   aggiornaHome();
   ss('home');
+}
+
+function generaCertificato() {
+  var nome = (S.userProfile && S.userProfile.email) ? S.userProfile.email.split('@')[0] : 'Utente';
+  var obiettivo = S.ctx || '';
+  var completati = S.giorniCompletati.length;
+  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var dataInizio = S.objDataInizio ? new Date(S.objDataInizio).toLocaleDateString('it-IT') : '';
+  var dataOggi = new Date().toLocaleDateString('it-IT');
+
+  var html = '<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">';
+  html += '<title>Certificato Persisto</title>';
+  html += '<style>';
+  html += 'body{margin:0;padding:40px;background:#fff;font-family:Georgia,serif;color:#1a1a2e}';
+  html += '.cert{max-width:700px;margin:0 auto;border:3px solid #00d4aa;border-radius:16px;padding:60px;text-align:center}';
+  html += '.logo{font-size:32px;font-weight:700;letter-spacing:-1px;color:#1a1a2e;margin-bottom:8px}';
+  html += '.logo span{color:#00d4aa}';
+  html += '.subtitle{font-size:13px;color:#6b7db3;text-transform:uppercase;letter-spacing:3px;margin-bottom:40px}';
+  html += '.titolo{font-size:14px;color:#6b7db3;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}';
+  html += '.nome{font-size:36px;font-weight:700;color:#1a1a2e;margin-bottom:40px;border-bottom:2px solid #00d4aa;padding-bottom:20px}';
+  html += '.obiettivo{font-size:18px;color:#1a1a2e;font-style:italic;margin-bottom:40px;line-height:1.6}';
+  html += '.stats{display:flex;justify-content:center;gap:40px;margin:40px 0}';
+  html += '.stat{text-align:center}';
+  html += '.stat-n{font-size:36px;font-weight:700;color:#00d4aa}';
+  html += '.stat-l{font-size:12px;color:#6b7db3;text-transform:uppercase;letter-spacing:1px;margin-top:4px}';
+  html += '.data{font-size:13px;color:#6b7db3;margin-top:40px}';
+  html += '.firma{margin-top:40px;font-size:20px;font-weight:700;color:#00d4aa}';
+  html += '@media print{body{padding:0}.btn-print{display:none}}';
+  html += '.btn-print{margin-top:30px;padding:12px 32px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}';
+  html += '</style></head><body>';
+  html += '<div class="cert">';
+  html += '<div class="logo">Per<span>sisto</span></div>';
+  html += '<div class="subtitle">Certificato di completamento</div>';
+  html += '<div class="titolo">Questo certifica che</div>';
+  html += '<div class="nome">' + nome + '</div>';
+  html += '<div class="titolo">ha completato il percorso</div>';
+  html += '<div class="obiettivo">"' + obiettivo + '"</div>';
+  html += '<div class="stats">';
+  html += '<div class="stat"><div class="stat-n">' + completati + '</div><div class="stat-l">Giorni completati</div></div>';
+  html += '<div class="stat"><div class="stat-n">+' + crescita + '%</div><div class="stat-l">Crescita totale</div></div>';
+  html += '<div class="stat"><div class="stat-n">30</div><div class="stat-l">Giorni di percorso</div></div>';
+  html += '</div>';
+  html += '<div class="data">Dal ' + dataInizio + ' al ' + dataOggi + '</div>';
+  html += '<div class="firma">+1% ogni giorno</div>';
+  html += '</div>';
+  html += '<div style="text-align:center"><button class="btn-print" onclick="window.print()">Stampa / Salva PDF</button></div>';
+  html += '</body></html>';
+
+  var win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
 }
 
 function showTaskList() {
