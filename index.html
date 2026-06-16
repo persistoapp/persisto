@@ -808,6 +808,9 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="bot">
     <button class="btn" onclick="tornaHome()">Torna alla home</button>
+    <button class="btn-ghost" id="btn-sblocca" onclick="sbloccaProssimoTask()" style="margin-top:8px;display:none">
+      <i class="ti ti-bolt"></i> Sblocca il prossimo task oggi
+    </button>
   </div>
 </div>
 
@@ -921,7 +924,9 @@ var S = {
   user: null, userProfile: null,
   taskCompletato: false,
   giornoAttuale: 1,
-  giorniCompletati: []
+  giorniCompletati: [],
+  taskExtraOggi: 0,
+  dataUltimoExtra: ''
 };
 
 var QUOTES = [
@@ -1150,7 +1155,6 @@ async function afterLogin() {
     .single();
 
   if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
-    // Ripristina stato dall'ultimo obiettivo
     S.ctx = obj.obiettivo_testo || '';
     S.objData = {
       come: obj.come || '',
@@ -1161,10 +1165,32 @@ async function afterLogin() {
     };
     S.profile = obj.profile_json || {};
     S.tasks = obj.tasks_json || [];
+    S.giorniCompletati = obj.giorni_completati || [];
+    S.reflections = obj.reflections || {};
+    S.taskExtraOggi = obj.task_extra_oggi || 0;
+    S.dataUltimoExtra = obj.data_ultimo_extra || '';
 
-    // Popola la home
+    // Calcola giorno attuale da created_at
+    var dataInizio = new Date(obj.created_at);
+    var oggi = new Date();
+    var diffMs = oggi - dataInizio;
+    var diffGiorni = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    // Il giorno attuale è il primo non ancora completato
+    var giornoCalcolato = diffGiorni + 1; // giorno 1 = primo giorno
+    // Se ha completato più task (extra), avanza il giorno
+    var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
+    S.giornoAttuale = Math.max(giornoCalcolato, maxCompletato + 1);
+    S.giornoAttuale = Math.min(S.giornoAttuale, 30); // max 30
+
+    // Reset extra se è un nuovo giorno
+    var oggiStr = oggi.toISOString().slice(0, 10);
+    if (S.dataUltimoExtra !== oggiStr) {
+      S.taskExtraOggi = 0;
+    }
+
+    // Popola la home col task del giorno attuale
     document.getElementById('home-score').textContent = obj.baseline_score || 0;
-    var t = S.tasks[0];
+    var t = S.tasks[S.giornoAttuale - 1] || S.tasks[0];
     if (t) {
       document.getElementById('task-title').textContent = clean(t.title) || '';
       var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
@@ -1702,6 +1728,12 @@ function markDone() {
   if (S.giorniCompletati.indexOf(S.giornoAttuale) === -1) {
     S.giorniCompletati.push(S.giornoAttuale);
   }
+  if (S.user) {
+    sb.from('obiettivi').update({
+      giorni_completati: S.giorniCompletati,
+      reflections: S.reflections || {}
+    }).eq('user_id', S.user.id);
+  }
 }
 
 async function saveRefl() {
@@ -1732,7 +1764,49 @@ async function saveRefl() {
   document.getElementById('done-giorno').textContent = completati;
   document.getElementById('done-perc').textContent = perc + '%';
   document.getElementById('done-crescita').textContent = '+' + crescita + '%';
+  // Mostra pulsante sblocca se non ha ancora fatto 3 task oggi e non è al giorno 30
+  var oggiStr = new Date().toISOString().slice(0, 10);
+  if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
+  var btnSblocca = document.getElementById('btn-sblocca');
+  if (btnSblocca) {
+    var prossimoGiorno = S.giornoAttuale + 1;
+    if (S.taskExtraOggi < 2 && prossimoGiorno <= 30 && S.tasks[prossimoGiorno - 1]) {
+      btnSblocca.style.display = 'block';
+      btnSblocca.innerHTML = '<i class="ti ti-bolt"></i> Sblocca il task del giorno ' + prossimoGiorno + ' (' + (2 - S.taskExtraOggi) + ' rimasti oggi)';
+    } else {
+      btnSblocca.style.display = 'none';
+    }
+  }
   ss('done');
+}
+
+function sbloccaProssimoTask() {
+  var oggiStr = new Date().toISOString().slice(0, 10);
+  if (S.dataUltimoExtra !== oggiStr) { S.taskExtraOggi = 0; S.dataUltimoExtra = oggiStr; }
+  if (S.taskExtraOggi >= 2) return;
+  S.giornoAttuale++;
+  S.taskCompletato = false;
+  S.taskExtraOggi++;
+  S.dataUltimoExtra = oggiStr;
+  // Salva su Supabase
+  if (S.user) {
+    sb.from('obiettivi').update({
+      giorni_completati: S.giorniCompletati,
+      task_extra_oggi: S.taskExtraOggi,
+      data_ultimo_extra: S.dataUltimoExtra
+    }).eq('user_id', S.user.id);
+  }
+  // Aggiorna home col nuovo task
+  var t = S.tasks[S.giornoAttuale - 1];
+  if (t) {
+    document.getElementById('task-title').textContent = clean(t.title) || '';
+    var df = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+    document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+    document.getElementById('task-desc').textContent = df;
+    document.getElementById('task-why').textContent = clean(t.why) || '';
+  }
+  aggiornaHome();
+  ss('home');
 }
 
 function tornaHome() {
