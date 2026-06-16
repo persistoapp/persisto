@@ -752,15 +752,10 @@ select option{background:#1a1a2e;color:#fff}
   <div class="center">
     <div class="ring2"><i class="ti ti-check"></i></div>
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
-    <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6">Come ti sei sentito completando questo task?</div>
-    <div class="emrow">
-      <button class="embtn" onclick="selEmoji(this,'🔥')">🔥</button>
-      <button class="embtn" onclick="selEmoji(this,'💪')">💪</button>
-      <button class="embtn" onclick="selEmoji(this,'😅')">😅</button>
-    </div>
+    <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6">Ottimo. Un passo fatto è meglio di mille pianificati.</div>
   </div>
   <div class="bot">
-    <button class="btn" id="btn-refl" onclick="saveRefl()" disabled>Salva</button>
+    <button class="btn" onclick="saveRefl()"><i class="ti ti-flag"></i> Segna come completato</button>
   </div>
 </div>
 
@@ -864,7 +859,8 @@ var S = {
   questions: [], answers: [], currentQ: 0,
   profile: {}, tasks: [], emoji: null,
   demoData: {}, objData: {},
-  user: null, userProfile: null
+  user: null, userProfile: null,
+  taskCompletato: false
 };
 
 var CHIPS = {};
@@ -1475,20 +1471,22 @@ function selEmoji(btn, e) {
 }
 
 function markDone() {
-  S.emoji = null;
-  document.getElementById('btn-refl').disabled = true;
-  document.querySelectorAll('.embtn').forEach(function(b){ b.classList.remove('sel'); });
+  S.taskCompletato = true;
+  // nasconde bottone correzione e disabilita "L'ho fatto"
+  document.getElementById('corr-panel').classList.remove('open');
+  var btnDone = document.querySelector('#sc-home .btn');
+  if (btnDone) { btnDone.disabled = true; btnDone.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
+  var btnCorr = document.querySelector('#sc-home .btn-ghost');
+  if (btnCorr) btnCorr.style.display = 'none';
   ss('reflection');
 }
 
 async function saveRefl() {
   var t = S.tasks[0] || {};
-  var moods = {'🔥':'motivato e carico', '💪':'determinato e fiero', '😅':'faticoso ma soddisfatto'};
-  var mood = moods[S.emoji] || 'positivo';
   var profCtx = buildProfileContext().slice(0, 300);
   try {
-    var sys = 'Coach diretto. Profilo persona:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". Si è sentito/a: ' + mood + '. Scrivi ESATTAMENTE 2 frasi brevi personalizzate per questa persona specifica. Niente asterischi, niente titoli.';
-    var msg = await callAI(sys, 'Task: ' + clean(t.title||'') + '. Umore: ' + mood);
+    var sys = 'Coach diretto. Profilo persona:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". Scrivi ESATTAMENTE 2 frasi brevi di incoraggiamento personalizzate. Niente asterischi, niente titoli.';
+    var msg = await callAI(sys, 'Task completato: ' + clean(t.title||''));
     document.getElementById('done-msg').textContent = clean(msg.trim());
   } catch(e) {
     document.getElementById('done-msg').textContent = 'Hai fatto il primo passo. Torna domani per continuare.';
