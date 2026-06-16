@@ -62,10 +62,10 @@ select option{background:#1a1a2e;color:#fff}
 .tlabel{font-size:10px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
 .ttitle{font-size:18px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:8px}
 .tdesc{font-size:13px;color:#6b7db3;line-height:1.6}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat{background:#16213e;border-radius:12px;padding:14px;text-align:center}
-.stat-n{font-size:26px;font-weight:700;color:#fff}
-.stat-l{font-size:11px;color:#4a5580;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.stat{background:#16213e;border-radius:12px;padding:10px 6px;text-align:center}
+.stat-n{font-size:20px;font-weight:700;color:#fff}
+.stat-l{font-size:9px;color:#4a5580;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
 .emrow{display:flex;gap:12px;justify-content:center;margin:20px 0}
 .embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e2d4a;background:#16213e;cursor:pointer;transition:all 0.15s}
 .embtn:hover,.embtn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
@@ -711,13 +711,24 @@ select option{background:#1a1a2e;color:#fff}
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px">Giorno 1/30</div>
+        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Giorno 1/30</div>
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
-    <div class="stats" style="margin-top:20px">
+    <div class="stats" style="margin-top:16px">
       <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
-      <div class="stat"><div class="stat-n">1</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-n" id="home-streak">0</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-n" id="home-perc">0%</div><div class="stat-l">Completati</div></div>
+      <div class="stat"><div class="stat-n" style="color:#00d4aa" id="home-crescita">+0%</div><div class="stat-l">Crescita</div></div>
+    </div>
+    <!-- BARRA PROGRESSO -->
+    <div style="margin:12px 0 0">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#4a5580;margin-bottom:4px">
+        <span>Percorso 30 giorni</span><span id="home-giorni-label">0/30</span>
+      </div>
+      <div style="height:4px;background:#16213e;border-radius:4px">
+        <div id="home-progbar" style="height:4px;background:#00d4aa;border-radius:4px;transition:width 0.4s;width:0%"></div>
+      </div>
     </div>
   </div>
   <div class="scroll">
@@ -873,19 +884,20 @@ function showNav(visible) {
 
 function navTo(dest) {
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
-  if (dest === 'home' || dest === 'task-oggi') {
-    if (dest === 'task-oggi') {
-      document.getElementById('nav-task').classList.add('active');
-      ss('storico');
-      loadStorico();
-    } else {
-      document.getElementById('nav-home').classList.add('active');
-      ss('home');
-    }
+  if (dest === 'home') {
+    document.getElementById('nav-home').classList.add('active');
+    aggiornaHome();
+    ss('home');
+  } else if (dest === 'task-oggi') {
+    document.getElementById('nav-task').classList.add('active');
+    document.getElementById('sc-storico').querySelector('.h1').textContent = 'I tuoi task';
+    loadTaskTab();
+    ss('storico');
   } else if (dest === 'storico') {
     document.getElementById('nav-storico').classList.add('active');
-    ss('storico');
+    document.getElementById('sc-storico').querySelector('.h1').textContent = 'Storico';
     loadStorico();
+    ss('storico');
   } else if (dest === 'profilo-menu') {
     document.getElementById('nav-profilo').classList.add('active');
     showEditProfile();
@@ -1055,6 +1067,7 @@ async function afterLogin() {
       document.getElementById('task-desc').textContent = clean(t.description) || '';
       document.getElementById('task-why').textContent = clean(t.why) || '';
     }
+    aggiornaHome();
     ss('home');
   } else {
     ss('welcome');
@@ -1542,36 +1555,102 @@ function showTaskDetail(idx) {
   document.getElementById('nav-home').classList.add('active');
 }
 
+function aggiornaHome() {
+  var completati = S.giorniCompletati.length;
+  var totale = 30;
+  var perc = Math.round((completati / totale) * 100);
+  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var streak = S.giorniCompletati.length; // semplificato per ora
+  var giorno = S.giornoAttuale || 1;
+
+  document.getElementById('home-giorno').textContent = 'Giorno ' + giorno + '/30';
+  document.getElementById('home-streak').textContent = streak;
+  document.getElementById('home-perc').textContent = perc + '%';
+  document.getElementById('home-crescita').textContent = '+' + crescita + '%';
+  document.getElementById('home-giorni-label').textContent = completati + '/30';
+  document.getElementById('home-progbar').style.width = perc + '%';
+}
+
 async function loadStorico() {
   var list = document.getElementById('storico-list');
   var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
-  var obiettivo = S.ctx || '';
+  var completati = S.giorniCompletati || [];
+
+  // Filtra solo i completati
+  var taskCompletati = tasks.filter(function(t) {
+    return completati.indexOf(t.day || 0) !== -1;
+  });
 
   if (document.getElementById('tasks-obiettivo-nav'))
-    document.getElementById('tasks-obiettivo-nav').textContent = obiettivo || '';
+    document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
 
-  if (!tasks.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
+  if (!taskCompletati.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
     bot.style.display = 'none';
     return;
   }
 
-  var completati = S.giorniCompletati || [];
   var html = '';
-  tasks.forEach(function(t, i) {
-    var day = t.day || (i+1);
-    var isCompletato = completati.indexOf(day) !== -1;
-    var desc = (t.description || '').split('.')[0];
-    if (desc.length > 80) desc = desc.slice(0, 80) + '…';
-    html += '<div class="tblock" style="opacity:' + (isCompletato ? '0.5' : '1') + ';cursor:pointer" onclick="apriTask(' + i + ')">';
-    html += '<div class="tlabel">Giorno ' + day + (isCompletato ? ' — ✓ completato' : (day === (S.giornoAttuale||1) ? ' — oggi' : '')) + '</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
-    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+  taskCompletati.forEach(function(t) {
+    html += '<div class="tblock" onclick="apriTaskSolaLettura(' + (t.day-1) + ')" style="cursor:pointer">';
+    html += '<div class="tlabel">Giorno ' + t.day + ' — ✓ completato</div>';
+    html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div>';
     html += '</div>';
   });
   list.innerHTML = html;
+  bot.style.display = 'none'; // storico = sola lettura, niente bottoni
+}
 
+function apriTaskSolaLettura(idx) {
+  var t = S.tasks[idx] || {};
+  document.getElementById('task-title').textContent = clean(t.title || '');
+  document.getElementById('task-desc').textContent = clean(t.description || '');
+  document.getElementById('task-why').textContent = clean(t.why || '');
+  ss('home');
+}
+
+async function loadTaskTab() {
+  var list = document.getElementById('storico-list');
+  var bot = document.getElementById('storico-bot');
+  var tasks = S.tasks || [];
+  var giorno = S.giornoAttuale || 1;
+
+  if (document.getElementById('tasks-obiettivo-nav'))
+    document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
+
+  if (!tasks.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.</div>';
+    bot.style.display = 'none';
+    return;
+  }
+
+  var html = '';
+  // Task di oggi
+  var oggi = tasks.find(function(t){ return (t.day||0) === giorno; }) || tasks[giorno-1];
+  if (oggi) {
+    var idx = tasks.indexOf(oggi);
+    html += '<div class="tblock" style="border-color:#00d4aa;cursor:pointer" onclick="apriTask(' + idx + ')">';
+    html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + giorno + ' — oggi</div>';
+    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(oggi.title||'') + '</div>';
+    var desc = (oggi.description||'').split('.')[0];
+    if (desc.length > 80) desc = desc.slice(0,80) + '…';
+    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+    html += '</div>';
+  }
+  // Prossimi 5 — solo titolo, bloccati
+  for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
+    var t = tasks[i];
+    if (!t) continue;
+    html += '<div class="tblock" style="opacity:0.4">';
+    html += '<div class="tlabel">Giorno ' + (t.day||i+1) + '</div>';
+    html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
+    html += '<div class="tdesc" style="font-size:11px;margin-top:4px">🔒 Disponibile dal giorno ' + (t.day||i+1) + '</div>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+
+  // Bottoni
   if (!S.taskCompletato) {
     bot.style.display = 'block';
     var btnC = document.getElementById('btn-completa');
@@ -1580,6 +1659,10 @@ async function loadStorico() {
     bot.style.display = 'block';
     var btnC = document.getElementById('btn-completa');
     if (btnC) { btnC.disabled = true; btnC.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
+    // nascondi correzione se già completato
+    document.getElementById('corr-panel').classList.remove('open');
+    var btnCorr = document.querySelector('#sc-storico .btn-ghost');
+    if (btnCorr) btnCorr.style.display = 'none';
   }
 }
 
