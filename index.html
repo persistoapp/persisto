@@ -8,8 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
-.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;border:1px solid #16213e;display:flex;flex-direction:column;height:780px;position:relative;overflow:hidden}
+html,body{height:100%;overflow:hidden}
+body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.phone{width:100%;height:100vh;background:#1a1a2e;display:flex;flex-direction:column;position:relative;overflow:hidden;max-width:480px;margin:0 auto}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
 .screen.has-nav{bottom:64px}
@@ -42,7 +43,7 @@ select option{background:#1a1a2e;color:#fff}
 .btn:disabled{opacity:0.25;cursor:not-allowed}
 .btn-ghost{width:100%;padding:14px;background:transparent;color:#4a5580;border:1px solid #1e2d4a;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
 .btn-link{background:none;border:none;color:#00d4aa;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
-.bot{padding:20px 24px 36px;margin-top:auto}
+.bot{padding:16px 24px 24px;margin-top:auto}
 .qnum{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
 .prog{height:2px;background:#16213e;margin:16px 0 24px;border-radius:2px}
