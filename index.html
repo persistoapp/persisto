@@ -9,8 +9,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:20px}
-.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;overflow:hidden;min-height:720px;display:flex;flex-direction:column;border:1px solid #16213e}
-.screen{display:none;flex-direction:column;min-height:720px}
+.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;overflow:hidden;height:780px;display:flex;flex-direction:column;border:1px solid #16213e}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
 .screen.active{display:flex}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
@@ -78,8 +78,8 @@ select option{background:#1a1a2e;color:#fff}
 .icon-btn:hover{color:#00d4aa}
 .step-indicator{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
 /* BOTTOM NAV */
-.bnav{display:none;position:sticky;bottom:0;background:#16213e;border-top:1px solid #1e2d4a;padding:10px 0 20px;z-index:100}
-.bnav.visible{display:flex}
+.bnav{display:none;flex-shrink:0;background:#16213e;border-top:1px solid #1e2d4a;padding:10px 0 20px;z-index:100}
+.bnav.visible{display:block}
 .bnav-items{display:flex;width:100%;justify-content:space-around}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#4a5580;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
 .bnav-item i{font-size:20px}
@@ -777,24 +777,8 @@ select option{background:#1a1a2e;color:#fff}
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bnav" id="bottom-nav">
-  <div class="bnav-items">
-    <button class="bnav-item" id="nav-home" onclick="navTo('home')">
-      <i class="ti ti-home"></i>Home
-    </button>
-    <button class="bnav-item" id="nav-task" onclick="navTo('task-oggi')">
-      <i class="ti ti-checkbox"></i>Task
-    </button>
-    <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
-      <i class="ti ti-history"></i>Storico
-    </button>
-    <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
-      <i class="ti ti-user"></i>Profilo
-    </button>
-  </div>
-</div>
-<div class="screen" id="sc-storico">
+
+
   <div class="s-pad">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
@@ -826,6 +810,41 @@ select option{background:#1a1a2e;color:#fff}
   <div class="bot">
     <button class="btn" onclick="goToEditFull()">Modifica tutto il profilo</button>
     <button class="btn-ghost" onclick="ss('welcome')">Chiudi</button>
+  </div>
+</div>
+
+<!-- STORICO (placeholder) -->
+<div class="screen" id="sc-storico">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">I tuoi task</div>
+    <div class="sub">Qui troverai tutti i task completati.</div>
+  </div>
+  <div class="scroll" id="storico-list">
+    <div style="text-align:center;padding:40px 0;color:#4a5580">
+      <i class="ti ti-history" style="font-size:40px;display:block;margin-bottom:12px"></i>
+      Lo storico arriva presto.
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV — fisso in fondo alla phone -->
+<div class="bnav" id="bottom-nav">
+  <div class="bnav-items">
+    <button class="bnav-item" id="nav-home" onclick="navTo('home')">
+      <i class="ti ti-home"></i>Home
+    </button>
+    <button class="bnav-item" id="nav-task" onclick="navTo('task-oggi')">
+      <i class="ti ti-checkbox"></i>Task
+    </button>
+    <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
+      <i class="ti ti-history"></i>Storico
+    </button>
+    <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
+      <i class="ti ti-user"></i>Profilo
+    </button>
   </div>
 </div>
 
