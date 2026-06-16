@@ -1560,8 +1560,9 @@ function showTaskList() {
 function showTaskDetail(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
-Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+  document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
   document.getElementById('nav-home').classList.add('active');
@@ -1617,8 +1618,9 @@ async function loadStorico() {
 function apriTaskSolaLettura(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
-Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+  document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
 }
@@ -1681,8 +1683,9 @@ async function loadTaskTab() {
 function apriTask(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
-Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+  document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
 }
