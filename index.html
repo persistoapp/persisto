@@ -751,9 +751,6 @@ select option{background:#1a1a2e;color:#fff}
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
     <div style="font-size:14px;color:#4a5580;margin-bottom:24px;line-height:1.6">Ottimo. Un passo fatto è meglio di mille pianificati.</div>
   </div>
-  <div class="bot">
-    <button class="btn" onclick="saveRefl()"><i class="ti ti-flag"></i> Segna come completato</button>
-  </div>
 </div>
 
 <!-- DONE -->
@@ -1354,6 +1351,7 @@ function avanzamento(tipo) {
     if (confirm('Confermi di aver completato il task di oggi?')) {
       markDone();
       ss('reflection');
+      setTimeout(function(){ saveRefl(); }, 1500);
     }
   } else if (tipo === 'domani') {
     // Shifta il percorso di 1 giorno — il task di oggi diventa anche domani
