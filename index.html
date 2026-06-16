@@ -1425,8 +1425,9 @@ async function genProfile() {
     S.profile = p1;
     S.tasks = p1.tasks || [];
 
-    // salva obiettivo su Supabase
+    // salva obiettivo su Supabase — uno solo alla volta
     if (S.user) {
+      await sb.from('obiettivi').delete().eq('user_id', S.user.id);
       await sb.from('obiettivi').insert({
         user_id: S.user.id,
         obiettivo_testo: S.ctx,
@@ -1545,11 +1546,28 @@ async function loadStorico() {
   list.innerHTML = html || '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.</div>';
 }
 
-function resetFlow() {
+async function resetFlow() {
+  var conf = confirm('⚠️ Stai per cancellare il percorso attuale.\n\nTutti i task e i progressi verranno eliminati definitivamente e non sono recuperabili.\n\nVuoi continuare?');
+  if (!conf) return;
+
+  // Cancella tutti gli obiettivi dell'utente da Supabase
+  if (S.user) {
+    await sb.from('obiettivi').delete().eq('user_id', S.user.id);
+  }
+
+  // Reset stato locale
   S.arch = null; S.freeText = ''; S.ctx = '';
   S.questions = []; S.answers = []; S.currentQ = 0;
   S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
+  S.taskCompletato = false;
   CHIPS.tentativo = null; CHIPS.scadenza = null;
+
+  // Reset UI home
+  var btnDone = document.querySelector('#sc-home .btn');
+  if (btnDone) { btnDone.disabled = false; btnDone.innerHTML = '<i class="ti ti-check"></i> L\'ho fatto!'; }
+  var btnCorr = document.querySelector('#sc-home .btn-ghost');
+  if (btnCorr) btnCorr.style.display = '';
+
   document.getElementById('free-text').value = '';
   document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
   document.getElementById('btn-start').disabled = true;
