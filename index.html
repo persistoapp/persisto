@@ -808,9 +808,6 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="bot">
     <button class="btn" onclick="tornaHome()">Torna alla home</button>
-    <button class="btn-ghost" id="btn-sblocca" onclick="sbloccaProssimoTask()" style="margin-top:8px;display:none">
-      <i class="ti ti-bolt"></i> Sblocca il prossimo task oggi
-    </button>
   </div>
 </div>
 
@@ -1777,19 +1774,6 @@ async function saveRefl() {
   document.getElementById('done-giorno').textContent = completati;
   document.getElementById('done-perc').textContent = perc + '%';
   document.getElementById('done-crescita').textContent = '+' + crescita + '%';
-  // Mostra pulsante sblocca se non ha ancora fatto 3 task oggi e non è al giorno 30
-  var oggiStr = new Date().toISOString().slice(0, 10);
-  if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
-  var btnSblocca = document.getElementById('btn-sblocca');
-  if (btnSblocca) {
-    var prossimoGiorno = S.giornoAttuale + 1;
-    if (S.taskExtraOggi < 2 && prossimoGiorno <= 30 && S.tasks[prossimoGiorno - 1]) {
-      btnSblocca.style.display = 'block';
-      btnSblocca.innerHTML = '<i class="ti ti-bolt"></i> Sblocca il task del giorno ' + prossimoGiorno + ' (' + (2 - S.taskExtraOggi) + ' rimasti oggi)';
-    } else {
-      btnSblocca.style.display = 'none';
-    }
-  }
   ss('done');
 }
 
