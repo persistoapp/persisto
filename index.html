@@ -857,7 +857,9 @@ var S = {
   profile: {}, tasks: [], emoji: null,
   demoData: {}, objData: {},
   user: null, userProfile: null,
-  taskCompletato: false
+  taskCompletato: false,
+  giornoAttuale: 1,
+  giorniCompletati: []
 };
 
 var CHIPS = {};
@@ -1412,15 +1414,36 @@ async function genProfile() {
   ss('analyzing');
   var qa = S.answers.map(function(x){ return 'D: ' + x.q + '\nR: ' + x.a; }).join('\n\n');
   try {
-    document.getElementById('an-title').textContent = 'Costruendo il tuo percorso';
-    document.getElementById('an-sub').textContent = 'Persisto sta analizzando le tue risposte...';
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
-    var sys1 = 'Sei un coach pratico e diretto. Hai il profilo completo della persona e le sue risposte alle domande di onboarding. Genera un piano PERSONALIZZATO basato ESATTAMENTE su chi è questa persona — età, figli, tempo disponibile, lavoro, situazione di vita. NON essere generico. Tratta tutti i numeri come testo letterale. Genera ESATTAMENTE 5 task concreti e realistici per questa persona specifica. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali su questa persona specifica.","approach":"Una frase pratica adatta alla sua situazione.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task per questa persona specifica."}]} baseline_score tra 15 e 65.\n\nPROFILO PERSONA:\n' + profCtx;
-    var raw1 = await callAI(sys1, objCtx + '\n\nRisposte onboarding:\n' + qa);
+    var baseCtx = profCtx + '\n\n' + objCtx + '\n\nRisposte onboarding:\n' + qa;
+
+    // CHIAMATA 1 — task 1-10 + profilo base
+    document.getElementById('an-title').textContent = 'Costruendo il tuo percorso';
+    document.getElementById('an-sub').textContent = 'Giorno 1-10...';
+    var sys1 = 'Sei un coach pratico e diretto. Hai il profilo completo della persona. Genera i task dal giorno 1 al giorno 10 di un percorso di 30 giorni. Task progressivi, concreti, realistici per questa persona specifica. NON essere generico. Tratta tutti i numeri come testo letterale. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali su questa persona.","approach":"Una frase pratica.","tasks":[{"day":1,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nbaseline_score tra 15 e 65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
+    var raw1 = await callAI(sys1, baseCtx);
     var p1 = safeJSON(raw1);
     S.profile = p1;
-    S.tasks = p1.tasks || [];
+    var allTasks = p1.tasks || [];
+
+    // CHIAMATA 2 — task 11-20
+    document.getElementById('an-sub').textContent = 'Giorno 11-20...';
+    var tasksCtx1 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
+    var sys2 = 'Sei un coach pratico. Continua il percorso di 30 giorni generando i task dal giorno 11 al giorno 20. Devono essere progressivi rispetto ai primi 10 giorni già generati. JSON senza altro testo: {"tasks":[{"day":11,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-10 già generati:\n' + tasksCtx1;
+    var raw2 = await callAI(sys2, objCtx);
+    var p2 = safeJSON(raw2);
+    allTasks = allTasks.concat(p2.tasks || []);
+
+    // CHIAMATA 3 — task 21-30
+    document.getElementById('an-sub').textContent = 'Giorno 21-30...';
+    var tasksCtx2 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
+    var sys3 = 'Sei un coach pratico. Concludi il percorso di 30 giorni generando i task dal giorno 21 al giorno 30. Devono consolidare e portare al risultato finale. JSON senza altro testo: {"tasks":[{"day":21,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-20 già generati:\n' + tasksCtx2;
+    var raw3 = await callAI(sys3, objCtx);
+    var p3 = safeJSON(raw3);
+    allTasks = allTasks.concat(p3.tasks || []);
+
+    S.tasks = allTasks;
 
     // salva obiettivo su Supabase — uno solo alla volta
     if (S.user) {
@@ -1470,6 +1493,9 @@ function selEmoji(btn, e) {
 
 function markDone() {
   S.taskCompletato = true;
+  if (S.giorniCompletati.indexOf(S.giornoAttuale) === -1) {
+    S.giorniCompletati.push(S.giornoAttuale);
+  }
 }
 
 async function saveRefl() {
@@ -1523,7 +1549,7 @@ async function loadStorico() {
   var obiettivo = S.ctx || '';
 
   if (document.getElementById('tasks-obiettivo-nav'))
-    document.getElementById('tasks-obiettivo-nav').textContent = obiettivo ? obiettivo : '';
+    document.getElementById('tasks-obiettivo-nav').textContent = obiettivo || '';
 
   if (!tasks.length) {
     list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
@@ -1531,19 +1557,21 @@ async function loadStorico() {
     return;
   }
 
+  var completati = S.giorniCompletati || [];
   var html = '';
   tasks.forEach(function(t, i) {
+    var day = t.day || (i+1);
+    var isCompletato = completati.indexOf(day) !== -1;
     var desc = (t.description || '').split('.')[0];
     if (desc.length > 80) desc = desc.slice(0, 80) + '…';
-    html += '<div class="tblock">';
-    html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
+    html += '<div class="tblock" style="opacity:' + (isCompletato ? '0.5' : '1') + ';cursor:pointer" onclick="apriTask(' + i + ')">';
+    html += '<div class="tlabel">Giorno ' + day + (isCompletato ? ' — ✓ completato' : (day === (S.giornoAttuale||1) ? ' — oggi' : '')) + '</div>';
     html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
     html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
     html += '</div>';
   });
   list.innerHTML = html;
 
-  // Mostra bottoni solo se task non ancora completato
   if (!S.taskCompletato) {
     bot.style.display = 'block';
     var btnC = document.getElementById('btn-completa');
@@ -1553,6 +1581,14 @@ async function loadStorico() {
     var btnC = document.getElementById('btn-completa');
     if (btnC) { btnC.disabled = true; btnC.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
   }
+}
+
+function apriTask(idx) {
+  var t = S.tasks[idx] || {};
+  document.getElementById('task-title').textContent = clean(t.title || '');
+  document.getElementById('task-desc').textContent = clean(t.description || '');
+  document.getElementById('task-why').textContent = clean(t.why || '');
+  ss('home');
 }
 
 function confirmDone() {
