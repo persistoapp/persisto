@@ -906,11 +906,13 @@ function navTo(dest) {
     aggiornaHome();
     ss('home');
   } else if (dest === 'task-oggi') {
+    S_activeNav = 'task';
     document.getElementById('nav-task').classList.add('active');
     document.getElementById('sc-storico').querySelector('.h1').textContent = 'I tuoi task';
     loadTaskTab();
     ss('storico');
   } else if (dest === 'storico') {
+    S_activeNav = 'storico';
     document.getElementById('nav-storico').classList.add('active');
     document.getElementById('sc-storico').querySelector('.h1').textContent = 'Storico';
     loadStorico();
@@ -922,6 +924,7 @@ function navTo(dest) {
 }
 
 // ─── UTILS ──────────────────────────────────────────────────────────────────
+var S_activeNav = '';
 function ss(id) {
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
@@ -934,9 +937,11 @@ function ss(id) {
   var navScreens = ['home','reflection','done','storico','edit-profile','tasks'];
   showNav(navScreens.indexOf(id) !== -1);
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
-  if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); }
-  if (id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
-  if (id === 'tasks') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
+  if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); S_activeNav = 'home'; }
+  // storico e task-oggi usano lo stesso screen sc-storico — il nav viene gestito da navTo
+  if (S_activeNav === 'storico' && id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
+  if (S_activeNav === 'task' && id === 'storico') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
+  if (id === 'tasks') { var nt2 = document.getElementById('nav-task'); if(nt2) nt2.classList.add('active'); }
 }
 
 function clean(t) {
@@ -1599,6 +1604,10 @@ async function saveRefl() {
     document.getElementById('refl-text').style.borderColor = '#ff6b9d';
     return;
   }
+  // Salva il testo della reflection
+  var giorno = S.giornoAttuale || 1;
+  if (!S.reflections) S.reflections = {};
+  S.reflections[giorno] = reflText;
   var t = S.tasks[S.giornoAttuale - 1] || S.tasks[0] || {};
   var profCtx = buildProfileContext().slice(0, 200);
   try {
@@ -1706,12 +1715,30 @@ async function loadStorico() {
 
 function apriTaskSolaLettura(idx) {
   var t = S.tasks[idx] || {};
-  document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
-  document.getElementById('task-desc').textContent = df;
-  document.getElementById('task-why').textContent = clean(t.why || '');
-  ss('home');
+  var day = t.day || (idx + 1);
+  var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
+  var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  var list = document.getElementById('storico-list');
+  var html = '<div style="margin-bottom:12px">';
+  html += '<button onclick="loadStorico()" style="background:none;border:none;color:#00d4aa;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
+  html += '</div>';
+  html += '<div class="tblock" style="border-color:#00d4aa">';
+  html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + day + ' — ✓ completato</div>';
+  html += '<div class="ttitle" style="font-size:16px;margin-bottom:12px">' + clean(t.title||'') + '</div>';
+  html += '<div class="tdesc" style="font-size:13px;white-space:pre-line;margin-bottom:8px">' + descFormatted + '</div>';
+  if (t.why) {
+    html += '<div class="tlabel" style="margin-top:12px">Perché questo task</div>';
+    html += '<div class="tdesc" style="font-size:12px;margin-top:4px">' + clean(t.why) + '</div>';
+  }
+  html += '</div>';
+  if (refl) {
+    html += '<div class="tblock" style="background:transparent;border-color:#1e2d4a">';
+    html += '<div class="tlabel">Cosa hai fatto</div>';
+    html += '<div class="tdesc" style="margin-top:6px;font-size:13px;color:#fff">' + refl + '</div>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+  document.getElementById('storico-bot').style.display = 'none';
 }
 
 async function loadTaskTab() {
