@@ -1358,8 +1358,13 @@ async function correggiTask() {
     var msg = objCtx + '\n\nTask precedente non adatto: ' + taskPrecedente + '\nCorrezione: "' + correzione + '"';
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
+    console.log('TASK RIGENERATO', task);
     task.day = giorno;
     S.tasks[giorno - 1] = task;
+    // Salva su Supabase
+    if (S.user) {
+      await sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('user_id', S.user.id);
+    }
     chiudiCorr();
     loadTaskTab(); // ricarica la vista
   } catch(e) {
