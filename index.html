@@ -77,6 +77,16 @@ select option{background:#1a1a2e;color:#fff}
 .icon-btn{background:none;border:none;color:#4a5580;cursor:pointer;font-size:18px;padding:4px}
 .icon-btn:hover{color:#00d4aa}
 .step-indicator{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+/* BOTTOM NAV */
+.bnav{display:none;position:sticky;bottom:0;background:#16213e;border-top:1px solid #1e2d4a;padding:10px 0 20px;z-index:100}
+.bnav.visible{display:flex}
+.bnav-items{display:flex;width:100%;justify-content:space-around}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#4a5580;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
+.bnav-item i{font-size:20px}
+.bnav-item.active,.bnav-item:hover{color:#00d4aa}
+/* CORREZIONE TASK */
+.corr-panel{display:none;background:#16213e;border:1px solid #1e2d4a;border-radius:14px;padding:16px;margin-bottom:12px}
+.corr-panel.open{display:block}
 </style>
 </head>
 <body>
@@ -644,8 +654,8 @@ select option{background:#1a1a2e;color:#fff}
 <div class="screen" id="sc-loading">
   <div class="center">
     <div class="ring"><div class="spin"></div></div>
-    <div class="ltitle">Sto ascoltando...</div>
-    <div class="lsub">L'IA sta preparando le domande giuste per te</div>
+    <div class="ltitle">Persisto sta elaborando...</div>
+    <div class="lsub">Stiamo costruendo il percorso giusto per te</div>
   </div>
 </div>
 
@@ -668,8 +678,8 @@ select option{background:#1a1a2e;color:#fff}
 <div class="screen" id="sc-analyzing">
   <div class="center">
     <div class="ring"><div class="spin"></div></div>
-    <div class="ltitle" id="an-title">Costruendo il tuo profilo</div>
-    <div class="lsub" id="an-sub">L'IA sta elaborando le tue risposte...</div>
+    <div class="ltitle" id="an-title">Costruendo il tuo percorso</div>
+    <div class="lsub" id="an-sub">Persisto sta analizzando le tue risposte...</div>
   </div>
 </div>
 
@@ -717,10 +727,20 @@ select option{background:#1a1a2e;color:#fff}
       <div class="tlabel">Perché questo task</div>
       <div class="tdesc" id="task-why" style="font-size:12px"></div>
     </div>
+    <!-- PANNELLO CORREZIONE -->
+    <div class="corr-panel" id="corr-panel">
+      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
+      <textarea id="corr-text" rows="3" placeholder="Es: lavoro a provvigione e non posso scegliere i clienti, ogni mese devo generare fatturato da zero..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
+        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
+      </div>
+      <div id="err-corr"></div>
+    </div>
   </div>
   <div class="bot">
     <button class="btn" onclick="markDone()"><i class="ti ti-check"></i> L'ho fatto!</button>
-    <button class="btn-ghost" onclick="resetFlow()">Nuovo obiettivo</button>
+    <button class="btn-ghost" onclick="toggleCorr()">Questo task non va — correggilo</button>
   </div>
 </div>
 
@@ -754,6 +774,39 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="bot">
     <button class="btn-ghost" onclick="resetFlow()">Nuovo obiettivo</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bottom-nav">
+  <div class="bnav-items">
+    <button class="bnav-item" id="nav-home" onclick="navTo('home')">
+      <i class="ti ti-home"></i>Home
+    </button>
+    <button class="bnav-item" id="nav-task" onclick="navTo('task-oggi')">
+      <i class="ti ti-checkbox"></i>Task
+    </button>
+    <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
+      <i class="ti ti-history"></i>Storico
+    </button>
+    <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
+      <i class="ti ti-user"></i>Profilo
+    </button>
+  </div>
+</div>
+<div class="screen" id="sc-storico">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">I tuoi task</div>
+    <div class="sub">Qui troverai tutti i task completati.</div>
+  </div>
+  <div class="scroll" id="storico-list">
+    <div style="text-align:center;padding:40px 0;color:#4a5580">
+      <i class="ti ti-history" style="font-size:40px;display:block;margin-bottom:12px"></i>
+      Lo storico arriva presto.
+    </div>
   </div>
 </div>
 
@@ -1144,7 +1197,17 @@ document.addEventListener('DOMContentLoaded', function() {
     ta.addEventListener('input', onFreeText);
     ta.addEventListener('keyup', onFreeText);
   }
-  // check sessione attiva
+  // SESSIONE PERSISTENTE — Supabase ricorda il login automaticamente
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (session && session.user) {
+      S.user = session.user;
+      if (!S.userProfile) afterLogin();
+    } else if (event === 'SIGNED_OUT') {
+      S.user = null; S.userProfile = null;
+      showNav(false);
+      ss('login');
+    }
+  });
   sb.auth.getSession().then(function(r) {
     if (r.data && r.data.session) {
       S.user = r.data.session.user;
@@ -1154,6 +1217,89 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+// ─── BOTTOM NAV ──────────────────────────────────────────────────────────────
+var NAV_SCREENS = ['home','task-oggi','storico','profilo-menu'];
+
+function showNav(visible) {
+  var nav = document.getElementById('bottom-nav');
+  if (visible) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+}
+
+function navTo(dest) {
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (dest === 'home') {
+    document.getElementById('nav-home').classList.add('active');
+    ss('home');
+  } else if (dest === 'task-oggi') {
+    document.getElementById('nav-task').classList.add('active');
+    ss('home');
+  } else if (dest === 'storico') {
+    document.getElementById('nav-storico').classList.add('active');
+    ss('storico');
+  } else if (dest === 'profilo-menu') {
+    document.getElementById('nav-profilo').classList.add('active');
+    showEditProfile();
+  }
+}
+
+// Mostra nav solo nelle schermate principali
+var _origSs = ss;
+ss = function(id) {
+  _origSs(id);
+  var navScreens = ['home','reflection','done','storico','edit-profile'];
+  showNav(navScreens.indexOf(id) !== -1);
+  // aggiorna active state nav
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (id === 'home') document.getElementById('nav-home') && document.getElementById('nav-home').classList.add('active');
+  if (id === 'storico') document.getElementById('nav-storico') && document.getElementById('nav-storico').classList.add('active');
+};
+
+// ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
+function toggleCorr() {
+  var p = document.getElementById('corr-panel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) {
+    document.getElementById('corr-text').focus();
+  }
+}
+
+function chiudiCorr() {
+  document.getElementById('corr-panel').classList.remove('open');
+  document.getElementById('corr-text').value = '';
+  document.getElementById('err-corr').innerHTML = '';
+}
+
+async function correggiTask() {
+  var correzione = document.getElementById('corr-text').value.trim();
+  if (!correzione) {
+    document.getElementById('err-corr').innerHTML = '<div class="err">Dimmi cosa non va.</div>';
+    return;
+  }
+  document.getElementById('err-corr').innerHTML = '';
+  var btnCorr = document.querySelector('#corr-panel .btn');
+  btnCorr.disabled = true;
+  btnCorr.textContent = 'Persisto sta ricalcolando...';
+  try {
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
+    var taskPrecedente = S.tasks[0] ? '"' + S.tasks[0].title + '"' : 'non disponibile';
+    var sys = 'Sei un coach diretto. Il task precedente non era adatto alla persona. Genera UN SOLO task corretto tenendo conto della correzione fornita. JSON senza altro testo: {"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task per questa persona."}\n\nPROFILO:\n' + profCtx;
+    var msg = objCtx + '\n\nTask precedente: ' + taskPrecedente + '\nCorrezione richiesta: "' + correzione + '"';
+    var raw = await callAI(sys, msg);
+    var task = safeJSON(raw);
+    S.tasks[0] = task;
+    document.getElementById('task-title').textContent = clean(task.title) || '';
+    document.getElementById('task-desc').textContent = clean(task.description) || '';
+    document.getElementById('task-why').textContent = clean(task.why) || '';
+    chiudiCorr();
+  } catch(e) {
+    document.getElementById('err-corr').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
+  }
+  btnCorr.disabled = false;
+  btnCorr.textContent = 'Rigenera task';
+}
 
 function startFlow() {
   var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
@@ -1224,8 +1370,8 @@ async function genProfile() {
   ss('analyzing');
   var qa = S.answers.map(function(x){ return 'D: ' + x.q + '\nR: ' + x.a; }).join('\n\n');
   try {
-    document.getElementById('an-title').textContent = 'Costruendo il tuo profilo';
-    document.getElementById('an-sub').textContent = "L'IA sta analizzando le tue risposte...";
+    document.getElementById('an-title').textContent = 'Costruendo il tuo percorso';
+    document.getElementById('an-sub').textContent = 'Persisto sta analizzando le tue risposte...';
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
     var sys1 = 'Sei un coach pratico e diretto. Hai il profilo completo della persona e le sue risposte alle domande di onboarding. Genera un piano PERSONALIZZATO basato ESATTAMENTE su chi è questa persona — età, figli, tempo disponibile, lavoro, situazione di vita. NON essere generico. Tratta tutti i numeri come testo letterale. Genera ESATTAMENTE 5 task concreti e realistici per questa persona specifica. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali su questa persona specifica.","approach":"Una frase pratica adatta alla sua situazione.","tasks":[{"title":"Titolo","description":"Come fare: passo 1, poi passo 2, poi passo 3.","why":"Perche questo task per questa persona specifica."}]} baseline_score tra 15 e 65.\n\nPROFILO PERSONA:\n' + profCtx;
