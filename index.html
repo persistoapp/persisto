@@ -1967,7 +1967,8 @@ async function loadTaskTab() {
     var t = tasks[i];
     if (!t) continue;
     var posizione = i - giorno; // 0 = prossimo, 1 = dopo, ecc.
-    var puoSbloccare = S.taskCompletato && posizione < 2 && extraRimanenti > 0 && posizione < extraRimanenti;
+    // Sblocca solo il PROSSIMO immediato, non entrambi insieme
+    var puoSbloccare = S.taskCompletato && posizione === 0 && extraRimanenti > 0;
     var dayNum = t.day || (i+1);
 
     if (puoSbloccare) {
