@@ -1353,15 +1353,15 @@ async function correggiTask() {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
     var taskPrecedente = S.tasks[0] ? '"' + S.tasks[0].title + '"' : 'non disponibile';
-    var sys = 'Sei un coach diretto. Il task precedente non era adatto alla persona. Genera UN SOLO task corretto tenendo conto della correzione fornita. JSON senza altro testo: {"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task per questa persona."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask precedente: ' + taskPrecedente + '\nCorrezione richiesta: "' + correzione + '"';
+    var giorno = S.giornoAttuale || 1;
+    var sys = 'Sei un coach diretto. Il task precedente non era adatto. Genera UN SOLO task micro-azione: qualcosa di concreto e fattibile in 30-60 minuti oggi, non un progetto. Una sola azione specifica, non un piano. JSON senza altro testo: {"day":' + giorno + ',"title":"Titolo breve","description":"Cosa fare esattamente in 30-60 minuti.","why":"Perche questo task."}\n\nPROFILO:\n' + profCtx;
+    var msg = objCtx + '\n\nTask precedente non adatto: ' + taskPrecedente + '\nCorrezione: "' + correzione + '"';
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
-    S.tasks[0] = task;
-    document.getElementById('task-title').textContent = clean(task.title) || '';
-    document.getElementById('task-desc').textContent = clean(task.description) || '';
-    document.getElementById('task-why').textContent = clean(task.why) || '';
+    task.day = giorno;
+    S.tasks[giorno - 1] = task;
     chiudiCorr();
+    loadTaskTab(); // ricarica la vista
   } catch(e) {
     document.getElementById('err-corr').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
   }
@@ -1445,7 +1445,7 @@ async function genProfile() {
     // CHIAMATA 1 — task 1-10 + profilo base
     document.getElementById('an-title').textContent = 'Costruendo il tuo percorso';
     document.getElementById('an-sub').textContent = 'Giorno 1-10...';
-    var sys1 = 'Sei un coach pratico e diretto. Hai il profilo completo della persona. Genera i task dal giorno 1 al giorno 10 di un percorso di 30 giorni. Task progressivi, concreti, realistici per questa persona specifica. NON essere generico. Tratta tutti i numeri come testo letterale. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi reali su questa persona.","approach":"Una frase pratica.","tasks":[{"day":1,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nbaseline_score tra 15 e 65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
+    var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 di un percorso di 30 giorni. REGOLA FONDAMENTALE: ogni task deve essere una micro-azione concreta fattibile in 30-60 minuti, NON un progetto o piano multi-settimana. Una sola azione specifica per giorno. Progressivi: ogni giorno costruisce sul precedente. Personalizzati su questa persona specifica. JSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi su questa persona.","approach":"Una frase pratica.","tasks":[{"day":1,"title":"Titolo breve azione","description":"Cosa fare esattamente oggi in 30-60 min. Passo 1: azione specifica. Passo 2: azione specifica.","why":"Perche questo task per questa persona."}]}\nbaseline_score tra 15 e 65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
     var raw1 = await callAI(sys1, baseCtx);
     var p1 = safeJSON(raw1);
     S.profile = p1;
@@ -1454,7 +1454,7 @@ async function genProfile() {
     // CHIAMATA 2 — task 11-20
     document.getElementById('an-sub').textContent = 'Giorno 11-20...';
     var tasksCtx1 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
-    var sys2 = 'Sei un coach pratico. Continua il percorso di 30 giorni generando i task dal giorno 11 al giorno 20. Devono essere progressivi rispetto ai primi 10 giorni già generati. JSON senza altro testo: {"tasks":[{"day":11,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-10 già generati:\n' + tasksCtx1;
+    var sys2 = 'Sei un coach pratico. Continua il percorso generando i task dal giorno 11 al giorno 20. REGOLA FONDAMENTALE: ogni task = micro-azione fattibile in 30-60 minuti, NON un progetto. Una sola azione specifica per giorno, progressiva rispetto ai giorni precedenti. JSON senza altro testo: {"tasks":[{"day":11,"title":"Titolo breve azione","description":"Cosa fare esattamente in 30-60 min. Passo 1: azione. Passo 2: azione.","why":"Perche."}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-10:\n' + tasksCtx1;
     var raw2 = await callAI(sys2, objCtx);
     var p2 = safeJSON(raw2);
     allTasks = allTasks.concat(p2.tasks || []);
@@ -1462,7 +1462,7 @@ async function genProfile() {
     // CHIAMATA 3 — task 21-30
     document.getElementById('an-sub').textContent = 'Giorno 21-30...';
     var tasksCtx2 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
-    var sys3 = 'Sei un coach pratico. Concludi il percorso di 30 giorni generando i task dal giorno 21 al giorno 30. Devono consolidare e portare al risultato finale. JSON senza altro testo: {"tasks":[{"day":21,"title":"Titolo","description":"Come fare passo per passo.","why":"Perche questo task."}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-20 già generati:\n' + tasksCtx2;
+    var sys3 = 'Sei un coach pratico. Concludi il percorso con i task dal giorno 21 al giorno 30. REGOLA FONDAMENTALE: ogni task = micro-azione fattibile in 30-60 minuti, NON un progetto. Questi task devono portare al risultato finale consolidando tutto il percorso. JSON senza altro testo: {"tasks":[{"day":21,"title":"Titolo breve azione","description":"Cosa fare esattamente in 30-60 min. Passo 1: azione. Passo 2: azione.","why":"Perche."}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx + '\n\nTask giorni 1-20:\n' + tasksCtx2;
     var raw3 = await callAI(sys3, objCtx);
     var p3 = safeJSON(raw3);
     allTasks = allTasks.concat(p3.tasks || []);
