@@ -1806,7 +1806,9 @@ function sbloccaProssimoTask() {
     document.getElementById('task-why').textContent = clean(t.why) || '';
   }
   aggiornaHome();
-  ss('home');
+  // Ricarica il tab task per aggiornare la lista
+  S_activeNav = 'task';
+  loadTaskTab();
 }
 
 function tornaHome() {
@@ -1956,14 +1958,32 @@ async function loadTaskTab() {
     html += '<div class="tdesc" style="font-size:12px;white-space:pre-line">' + descFormatted + '</div>';
     html += '</div>';
   }
-  // Prossimi 5 — solo titolo, bloccati, non cliccabili
+  // Prossimi 5 — solo titolo, bloccati; i primi 2 hanno pulsante sblocca se task completato
+  var oggiStr = new Date().toISOString().slice(0, 10);
+  if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
+  var extraRimanenti = 2 - (S.taskExtraOggi || 0);
+
   for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
     var t = tasks[i];
     if (!t) continue;
-    html += '<div class="tblock" style="opacity:0.4;pointer-events:none">';
-    html += '<div class="tlabel">Giorno ' + (t.day||i+1) + '</div>';
-    html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
-    html += '</div>';
+    var posizione = i - giorno; // 0 = prossimo, 1 = dopo, ecc.
+    var puoSbloccare = S.taskCompletato && posizione < 2 && extraRimanenti > 0 && posizione < extraRimanenti;
+    var dayNum = t.day || (i+1);
+
+    if (puoSbloccare) {
+      html += '<div class="tblock" style="border-color:#00d4aa44">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+      html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
+      html += '<button onclick="sbloccaProssimoTask()" style="background:#00d4aa;color:#0d0d1a;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">⚡ Sblocca (' + extraRimanenti + ' rimanenti)</button>';
+      html += '</div>';
+      html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
+      html += '</div>';
+    } else {
+      html += '<div class="tblock" style="opacity:0.35;pointer-events:none">';
+      html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
+      html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
+      html += '</div>';
+    }
   }
   list.innerHTML = html;
   var avanzPanel = document.getElementById('avanz-panel');
