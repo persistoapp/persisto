@@ -8,10 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;min-height:100vh;padding:20px}
-.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;overflow:hidden;height:780px;display:flex;flex-direction:column;border:1px solid #16213e}
-.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px}
+.phone{width:100%;max-width:390px;background:#1a1a2e;border-radius:32px;border:1px solid #16213e;display:flex;flex-direction:column;height:780px;position:relative;overflow:hidden}
+.screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
+.screen.has-nav{bottom:64px}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
 .logo span{color:#00d4aa}
@@ -78,7 +79,7 @@ select option{background:#1a1a2e;color:#fff}
 .icon-btn:hover{color:#00d4aa}
 .step-indicator{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
 /* BOTTOM NAV */
-.bnav{display:none;flex-shrink:0;background:#16213e;border-top:1px solid #1e2d4a;padding:10px 0 20px;z-index:100}
+.bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#16213e;border-top:1px solid #1e2d4a;padding:8px 0 16px;z-index:200}
 .bnav.visible{display:block}
 .bnav-items{display:flex;width:100%;justify-content:space-around}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#4a5580;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
@@ -703,7 +704,7 @@ select option{background:#1a1a2e;color:#fff}
 </div>
 
 <!-- HOME -->
-<div class="screen" id="sc-home">
+<div class="screen has-nav" id="sc-home">
   <div class="s-pad" style="padding-bottom:0">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
@@ -745,7 +746,7 @@ select option{background:#1a1a2e;color:#fff}
 </div>
 
 <!-- REFLECTION -->
-<div class="screen" id="sc-reflection">
+<div class="screen has-nav" id="sc-reflection">
   <div class="center">
     <div class="ring2"><i class="ti ti-check"></i></div>
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">+1% completato</div>
@@ -762,7 +763,7 @@ select option{background:#1a1a2e;color:#fff}
 </div>
 
 <!-- DONE -->
-<div class="screen" id="sc-done">
+<div class="screen has-nav" id="sc-done">
   <div class="center">
     <div class="ring2"><i class="ti ti-star"></i></div>
     <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
@@ -795,7 +796,7 @@ select option{background:#1a1a2e;color:#fff}
 </div>
 
 <!-- EDIT PROFILO -->
-<div class="screen" id="sc-edit-profile">
+<div class="screen has-nav" id="sc-edit-profile">
   <div class="s-pad">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
@@ -814,7 +815,7 @@ select option{background:#1a1a2e;color:#fff}
 </div>
 
 <!-- STORICO (placeholder) -->
-<div class="screen" id="sc-storico">
+<div class="screen has-nav" id="sc-storico">
   <div class="s-pad">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
