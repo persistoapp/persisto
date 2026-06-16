@@ -860,6 +860,27 @@ var S = {
 
 var CHIPS = {};
 
+// ─── BOTTOM NAV ──────────────────────────────────────────────────────────────
+function showNav(visible) {
+  var nav = document.getElementById('bottom-nav');
+  if (visible) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+}
+
+function navTo(dest) {
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (dest === 'home' || dest === 'task-oggi') {
+    document.getElementById('nav-home').classList.add('active');
+    ss('home');
+  } else if (dest === 'storico') {
+    document.getElementById('nav-storico').classList.add('active');
+    ss('storico');
+  } else if (dest === 'profilo-menu') {
+    document.getElementById('nav-profilo').classList.add('active');
+    showEditProfile();
+  }
+}
+
 // ─── UTILS ──────────────────────────────────────────────────────────────────
 function ss(id) {
   document.querySelectorAll('.screen').forEach(function(s){
@@ -869,6 +890,12 @@ function ss(id) {
   var target = document.getElementById('sc-' + id);
   target.classList.add('active');
   target.style.display = 'flex';
+  // nav
+  var navScreens = ['home','reflection','done','storico','edit-profile'];
+  showNav(navScreens.indexOf(id) !== -1);
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); }
+  if (id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
 }
 
 function clean(t) {
@@ -1260,44 +1287,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
-
-// ─── BOTTOM NAV ──────────────────────────────────────────────────────────────
-var NAV_SCREENS = ['home','task-oggi','storico','profilo-menu'];
-
-function showNav(visible) {
-  var nav = document.getElementById('bottom-nav');
-  if (visible) nav.classList.add('visible');
-  else nav.classList.remove('visible');
-}
-
-function navTo(dest) {
-  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
-  if (dest === 'home') {
-    document.getElementById('nav-home').classList.add('active');
-    ss('home');
-  } else if (dest === 'task-oggi') {
-    document.getElementById('nav-task').classList.add('active');
-    ss('home');
-  } else if (dest === 'storico') {
-    document.getElementById('nav-storico').classList.add('active');
-    ss('storico');
-  } else if (dest === 'profilo-menu') {
-    document.getElementById('nav-profilo').classList.add('active');
-    showEditProfile();
-  }
-}
-
-// Mostra nav solo nelle schermate principali
-var _origSs = ss;
-ss = function(id) {
-  _origSs(id);
-  var navScreens = ['home','reflection','done','storico','edit-profile'];
-  showNav(navScreens.indexOf(id) !== -1);
-  // aggiorna active state nav
-  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
-  if (id === 'home') document.getElementById('nav-home') && document.getElementById('nav-home').classList.add('active');
-  if (id === 'storico') document.getElementById('nav-storico') && document.getElementById('nav-storico').classList.add('active');
-};
 
 // ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
 function toggleCorr() {
