@@ -777,7 +777,7 @@ select option{background:#1a1a2e;color:#fff}
   <div class="s-pad">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
-      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-x"></i></button>
+      <button class="icon-btn" onclick="chiudiProfilo()"><i class="ti ti-x"></i></button>
     </div>
     <div class="h1" style="font-size:22px;margin-top:20px">Il tuo profilo</div>
     <div class="sub">Modifica le tue info in qualsiasi momento.</div>
@@ -787,7 +787,7 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="bot">
     <button class="btn" onclick="goToEditFull()">Modifica tutto il profilo</button>
-    <button class="btn-ghost" onclick="ss('welcome')">Chiudi</button>
+    <button class="btn-ghost" onclick="chiudiProfilo()">Chiudi</button>
   </div>
 </div>
 
@@ -1064,7 +1064,9 @@ async function afterLogin() {
     var t = S.tasks[0];
     if (t) {
       document.getElementById('task-title').textContent = clean(t.title) || '';
-      document.getElementById('task-desc').textContent = clean(t.description) || '';
+      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+      document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+      document.getElementById('task-desc').textContent = descFormatted;
       document.getElementById('task-why').textContent = clean(t.why) || '';
     }
     aggiornaHome();
@@ -1237,6 +1239,15 @@ function goToEditFull() {
     if (p.situazione_attuale) document.getElementById('demo-situazione').value = p.situazione_attuale;
     if (p.paure_cambiamento) document.getElementById('demo-paure').value = p.paure_cambiamento;
   }, 100);
+}
+
+function chiudiProfilo() {
+  if (S.tasks && S.tasks.length > 0) {
+    aggiornaHome();
+    ss('home');
+  } else {
+    ss('welcome');
+  }
 }
 
 function showEditProfile() {
@@ -1549,7 +1560,8 @@ function showTaskList() {
 function showTaskDetail(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  document.getElementById('task-desc').textContent = clean(t.description || '');
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
+Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
   document.getElementById('nav-home').classList.add('active');
@@ -1605,7 +1617,8 @@ async function loadStorico() {
 function apriTaskSolaLettura(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  document.getElementById('task-desc').textContent = clean(t.description || '');
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
+Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
 }
@@ -1630,46 +1643,46 @@ async function loadTaskTab() {
   var oggi = tasks.find(function(t){ return (t.day||0) === giorno; }) || tasks[giorno-1];
   if (oggi) {
     var idx = tasks.indexOf(oggi);
-    html += '<div class="tblock" style="border-color:#00d4aa;cursor:pointer" onclick="apriTask(' + idx + ')">';
+    // Formatta descrizione: ogni "Passo N:" va a capo
+    var descFormatted = clean(oggi.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+    var completatoOggi = S.taskCompletato;
+    html += '<div class="tblock" style="border-color:#00d4aa">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
     html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + giorno + ' — oggi</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(oggi.title||'') + '</div>';
-    var desc = (oggi.description||'').split('.')[0];
-    if (desc.length > 80) desc = desc.slice(0,80) + '…';
-    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
+    if (completatoOggi) {
+      html += '<span style="font-size:11px;color:#00d4aa;font-weight:600"><i class="ti ti-check"></i> completato</span>';
+    } else {
+      html += '<button onclick="confirmDone()" style="background:#00d4aa;color:#0d0d1a;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap"><i class="ti ti-flag"></i> Fatto</button>';
+    }
+    html += '</div>';
+    html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px" onclick="apriTask(' + idx + ')" style="cursor:pointer">' + clean(oggi.title||'') + '</div>';
+    html += '<div class="tdesc" style="font-size:12px;white-space:pre-line">' + descFormatted + '</div>';
+    if (!completatoOggi) {
+      html += '<div style="margin-top:10px"><button onclick="toggleCorr()" style="background:none;border:none;color:#4a5580;font-size:11px;cursor:pointer;text-decoration:underline">Questo task non va — correggilo</button></div>';
+    }
     html += '</div>';
   }
-  // Prossimi 5 — solo titolo, bloccati
+  // Prossimi 5 — solo titolo, bloccati, non cliccabili
   for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
     var t = tasks[i];
     if (!t) continue;
-    html += '<div class="tblock" style="opacity:0.4">';
+    html += '<div class="tblock" style="opacity:0.4;pointer-events:none">';
     html += '<div class="tlabel">Giorno ' + (t.day||i+1) + '</div>';
     html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
-    html += '<div class="tdesc" style="font-size:11px;margin-top:4px">🔒 Disponibile dal giorno ' + (t.day||i+1) + '</div>';
     html += '</div>';
   }
   list.innerHTML = html;
-
-  // Bottoni
-  if (!S.taskCompletato) {
-    bot.style.display = 'block';
-    var btnC = document.getElementById('btn-completa');
-    if (btnC) { btnC.disabled = false; btnC.innerHTML = '<i class="ti ti-flag"></i> Segna come completato'; }
-  } else {
-    bot.style.display = 'block';
-    var btnC = document.getElementById('btn-completa');
-    if (btnC) { btnC.disabled = true; btnC.innerHTML = '<i class="ti ti-check"></i> Completato oggi'; }
-    // nascondi correzione se già completato
-    document.getElementById('corr-panel').classList.remove('open');
-    var btnCorr = document.querySelector('#sc-storico .btn-ghost');
-    if (btnCorr) btnCorr.style.display = 'none';
-  }
+  // Pannello correzione sempre disponibile nel DOM, ma nascosto
+  bot.style.display = S.taskCompletato ? 'none' : 'block';
+  var btnC = document.getElementById('btn-completa');
+  if (btnC) btnC.style.display = 'none'; // bottone ora inline
 }
 
 function apriTask(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  document.getElementById('task-desc').textContent = clean(t.description || '');
+  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '
+Passo $1:').trim(); document.getElementById('task-desc').style.whiteSpace = 'pre-line'; document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
 }
