@@ -739,7 +739,7 @@ select option{background:#1a1a2e;color:#fff}
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Giorno 1/30</div>
+        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Task 1/30</div>
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
@@ -1733,40 +1733,47 @@ function selEmoji(btn, e) {
   document.getElementById('btn-refl').disabled = false;
 }
 
-function markDone() {
+async function markDone() {
   S.taskCompletato = true;
   if (S.giorniCompletati.indexOf(S.giornoAttuale) === -1) {
     S.giorniCompletati.push(S.giornoAttuale);
   }
+  // Salva SUBITO su Supabase con await
   if (S.user) {
-    sb.from('obiettivi').update({
-      giorni_completati: S.giorniCompletati,
-      reflections: S.reflections || {}
+    var {error} = await sb.from('obiettivi').update({
+      giorni_completati: S.giorniCompletati
     }).eq('user_id', S.user.id);
+    if (error) console.error('Errore salvataggio giorno:', error);
+    else console.log('Giorno salvato:', S.giorniCompletati);
   }
 }
 
 async function saveRefl() {
   var reflText = document.getElementById('refl-text').value.trim();
-  if (!reflText) {
-    document.getElementById('refl-text').placeholder = 'Scrivi almeno una riga su cosa hai fatto...';
-    document.getElementById('refl-text').style.borderColor = '#ff6b9d';
-    return;
-  }
-  // Salva il testo della reflection
+  // FIX 1: reflection NON obbligatoria
   var giorno = S.giornoAttuale || 1;
   if (!S.reflections) S.reflections = {};
-  S.reflections[giorno] = reflText;
+  if (reflText) S.reflections[giorno] = reflText;
+
   var t = S.tasks[S.giornoAttuale - 1] || S.tasks[0] || {};
   var profCtx = buildProfileContext().slice(0, 200);
   try {
-    var sys = 'Coach diretto. Profilo:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". Cosa ha fatto: "' + reflText + '". Scrivi ESATTAMENTE 2 frasi brevi di incoraggiamento basate su quello che ha scritto. Niente asterischi, niente titoli. Parla di quello che ha fatto, non inventare altro.';
-    var msg = await callAI(sys, 'Ha fatto: ' + reflText);
+    var reflCtx = reflText ? 'Cosa ha fatto: "' + reflText + '".' : 'Ha completato il task senza lasciare note.';
+    var sys = 'Coach diretto. Profilo:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". ' + reflCtx + ' Scrivi ESATTAMENTE 2 frasi brevi di incoraggiamento. Niente asterischi, niente titoli.';
+    var msg = await callAI(sys, 'Task: ' + clean(t.title||''));
     document.getElementById('done-msg').textContent = clean(msg.trim());
   } catch(e) {
     document.getElementById('done-msg').textContent = 'Hai fatto il primo passo. Torna domani per continuare.';
   }
-  // Aggiorna stats done screen
+
+  // Salva reflection su Supabase
+  if (S.user && reflText) {
+    await sb.from('obiettivi').update({
+      reflections: S.reflections
+    }).eq('user_id', S.user.id);
+  }
+
+  // FIX 4: stats corrette
   var completati = S.giorniCompletati.length;
   var perc = Math.round((completati / 30) * 100);
   var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
@@ -1777,17 +1784,23 @@ async function saveRefl() {
   ss('done');
 }
 
-function sbloccaProssimoTask() {
+async function sbloccaProssimoTask() {
   var oggiStr = new Date().toISOString().slice(0, 10);
-  if (S.dataUltimoExtra !== oggiStr) { S.taskExtraOggi = 0; S.dataUltimoExtra = oggiStr; }
-  if (S.taskExtraOggi >= 2) return;
+  // FIX 2: reset se nuovo giorno, non cumulativo
+  if (S.dataUltimoExtra !== oggiStr) {
+    S.taskExtraOggi = 0;
+    S.dataUltimoExtra = oggiStr;
+  }
+  if (S.taskExtraOggi >= 2) {
+    alert('Hai già sbloccato 2 task extra oggi. Torna domani.');
+    return;
+  }
   S.giornoAttuale++;
   S.taskCompletato = false;
   S.taskExtraOggi++;
   S.dataUltimoExtra = oggiStr;
-  // Salva su Supabase
   if (S.user) {
-    sb.from('obiettivi').update({
+    await sb.from('obiettivi').update({
       giorni_completati: S.giorniCompletati,
       task_extra_oggi: S.taskExtraOggi,
       data_ultimo_extra: S.dataUltimoExtra
@@ -1921,7 +1934,7 @@ function aggiornaHome() {
   var streak = S.giorniCompletati.length; // semplificato per ora
   var giorno = S.giornoAttuale || 1;
 
-  document.getElementById('home-giorno').textContent = 'Giorno ' + giorno + '/30';
+  document.getElementById('home-giorno').textContent = 'Task ' + giorno + '/30';
   document.getElementById('home-streak').textContent = streak;
   document.getElementById('home-perc').textContent = perc + '%';
   document.getElementById('home-crescita').textContent = '+' + crescita + '%';
@@ -1951,8 +1964,9 @@ async function loadStorico() {
 
   var html = '';
   taskCompletati.forEach(function(t) {
-    html += '<div class="tblock" onclick="apriTaskSolaLettura(' + (t.day-1) + ')" style="cursor:pointer">';
-    html += '<div class="tlabel">Giorno ' + t.day + ' — ✓ completato</div>';
+    var idx = tasks.indexOf(t);
+    html += '<div class="tblock" onclick="apriTaskSolaLettura(' + idx + ')" style="cursor:pointer">';
+    html += '<div class="tlabel">Task ' + (idx+1) + ' — ✓ completato</div>';
     html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div>';
     html += '</div>';
   });
@@ -2005,7 +2019,8 @@ async function loadTaskTab() {
 
   var html = '';
   // Task di oggi
-  var oggi = tasks.find(function(t){ return (t.day||0) === giorno; }) || tasks[giorno-1];
+  // FIX 3: usa indice array, non campo day (evita salti se AI non rispetta sequenza)
+  var oggi = tasks[giorno-1] || tasks.find(function(t){ return (t.day||0) === giorno; });
   if (oggi) {
     var idx = tasks.indexOf(oggi);
     // Formatta descrizione: ogni "Passo N:" va a capo
