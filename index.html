@@ -79,6 +79,36 @@ select option{background:#111827;color:#fff}
 .icon-btn{background:none;border:none;color:#8FA0B8;cursor:pointer;font-size:18px;padding:4px}
 .icon-btn:hover{color:#EA580C}
 .step-indicator{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+
+/* HOME REDESIGN */
+.home-head{padding-bottom:0}
+.home-day-pill{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1px;background:#2A1408;border:1px solid #EA580C33;border-radius:999px;padding:6px 10px;font-weight:700}
+.home-kicker{font-size:12px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:24px}
+.home-title{font-size:28px;font-weight:800;line-height:1.1;color:#fff;margin:8px 0 8px;letter-spacing:-0.8px}
+.home-sub{font-size:13px;color:#C7D2E0;line-height:1.55;margin-bottom:8px}
+.home-scroll{padding-top:16px}
+.goal-card{background:linear-gradient(180deg,#1B2435 0%,#101a2c 100%);border:1px solid #EA580C33;border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+.goal-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+.goal-label{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+.goal-title{font-size:19px;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-.3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.goal-badge{font-size:12px;color:#EA580C;background:#2A1408;border:1px solid #EA580C55;border-radius:999px;padding:7px 10px;font-weight:800;white-space:nowrap}
+.goal-progress-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#C7D2E0;margin-bottom:8px}
+.goal-progress-row strong{color:#fff;font-size:14px}
+.goal-bar{height:8px;background:#0B1020;border-radius:999px;overflow:hidden;border:1px solid #2F3B52}
+.goal-bar div{height:100%;background:#EA580C;border-radius:999px;transition:width .4s ease}
+.goal-meta{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:11px;color:#C7D2E0;line-height:1.4;flex-wrap:wrap}
+.goal-meta i{color:#EA580C;margin-right:4px}.goal-meta b{color:#fff;font-weight:700}
+.home-mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.mini-stat{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:12px 8px;display:flex;align-items:center;gap:8px;min-width:0}
+.mini-icon{font-size:16px;line-height:1}.mini-stat strong{display:block;color:#fff;font-size:16px;font-weight:800}.mini-stat span{display:block;color:#8FA0B8;font-size:9px;text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.today-card{background:#1B2435;border:1px solid #2F3B52;border-radius:20px;padding:18px;margin-bottom:12px}
+.today-label{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:8px}
+.today-title{font-size:21px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:10px;letter-spacing:-.4px}
+.today-desc{font-size:13px;color:#c9d3e6;line-height:1.65;white-space:pre-line;margin-bottom:14px}
+.today-why{background:#2A1408;border:1px solid #EA580C22;border-radius:14px;padding:12px;margin:12px 0 14px}
+.today-why .tdesc{font-size:12px;line-height:1.55;color:#C7D2E0}.home-complete{margin-top:2px}
+.home-complete.done{background:transparent;color:#EA580C;border:1px solid #EA580C}
+
 /* BOTTOM NAV */
 .bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#1B2435;border-top:1px solid #2F3B52;padding:8px 0 16px;z-index:200}
 .bnav.visible{display:block}
@@ -740,41 +770,71 @@ select option{background:#111827;color:#fff}
 
 <!-- HOME -->
 <div class="screen has-nav" id="sc-home">
-  <div class="s-pad" style="padding-bottom:0">
+  <div class="s-pad home-head">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div style="font-size:12px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Task 1/30</div>
+        <div class="home-day-pill" id="home-giorno">Task 1/30</div>
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
-    <div class="stats" style="margin-top:16px">
-      <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Baseline</div></div>
-      <div class="stat"><div class="stat-n" id="home-streak">0</div><div class="stat-l">Streak</div></div>
-      <div class="stat"><div class="stat-n" id="home-perc">0%</div><div class="stat-l">Completati</div></div>
-      <div class="stat"><div class="stat-n" style="color:#EA580C" id="home-crescita">+0%</div><div class="stat-l">Crescita</div></div>
-    </div>
-    <!-- BARRA PROGRESSO -->
-    <div style="margin:12px 0 0">
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:#8FA0B8;margin-bottom:4px">
-        <span>Percorso 30 giorni</span><span id="home-giorni-label">0/30</span>
-      </div>
-      <div style="height:4px;background:#1B2435;border-radius:4px">
-        <div id="home-progbar" style="height:4px;background:#EA580C;border-radius:4px;transition:width 0.4s;width:0%"></div>
-      </div>
-    </div>
+    <div class="home-kicker">Oggi continui il tuo percorso</div>
+    <div class="home-title" id="home-main-title">Un passo piccolo. Fatto bene.</div>
+    <div class="home-sub">La home ti mostra solo ciò che conta: obiettivo, avanzamento e task di oggi.</div>
   </div>
-  <div class="scroll">
-    <div class="tblock">
-      <div style="font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:4px" id="home-task-num">Task 1 di 30</div>
-      <div class="tlabel">Task di oggi</div>
-      <div class="ttitle" id="task-title"></div>
-      <div class="tdesc" id="task-desc"></div>
+
+  <div class="scroll home-scroll">
+    <!-- CARD OBIETTIVO ATTIVO -->
+    <div class="goal-card">
+      <div class="goal-top">
+        <div>
+          <div class="goal-label">Obiettivo attivo</div>
+          <div class="goal-title" id="home-goal-title">Il tuo percorso</div>
+        </div>
+        <div class="goal-badge" id="home-giorni-label">0/30</div>
+      </div>
+      <div class="goal-progress-row">
+        <span>Avanzamento</span>
+        <strong id="home-perc">0%</strong>
+      </div>
+      <div class="goal-bar">
+        <div id="home-progbar" style="width:0%"></div>
+      </div>
+      <div class="goal-meta">
+        <span><i class="ti ti-calendar-check"></i> Fine stimata: <b id="home-end-date">—</b></span>
+        <span><i class="ti ti-flame"></i> <b id="home-streak">0</b> giorni</span>
+      </div>
     </div>
-    <div class="tblock" style="background:transparent;border-color:#1B2435">
-      <div class="tlabel">Perché questo task</div>
-      <div class="tdesc" id="task-why" style="font-size:12px"></div>
+
+    <!-- MINI STATS -->
+    <div class="home-mini-stats">
+      <div class="mini-stat">
+        <div class="mini-icon">🔥</div>
+        <div><strong id="home-streak-copy">0</strong><span>Streak</span></div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-icon">✅</div>
+        <div><strong id="home-perc-copy">0%</strong><span>Completati</span></div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-icon">📈</div>
+        <div><strong id="home-crescita">+0%</strong><span>Crescita</span></div>
+      </div>
     </div>
+    <span id="home-score" style="display:none">0</span>
+
+    <!-- TASK DI OGGI -->
+    <div class="today-card">
+      <div class="today-label" id="home-task-num">Task 1 di 30</div>
+      <div class="today-title" id="task-title"></div>
+      <div class="today-desc" id="task-desc"></div>
+      <div class="today-why">
+        <div class="tlabel">Perché oggi</div>
+        <div class="tdesc" id="task-why"></div>
+      </div>
+      <button class="btn home-complete" id="home-complete-btn" onclick="completeFromHome()">Ho completato il task</button>
+    </div>
+
     <!-- ABITUDINI ATTIVE -->
     <div class="tblock" id="home-habits" style="display:none;border-color:#EA580C22"></div>
   </div>
@@ -2059,20 +2119,41 @@ function aggiornaHome() {
   var totale = 30;
   var perc = Math.round((completati / totale) * 100);
   var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
-  var streak = S.giorniCompletati.length; // semplificato per ora
+  var streak = S.giorniCompletati.length;
   var giorno = S.giornoAttuale || 1;
+  var rimanenti = Math.max(totale - completati, 0);
+  var fine = new Date();
+  fine.setDate(fine.getDate() + rimanenti);
+  var fineStr = fine.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
 
-  document.getElementById('home-giorno').textContent = 'Task ' + giorno + '/30';
-  if (document.getElementById('home-task-num'))
-    document.getElementById('home-task-num').textContent = 'Task ' + giorno + ' di 30';
-  document.getElementById('home-streak').textContent = streak;
-  document.getElementById('home-perc').textContent = perc + '%';
-  document.getElementById('home-crescita').textContent = '+' + crescita + '%';
-  document.getElementById('home-giorni-label').textContent = completati + '/30';
-  document.getElementById('home-progbar').style.width = perc + '%';
+  var goalTitle = (S.objData && (S.objData.risultato || S.objData.come)) || S.ctx || 'Il tuo percorso';
+  if (goalTitle.length > 72) goalTitle = goalTitle.slice(0, 72) + '…';
+
+  var el;
+  el = document.getElementById('home-giorno'); if (el) el.textContent = 'Task ' + giorno + '/30';
+  el = document.getElementById('home-task-num'); if (el) el.textContent = 'Task ' + giorno + ' di 30';
+  el = document.getElementById('home-goal-title'); if (el) el.textContent = goalTitle;
+  el = document.getElementById('home-streak'); if (el) el.textContent = streak;
+  el = document.getElementById('home-streak-copy'); if (el) el.textContent = streak;
+  el = document.getElementById('home-perc'); if (el) el.textContent = perc + '%';
+  el = document.getElementById('home-perc-copy'); if (el) el.textContent = perc + '%';
+  el = document.getElementById('home-crescita'); if (el) el.textContent = '+' + crescita + '%';
+  el = document.getElementById('home-giorni-label'); if (el) el.textContent = completati + '/30';
+  el = document.getElementById('home-end-date'); if (el) el.textContent = rimanenti === 0 ? 'completato' : fineStr;
+  el = document.getElementById('home-progbar'); if (el) el.style.width = perc + '%';
+
+  var btn = document.getElementById('home-complete-btn');
+  if (btn) {
+    if (S.taskCompletato) {
+      btn.textContent = 'Task completato — vedi i prossimi';
+      btn.classList.add('done');
+    } else {
+      btn.textContent = 'Ho completato il task';
+      btn.classList.remove('done');
+    }
+  }
   aggiornaHomeHabits();
 }
-
 async function loadStorico() {
   var list = document.getElementById('storico-list');
   var bot = document.getElementById('storico-bot');
@@ -2218,6 +2299,29 @@ function apriTask(idx) {
   document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
   ss('home');
+}
+
+
+async function completeFromHome() {
+  if (S.taskCompletato) {
+    S_activeNav = 'task';
+    loadTaskTab();
+    ss('storico');
+    return;
+  }
+  if (confirm('Confermi di aver completato il task di oggi?')) {
+    await markDone();
+    var giorno = S.giornoAttuale || 1;
+    var t = S.tasks[giorno - 1] || S.tasks[0] || {};
+    var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '
+Passo $1:').trim();
+    document.getElementById('refl-task-title').textContent = clean(t.title || '');
+    document.getElementById('refl-task-desc').textContent = descFormatted;
+    document.getElementById('refl-task-desc').style.whiteSpace = 'pre-line';
+    document.getElementById('refl-text').value = '';
+    document.getElementById('refl-text').style.borderColor = '';
+    ss('reflection');
+  }
 }
 
 function confirmDone() {
