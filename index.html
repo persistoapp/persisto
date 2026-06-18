@@ -13,7 +13,7 @@ body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
 .phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
-.screen.has-nav{bottom:64px}
+.screen.has-nav{bottom:88px}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
 .logo span{color:#EA580C}
@@ -31,7 +31,7 @@ body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
 .div-text{font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px}
 input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:#1B2435;border:1px solid #2F3B52;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6;appearance:none;-webkit-appearance:none}
 input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:#EA580C}
-input::placeholder,textarea::placeholder{color:#2a3a5a}
+input::placeholder,textarea::placeholder{color:#5F6F89}
 select option{background:#111827;color:#fff}
 .field{margin-bottom:14px}
 .field-label{font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
@@ -43,7 +43,7 @@ select option{background:#111827;color:#fff}
 .btn:disabled{opacity:0.25;cursor:not-allowed}
 .btn-ghost{width:100%;padding:14px;background:transparent;color:#8FA0B8;border:1px solid #2F3B52;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
 .btn-link{background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
-.bot{padding:16px 24px 24px;margin-top:auto}
+.bot{padding:16px 24px 28px;margin-top:auto}
 .qnum{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
 .prog{height:2px;background:#1B2435;margin:16px 0 24px;border-radius:2px}
@@ -110,12 +110,59 @@ select option{background:#111827;color:#fff}
 .home-complete.done{background:transparent;color:#EA580C;border:1px solid #EA580C}
 
 /* BOTTOM NAV */
-.bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#1B2435;border-top:1px solid #2F3B52;padding:8px 0 16px;z-index:200}
+.bnav{
+  display:none;
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#1B2435;
+  border-top:1px solid #2F3B52;
+  padding:8px 6px calc(18px + env(safe-area-inset-bottom));
+  min-height:88px;
+  z-index:200;
+}
 .bnav.visible{display:block}
-.bnav-items{display:flex;width:100%;justify-content:space-around}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 6px;border-radius:10px;background:none;border:none;color:#8FA0B8;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
-.bnav-item i{font-size:20px}
-.bnav-item.active,.bnav-item:hover{color:#EA580C}
+.bnav-items{
+  display:flex;
+  width:100%;
+  justify-content:space-between;
+  align-items:center;
+  gap:2px;
+}
+.bnav-item{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  cursor:pointer;
+  padding:7px 2px;
+  border-radius:12px;
+  background:none;
+  border:none;
+  color:#9FB0C8;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  font-family:inherit;
+  transition:color 0.15s, background 0.15s;
+  line-height:1.1;
+}
+.bnav-item i{font-size:21px;line-height:1}
+.bnav-item.active,.bnav-item:hover{
+  color:#EA580C;
+  background:#2A140844;
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)){
+  .bot{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+}
+@media (max-width:380px){
+  .bnav-item{font-size:8px;letter-spacing:.3px}
+  .bnav-item i{font-size:20px}
+}
 /* CORREZIONE TASK */
 .corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
 .corr-panel.open{display:block}
@@ -997,13 +1044,13 @@ select option{background:#111827;color:#fff}
       <i class="ti ti-checkbox"></i>Task
     </button>
     <button class="bnav-item" id="nav-progressi" onclick="navTo('progressi')">
-      <i class="ti ti-chart-line"></i>Progressi
+      <i class="ti ti-chart-line"></i>Prog.
     </button>
     <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
-      <i class="ti ti-history"></i>Storico
+      <i class="ti ti-history"></i>Stor.
     </button>
     <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
-      <i class="ti ti-user"></i>Profilo
+      <i class="ti ti-user"></i>Prof.
     </button>
   </div>
 </div>
