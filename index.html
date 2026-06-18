@@ -744,7 +744,7 @@ select option{background:#1a1a2e;color:#fff}
       </div>
     </div>
     <div class="stats" style="margin-top:16px">
-      <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Punteggio</div></div>
+      <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Baseline</div></div>
       <div class="stat"><div class="stat-n" id="home-streak">0</div><div class="stat-l">Streak</div></div>
       <div class="stat"><div class="stat-n" id="home-perc">0%</div><div class="stat-l">Completati</div></div>
       <div class="stat"><div class="stat-n" style="color:#00d4aa" id="home-crescita">+0%</div><div class="stat-l">Crescita</div></div>
@@ -761,6 +761,7 @@ select option{background:#1a1a2e;color:#fff}
   </div>
   <div class="scroll">
     <div class="tblock">
+      <div style="font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:4px" id="home-task-num">Task 1 di 30</div>
       <div class="tlabel">Task di oggi</div>
       <div class="ttitle" id="task-title"></div>
       <div class="tdesc" id="task-desc"></div>
@@ -1827,17 +1828,8 @@ function tornaHome() {
     ss('completato');
     return;
   }
-  // Altrimenti avanza al giorno successivo
-  S.giornoAttuale++;
-  S.taskCompletato = false;
-  var t = S.tasks[S.giornoAttuale - 1];
-  if (t) {
-    document.getElementById('task-title').textContent = clean(t.title) || '';
-    var df = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    document.getElementById('task-desc').style.whiteSpace = 'pre-line';
-    document.getElementById('task-desc').textContent = df;
-    document.getElementById('task-why').textContent = clean(t.why) || '';
-  }
+  // NON avanza il giorno — rimane sul task attuale
+  // Il giorno avanza solo con sblocca esplicito dal tab Task
   aggiornaHome();
   ss('home');
 }
@@ -1935,6 +1927,8 @@ function aggiornaHome() {
   var giorno = S.giornoAttuale || 1;
 
   document.getElementById('home-giorno').textContent = 'Task ' + giorno + '/30';
+  if (document.getElementById('home-task-num'))
+    document.getElementById('home-task-num').textContent = 'Task ' + giorno + ' di 30';
   document.getElementById('home-streak').textContent = streak;
   document.getElementById('home-perc').textContent = perc + '%';
   document.getElementById('home-crescita').textContent = '+' + crescita + '%';
