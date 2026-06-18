@@ -1945,32 +1945,30 @@ async function markDone() {
 
 async function saveRefl() {
   var reflText = document.getElementById('refl-text').value.trim();
-  // FIX 1: reflection NON obbligatoria
   var giorno = S.giornoAttuale || 1;
+
   if (!S.reflections) S.reflections = {};
   if (reflText) S.reflections[giorno] = reflText;
 
-  var t = S.tasks[S.giornoAttuale - 1] || S.tasks[0] || {};
-  var profCtx = buildProfileContext().slice(0, 200);
-  try {
-    var reflCtx = reflText ? 'Cosa ha fatto: "' + reflText + '".' : 'Ha completato il task senza lasciare note.';
-    var sys = 'Coach diretto. Profilo:\n' + profCtx + '\nTask completato: "' + clean(t.title||'') + '". ' + reflCtx + ' Scrivi ESATTAMENTE 2 frasi brevi di incoraggiamento. Niente asterischi, niente titoli.';
-    var msg = await callAI(sys, 'Task: ' + clean(t.title||''));
-    document.getElementById('done-msg').textContent = clean(msg.trim());
-  } catch(e) {
-    document.getElementById('done-msg').textContent = 'Hai fatto il primo passo. Torna domani per continuare.';
+  // Salva reflection su Supabase, se presente
+  if (S.user) {
+    var payload = { giorni_completati: S.giorniCompletati };
+    if (reflText) payload.reflections = S.reflections;
+
+    var { error } = await sb.from('obiettivi')
+      .update(payload)
+      .eq('user_id', S.user.id);
+
+    if (error) {
+      alert('Errore salvataggio: ' + error.message);
+      return;
+    }
   }
 
-  // Salva reflection su Supabase
-  if (S.user && reflText) {
-    await sb.from('obiettivi').update({
-      reflections: S.reflections
-    }).eq('user_id', S.user.id);
-  }
   aggiornaHome();
-  S_activeNav = 'task';
-  await loadTaskTab();
-  ss('storico');
+  loadProgressi();
+  S_activeNav = 'progressi';
+  ss('progressi');
 }
 
 async function sbloccaProssimoTask() {
