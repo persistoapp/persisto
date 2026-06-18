@@ -607,16 +607,21 @@ select option{background:#1a1a2e;color:#fff}
   </div>
 </div>
 
-<!-- OBIETTIVO SPECIFICO -->
+<!-- OBIETTIVO SPECIFICO - DINAMICO PER AREA -->
 <div class="screen" id="sc-obiettivo">
   <div class="s-pad">
     <div class="logo">Per<span>sisto</span></div>
-    <div class="prog"><div class="progbar" style="width:0%"></div></div>
-    <div class="h1" style="font-size:22px">Il tuo obiettivo</div>
-    <div class="sub">Prima di tutto dimmi: come vuoi raggiungere questo obiettivo specificamente?</div>
+    <div class="prog"><div class="progbar" id="obj-prog" style="width:0%"></div></div>
+    <div class="h1" style="font-size:22px" id="obj-title">Il tuo obiettivo</div>
+    <div class="sub" id="obj-sub">Dimmi cosa vuoi ottenere esattamente.</div>
+    <!-- CHIPS OBIETTIVO SPECIFICO PER AREA -->
+    <div class="field" id="obj-chips-field">
+      <div class="field-label" id="obj-chips-label">Cosa vuoi ottenere?</div>
+      <div class="chips" id="chips-obj-tipo"></div>
+    </div>
     <div class="field">
-      <div class="field-label">Come pensi di arrivarci</div>
-      <textarea id="obj-come" rows="3" placeholder="Es: voglio fare i 10.000€ al mese come closer nel settore formazione online..."></textarea>
+      <div class="field-label" id="obj-come-label">Descrivilo con parole tue</div>
+      <textarea id="obj-come" rows="3" placeholder=""></textarea>
     </div>
     <div class="field">
       <div class="field-label">Hai già provato? Come è andata?</div>
@@ -632,8 +637,8 @@ select option{background:#1a1a2e;color:#fff}
       <textarea id="obj-bloccato" rows="2" placeholder="Sii onesta, non fare la versione bella..."></textarea>
     </div>
     <div class="field">
-      <div class="field-label">Risultato concreto che definisce il successo</div>
-      <input type="text" id="obj-risultato" placeholder="Es: 10.000€ netti al mese, -10kg, correre 5km">
+      <div class="field-label" id="obj-risultato-label">Risultato concreto che definisce il successo</div>
+      <input type="text" id="obj-risultato" placeholder="">
     </div>
     <div class="field">
       <div class="field-label">Entro quando</div>
@@ -1588,37 +1593,117 @@ async function correggiTask() {
   btnCorr.textContent = 'Rigenera task';
 }
 
+var AREA_CONFIG = {
+  corpo: {
+    title: 'Obiettivo corpo',
+    sub: 'Cosa vuoi cambiare nel tuo corpo?',
+    chips: ['Perdere peso','Tonificare e definire','Recuperare dopo infortunio/malattia','Avere più energia','Ricominciare a muovermi','Migliorare alimentazione','Dormire meglio'],
+    comeLabel: 'Come pensi di arrivarci?',
+    risultatoLabel: 'Risultato concreto (es: -10kg, correre 5km, dormire 7h)',
+    risultatoPlaceholder: 'Es: perdere 10kg, correre 5km senza fermarmi, dormire 7 ore ogni notte'
+  },
+  mente: {
+    title: 'Obiettivo mente',
+    sub: 'Su cosa vuoi lavorare mentalmente?',
+    chips: ['Ridurre stress e ansia','Migliorare il focus','Cambiare mindset e credenze','Migliorare la memoria','Smettere di procrastinare','Gestire le emozioni','Aumentare la fiducia in me'],
+    comeLabel: 'Come si manifesta il problema oggi?',
+    risultatoLabel: 'Come ti sentiresti se fosse risolto?',
+    risultatoPlaceholder: 'Es: riuscire a concentrarmi 2 ore senza distrarmi, non avere attacchi d\'ansia'
+  },
+  lavoro: {
+    title: 'Obiettivo lavoro',
+    sub: 'Cosa vuoi cambiare nel tuo lavoro?',
+    chips: ['Aumentare il fatturato','Avviare un nuovo business','Cambiare lavoro o carriera','Scalare un business esistente','Trovare nuovi clienti','Lavorare meno ore','Diventare indipendente'],
+    comeLabel: 'Descrivilo in dettaglio — settore, metodo, situazione attuale',
+    risultatoLabel: 'Risultato concreto (es: 10.000€/mese, 5 nuovi clienti)',
+    risultatoPlaceholder: 'Es: 10.000€ netti al mese, 5 clienti ricorrenti, lasciare il lavoro dipendente'
+  },
+  relazioni: {
+    title: 'Obiettivo relazioni',
+    sub: 'Su quale relazione vuoi lavorare?',
+    chips: ['Migliorare il rapporto di coppia','Gestire meglio il rapporto con i figli','Ricostruire un rapporto familiare','Uscire da una relazione tossica','Fare nuove amicizie','Migliorare le relazioni al lavoro','Trovare un partner'],
+    comeLabel: 'Descrivi la situazione attuale',
+    risultatoLabel: 'Come sarebbe la situazione ideale?',
+    risultatoPlaceholder: 'Es: comunicare senza litigare, passare tempo di qualità con i figli ogni giorno'
+  }
+};
+
 function startFlow() {
   var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
   S.ctx = ctx;
   CHIPS.tentativo = null;
+  CHIPS['obj-tipo'] = null;
   document.getElementById('obj-come').value = '';
   document.getElementById('obj-risultato').value = '';
   document.getElementById('field-cosa-bloccato').style.display = 'none';
   document.getElementById('err-obiettivo').innerHTML = '';
+
+  // Personalizza la schermata obiettivo per area
+  var cfg = S.arch ? AREA_CONFIG[S.arch] : null;
+  if (cfg) {
+    document.getElementById('obj-title').textContent = cfg.title;
+    document.getElementById('obj-sub').textContent = cfg.sub;
+    document.getElementById('obj-come-label').textContent = cfg.comeLabel;
+    document.getElementById('obj-risultato-label').textContent = cfg.risultatoLabel;
+    document.getElementById('obj-risultato').placeholder = cfg.risultatoPlaceholder;
+    document.getElementById('obj-come').placeholder = '';
+    // Popola chips specifiche
+    var chipsEl = document.getElementById('chips-obj-tipo');
+    chipsEl.innerHTML = cfg.chips.map(function(c) {
+      return '<div class="chip" onclick="selChipObjTipo(this,\'' + c.replace(/'/g,"\\'") + '\')">' + c + '</div>';
+    }).join('');
+    document.getElementById('obj-chips-field').style.display = 'block';
+  } else {
+    // Testo libero — nascondi chips area
+    document.getElementById('obj-title').textContent = 'Il tuo obiettivo';
+    document.getElementById('obj-sub').textContent = 'Dimmi cosa vuoi ottenere esattamente.';
+    document.getElementById('obj-come-label').textContent = 'Come pensi di arrivarci';
+    document.getElementById('obj-risultato-label').textContent = 'Risultato concreto che definisce il successo';
+    document.getElementById('obj-risultato').placeholder = 'Es: 10.000€ netti al mese, -10kg, correre 5km';
+    document.getElementById('obj-come').placeholder = 'Descrivi il tuo obiettivo...';
+    document.getElementById('obj-chips-field').style.display = 'none';
+  }
+  // Reset chips tentativo e scadenza
+  document.querySelectorAll('#chips-tentativo .chip, #chips-scadenza .chip').forEach(function(c){ c.classList.remove('sel'); });
   ss('obiettivo');
+}
+
+function selChipObjTipo(el, val) {
+  document.querySelectorAll('#chips-obj-tipo .chip').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  CHIPS['obj-tipo'] = val;
+  // Pre-popola la textarea con la selezione
+  var ta = document.getElementById('obj-come');
+  if (!ta.value) ta.placeholder = 'Es: voglio ' + val.toLowerCase() + '...';
 }
 
 async function startOnboarding() {
   var come = document.getElementById('obj-come').value.trim();
   var risultato = document.getElementById('obj-risultato').value.trim();
-  if (!come) {
-    document.getElementById('err-obiettivo').innerHTML = '<div class="err">Dimmi come pensi di raggiungere l\'obiettivo.</div>';
+  var tipoScelto = CHIPS['obj-tipo'] || '';
+  if (!come && !tipoScelto) {
+    document.getElementById('err-obiettivo').innerHTML = '<div class="err">Dimmi cosa vuoi ottenere.</div>';
     return;
   }
+  // Costruisce il contesto obiettivo con il tipo specifico
+  var ctxCompleto = tipoScelto ? tipoScelto + (come ? ': ' + come : '') : come;
+  S.ctx = ctxCompleto;
   S.objData = {
-    come: come,
+    come: come || tipoScelto,
     tentativo: CHIPS.tentativo || 'mai',
     bloccato: document.getElementById('obj-bloccato').value.trim(),
     risultato: risultato,
-    scadenza: CHIPS.scadenza || 'non specificata'
+    scadenza: CHIPS.scadenza || 'non specificata',
+    area: S.arch || 'generico',
+    tipoObiettivo: tipoScelto
   };
   ss('loading');
   document.getElementById('err-welcome').innerHTML = '';
   try {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nTentativo precedente: ' + S.objData.tentativo + (S.objData.bloccato ? ' — cosa l\'ha bloccato: "' + S.objData.bloccato + '"' : '') + '\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
-    var sys = 'Sei un coach diretto e chirurgico. Hai già il profilo completo della persona. Genera ESATTAMENTE 4 domande brevi e specifiche per capire il punto di partenza REALE rispetto a questo obiettivo specifico. NON chiedere cose già note dal profilo. NON chiedere come vuole raggiungere l\'obiettivo (già risposto). Domande sulla situazione attuale specifica rispetto all\'obiettivo dichiarato. Rispondi SOLO con JSON: {"questions":["q1","q2","q3","q4"]}\n\nPROFILO PERSONA:\n' + profCtx;
+    var areaCtx = S.objData.area && S.objData.area !== 'generico' ? '\nArea di lavoro: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo: ' + S.objData.tipoObiettivo : '') : '';
+    var sys = 'Sei un coach diretto e chirurgico. Genera ESATTAMENTE 4 domande brevi e specifiche per capire il punto di partenza REALE di questa persona rispetto al suo obiettivo.\n\nREGOLE:\n- Domande contestualizzate all\'area specifica (' + (S.objData.area||'generale') + ')\n- NON chiedere cose già note dal profilo demografico\n- NON chiedere come vuole raggiungere l\'obiettivo (già risposto)\n- Domande concrete sulla situazione attuale\n- Brevi, dirette, una cosa sola per domanda\n\nRispondi SOLO con JSON: {"questions":["q1","q2","q3","q4"]}\n\nPROFILO PERSONA:\n' + profCtx + areaCtx;
     var raw = await callAI(sys, objCtx);
     var p = safeJSON(raw);
     S.questions = p.questions.slice(0, 4);
@@ -1665,7 +1750,8 @@ async function genProfile() {
   try {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
-    var baseCtx = profCtx + '\n\n' + objCtx + '\n\nRisposte onboarding:\n' + qa;
+    var areaExtra = S.objData.area && S.objData.area !== 'generico' ? '\nArea specifica: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo scelto: ' + S.objData.tipoObiettivo : '') : '';
+    var baseCtx = profCtx + '\n\n' + objCtx + areaExtra + '\n\nRisposte onboarding:\n' + qa;
     var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare a domani o giorni futuri.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO DICHIARATO.\n4. Personalizzati su questa persona specifica.\n\nDUE TIPI DI TASK:\n- type:\"action\" = azione singola, si fa UNA VOLTA SOLA oggi\n- type:\"habit\" = abitudine da ripetere ogni giorno per N giorni (es. movimento, alimentazione, routine). Usa habit_id univoco snake_case (es. \"food_log\", \"morning_walk\") e habit_days (numero giorni).\nMAX 3 abitudini sui 10 task.\n\nJSON senza altro testo: {\"baseline_score\":42,\"area\":\"Nome area\",\"summary\":\"2 frasi su questa persona.\",\"approach\":\"Una frase pratica.\",\"tasks\":[{\"day\":1,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"},{\"day\":2,\"type\":\"habit\",\"habit_id\":\"food_log\",\"habit_days\":7,\"title\":\"Fotografa ogni pasto oggi\",\"description\":\"Fai foto prima di ogni pasto.\",\"why\":\"Crea consapevolezza.\"}]}\nbaseline_score 15-65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
     var sys2 = 'Sei un coach pratico. Genera i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (con habit_id snake_case e habit_days).\nNON ricreare abitudini già attive nei giorni 1-10 (già mostrate automaticamente).\nMAX 2 nuove abitudini.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":11,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx;
     var sys3 = 'Sei un coach pratico. Genera i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. Portano al risultato finale.\n\nDUE TIPI: type:\"action\" o type:\"habit\". NON ricreare abitudini già attive. MAX 1 nuova abitudine.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":21,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
