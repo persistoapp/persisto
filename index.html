@@ -13,7 +13,7 @@ body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
 .phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
-.screen.has-nav{bottom:88px}
+.screen.has-nav{bottom:118px}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
 .logo span{color:#EA580C}
@@ -43,7 +43,7 @@ select option{background:#111827;color:#fff}
 .btn:disabled{opacity:0.25;cursor:not-allowed}
 .btn-ghost{width:100%;padding:14px;background:transparent;color:#8FA0B8;border:1px solid #2F3B52;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
 .btn-link{background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
-.bot{padding:16px 24px 28px;margin-top:auto}
+.bot{padding:16px 24px calc(34px + env(safe-area-inset-bottom));margin-top:auto}
 .qnum{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
 .prog{height:2px;background:#1B2435;margin:16px 0 24px;border-radius:2px}
@@ -113,55 +113,94 @@ select option{background:#111827;color:#fff}
 .bnav{
   display:none;
   position:absolute;
-  bottom:0;
   left:0;
   right:0;
+  bottom:0;
   background:#1B2435;
   border-top:1px solid #2F3B52;
-  padding:8px 6px calc(18px + env(safe-area-inset-bottom));
-  min-height:88px;
+  padding:10px 6px calc(34px + env(safe-area-inset-bottom));
+  min-height:112px;
   z-index:200;
 }
 .bnav.visible{display:block}
 .bnav-items{
-  display:flex;
-  width:100%;
-  justify-content:space-between;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
   align-items:center;
   gap:2px;
+  width:100%;
 }
 .bnav-item{
-  flex:1;
   min-width:0;
+  width:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:4px;
+  gap:5px;
   cursor:pointer;
-  padding:7px 2px;
-  border-radius:12px;
+  padding:8px 1px;
+  border-radius:14px;
   background:none;
   border:none;
   color:#9FB0C8;
-  font-size:9px;
+  font-size:10px;
   text-transform:uppercase;
-  letter-spacing:.6px;
+  letter-spacing:.35px;
   font-family:inherit;
-  transition:color 0.15s, background 0.15s;
-  line-height:1.1;
+  line-height:1.05;
+  white-space:nowrap;
+  overflow:visible;
+  transition:color .15s, background .15s;
 }
-.bnav-item i{font-size:21px;line-height:1}
+.bnav-item i{
+  font-size:22px;
+  line-height:1;
+  flex-shrink:0;
+}
 .bnav-item.active,.bnav-item:hover{
   color:#EA580C;
   background:#2A140844;
 }
 @supports (padding-bottom: env(safe-area-inset-bottom)){
-  .bot{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  .bot{padding-bottom:calc(34px + env(safe-area-inset-bottom))}
 }
-@media (max-width:380px){
-  .bnav-item{font-size:8px;letter-spacing:.3px}
-  .bnav-item i{font-size:20px}
+
+/* Telefoni stretti: mantieni parole complete, riduci solo font e spazi */
+@media (max-width:390px){
+  .bnav{
+    padding-left:3px;
+    padding-right:3px;
+  }
+  .bnav-item{
+    font-size:8.5px;
+    letter-spacing:.15px;
+    padding-left:0;
+    padding-right:0;
+  }
+  .bnav-item i{font-size:21px}
+}
+
+/* Browser mobile con barra di sistema visibile: alza e allarga area cliccabile */
+@media (max-height:760px){
+  .screen.has-nav{bottom:128px}
+  .bnav{
+    min-height:122px;
+    padding-bottom:44px;
+  }
+}
+
+/* Desktop: mantiene look compatto */
+@media (min-width:700px){
+  .screen.has-nav{bottom:92px}
+  .bnav{
+    min-height:86px;
+    padding-bottom:18px;
+  }
+  .bnav-item{
+    font-size:10px;
+    letter-spacing:.8px;
+  }
 }
 /* CORREZIONE TASK */
 .corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
@@ -1044,13 +1083,13 @@ select option{background:#111827;color:#fff}
       <i class="ti ti-checkbox"></i>Task
     </button>
     <button class="bnav-item" id="nav-progressi" onclick="navTo('progressi')">
-      <i class="ti ti-chart-line"></i>Prog.
+      <i class="ti ti-chart-line"></i>Progressi
     </button>
     <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
-      <i class="ti ti-history"></i>Stor.
+      <i class="ti ti-history"></i>Storico
     </button>
     <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
-      <i class="ti ti-user"></i>Prof.
+      <i class="ti ti-user"></i>Profilo
     </button>
   </div>
 </div>
