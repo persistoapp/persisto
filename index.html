@@ -989,6 +989,9 @@ select option{background:#111827;color:#fff}
 // ─── SUPABASE ───────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ssngfxdviefytqnzljmf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MhxlV9kHfukREFKcn2wBWg_mOxMlHxh';
+if (typeof supabase === 'undefined') {
+  alert('Supabase non è caricato. Controlla la connessione o il blocco CDN.');
+}
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ─── STATO ──────────────────────────────────────────────────────────────────
@@ -1634,7 +1637,7 @@ async function correggiTask() {
     }
     var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
     var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask da sostituire: ' + taskPrecedente + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
+    var msg = objCtx + '\n\nTask da sostituire: ' + clean((taskAttuale && taskAttuale.title) || '') + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
     console.log('TASK RIGENERATO', task);
@@ -2313,8 +2316,7 @@ async function completeFromHome() {
     await markDone();
     var giorno = S.giornoAttuale || 1;
     var t = S.tasks[giorno - 1] || S.tasks[0] || {};
-    var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '
-Passo $1:').trim();
+    var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
     document.getElementById('refl-task-title').textContent = clean(t.title || '');
     document.getElementById('refl-task-desc').textContent = descFormatted;
     document.getElementById('refl-task-desc').style.whiteSpace = 'pre-line';
