@@ -113,7 +113,7 @@ select option{background:#111827;color:#fff}
 .bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#1B2435;border-top:1px solid #2F3B52;padding:8px 0 16px;z-index:200}
 .bnav.visible{display:block}
 .bnav-items{display:flex;width:100%;justify-content:space-around}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#8FA0B8;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 6px;border-radius:10px;background:none;border:none;color:#8FA0B8;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
 .bnav-item i{font-size:20px}
 .bnav-item.active,.bnav-item:hover{color:#EA580C}
 /* CORREZIONE TASK */
@@ -778,9 +778,9 @@ select option{background:#111827;color:#fff}
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
-    <div class="home-kicker">Oggi continui il tuo percorso</div>
-    <div class="home-title" id="home-main-title">Un passo piccolo. Fatto bene.</div>
-    <div class="home-sub">La home ti mostra solo ciò che conta: obiettivo, avanzamento e task di oggi.</div>
+    <div class="home-kicker">Il prossimo passo conta</div>
+    <div class="home-title" id="home-main-title">Completa il task di oggi.</div>
+    <div class="home-sub">Non devi fare tutto oggi. Devi solo non saltare il prossimo passo.</div>
   </div>
 
   <div class="scroll home-scroll">
@@ -809,6 +809,10 @@ select option{background:#111827;color:#fff}
     <!-- MINI STATS -->
     <div class="home-mini-stats">
       <div class="mini-stat">
+        <div class="mini-icon">🎯</div>
+        <div><strong id="home-day-copy">1</strong><span>Giorno</span></div>
+      </div>
+      <div class="mini-stat">
         <div class="mini-icon">🔥</div>
         <div><strong id="home-streak-copy">0</strong><span>Streak</span></div>
       </div>
@@ -816,12 +820,9 @@ select option{background:#111827;color:#fff}
         <div class="mini-icon">✅</div>
         <div><strong id="home-perc-copy">0%</strong><span>Completati</span></div>
       </div>
-      <div class="mini-stat">
-        <div class="mini-icon">📈</div>
-        <div><strong id="home-crescita">+0%</strong><span>Crescita</span></div>
-      </div>
     </div>
     <span id="home-score" style="display:none">0</span>
+    <span id="home-crescita" style="display:none">+0%</span>
 
     <!-- TASK DI OGGI -->
     <div class="today-card">
@@ -832,7 +833,7 @@ select option{background:#111827;color:#fff}
         <div class="tlabel">Perché oggi</div>
         <div class="tdesc" id="task-why"></div>
       </div>
-      <button class="btn home-complete" id="home-complete-btn" onclick="completeFromHome()">Ho completato il task</button>
+      <button class="btn home-complete" id="home-complete-btn" onclick="goTaskFromHome()">Vai al task</button>
     </div>
 
     <!-- ABITUDINI ATTIVE -->
@@ -857,25 +858,7 @@ select option{background:#111827;color:#fff}
     </div>
   </div>
   <div class="bot">
-    <button class="btn" onclick="saveRefl()">Salva e vai avanti</button>
-  </div>
-</div>
-
-<!-- DONE -->
-<div class="screen has-nav" id="sc-done">
-  <div class="s-pad" style="text-align:center;padding-top:40px">
-    <div class="ring2" style="margin:0 auto 16px"><i class="ti ti-star"></i></div>
-    <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
-    <div style="font-size:14px;color:#C7D2E0;line-height:1.7;margin-bottom:24px" id="done-msg"></div>
-    <div class="stats" style="margin-bottom:0">
-      <div class="stat"><div class="stat-n" id="done-score">0</div><div class="stat-l">Punteggio</div></div>
-      <div class="stat"><div class="stat-n" id="done-giorno">1</div><div class="stat-l">Giorni ✓</div></div>
-      <div class="stat"><div class="stat-n" id="done-perc">0%</div><div class="stat-l">Completati</div></div>
-      <div class="stat"><div class="stat-n" style="color:#EA580C" id="done-crescita">+0%</div><div class="stat-l">Crescita</div></div>
-    </div>
-  </div>
-  <div class="bot">
-    <button class="btn" onclick="tornaHome()">Torna alla home</button>
+    <button class="btn" onclick="saveRefl()">Conferma completamento</button>
   </div>
 </div>
 
@@ -909,6 +892,45 @@ select option{background:#111827;color:#fff}
     <div class="sub" id="tasks-obiettivo" style="margin-bottom:12px"></div>
   </div>
   <div class="scroll" id="tasks-list"></div>
+</div>
+
+
+<!-- PROGRESSI -->
+<div class="screen has-nav" id="sc-progressi">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">Progressi</div>
+    <div class="sub">La misura del tuo percorso, senza rumore.</div>
+  </div>
+  <div class="scroll">
+    <div class="tblock" style="border-color:#EA580C33">
+      <div class="tlabel">Percorso attivo</div>
+      <div class="ttitle" id="prog-obiettivo" style="font-size:17px"></div>
+      <div style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#C7D2E0;margin-bottom:8px">
+          <span>Avanzamento 30 giorni</span>
+          <strong id="prog-perc" style="color:#fff">0%</strong>
+        </div>
+        <div style="height:8px;background:#0B1020;border-radius:999px;overflow:hidden;border:1px solid #2F3B52">
+          <div id="prog-bar" style="height:100%;background:#EA580C;border-radius:999px;width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:12px">
+      <div class="stat"><div class="stat-n" id="prog-completati">0</div><div class="stat-l">Giorni completati</div></div>
+      <div class="stat"><div class="stat-n" id="prog-streak">0</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="prog-crescita">+0%</div><div class="stat-l">Crescita stimata</div></div>
+      <div class="stat"><div class="stat-n" id="prog-rimanenti">30</div><div class="stat-l">Giorni rimanenti</div></div>
+    </div>
+
+    <div class="tblock">
+      <div class="tlabel">Milestone</div>
+      <div id="prog-milestones"></div>
+    </div>
+  </div>
 </div>
 
 <!-- STORICO -->
@@ -974,6 +996,9 @@ select option{background:#111827;color:#fff}
     <button class="bnav-item" id="nav-task" onclick="navTo('task-oggi')">
       <i class="ti ti-checkbox"></i>Task
     </button>
+    <button class="bnav-item" id="nav-progressi" onclick="navTo('progressi')">
+      <i class="ti ti-chart-line"></i>Progressi
+    </button>
     <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
       <i class="ti ti-history"></i>Storico
     </button>
@@ -989,9 +1014,6 @@ select option{background:#111827;color:#fff}
 // ─── SUPABASE ───────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://ssngfxdviefytqnzljmf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MhxlV9kHfukREFKcn2wBWg_mOxMlHxh';
-if (typeof supabase === 'undefined') {
-  alert('Supabase non è caricato. Controlla la connessione o il blocco CDN.');
-}
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ─── STATO ──────────────────────────────────────────────────────────────────
@@ -1083,6 +1105,11 @@ function navTo(dest) {
     document.getElementById('sc-storico').querySelector('.h1').textContent = 'I tuoi task';
     loadTaskTab();
     ss('storico');
+  } else if (dest === 'progressi') {
+    S_activeNav = 'progressi';
+    document.getElementById('nav-progressi').classList.add('active');
+    loadProgressi();
+    ss('progressi');
   } else if (dest === 'storico') {
     S_activeNav = 'storico';
     document.getElementById('nav-storico').classList.add('active');
@@ -1106,11 +1133,12 @@ function ss(id) {
   target.classList.add('active');
   target.style.display = 'flex';
   // nav
-  var navScreens = ['home','reflection','done','storico','edit-profile','tasks'];
+  var navScreens = ['home','reflection','storico','progressi','edit-profile','tasks'];
   showNav(navScreens.indexOf(id) !== -1);
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
   if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); S_activeNav = 'home'; }
   // storico e task-oggi usano lo stesso screen sc-storico — il nav viene gestito da navTo
+  if (S_activeNav === 'progressi' && id === 'progressi') { var np = document.getElementById('nav-progressi'); if(np) np.classList.add('active'); }
   if (S_activeNav === 'storico' && id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
   if (S_activeNav === 'task' && id === 'storico') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
   if (id === 'tasks') { var nt2 = document.getElementById('nav-task'); if(nt2) nt2.classList.add('active'); }
@@ -1637,7 +1665,7 @@ async function correggiTask() {
     }
     var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
     var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask da sostituire: ' + clean((taskAttuale && taskAttuale.title) || '') + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
+    var msg = objCtx + '\n\nTask da sostituire: ' + taskPrecedente + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
     console.log('TASK RIGENERATO', task);
@@ -1939,16 +1967,10 @@ async function saveRefl() {
       reflections: S.reflections
     }).eq('user_id', S.user.id);
   }
-
-  // FIX 4: stats corrette
-  var completati = S.giorniCompletati.length;
-  var perc = Math.round((completati / 30) * 100);
-  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
-  document.getElementById('done-score').textContent = S.profile.baseline_score || 0;
-  document.getElementById('done-giorno').textContent = completati;
-  document.getElementById('done-perc').textContent = perc + '%';
-  document.getElementById('done-crescita').textContent = '+' + crescita + '%';
-  ss('done');
+  aggiornaHome();
+  S_activeNav = 'task';
+  await loadTaskTab();
+  ss('storico');
 }
 
 async function sbloccaProssimoTask() {
@@ -2145,18 +2167,56 @@ function aggiornaHome() {
   el = document.getElementById('home-end-date'); if (el) el.textContent = rimanenti === 0 ? 'completato' : fineStr;
   el = document.getElementById('home-progbar'); if (el) el.style.width = perc + '%';
 
+  el = document.getElementById('home-day-copy'); if (el) el.textContent = giorno;
+
   var btn = document.getElementById('home-complete-btn');
   if (btn) {
-    if (S.taskCompletato) {
-      btn.textContent = 'Task completato — vedi i prossimi';
-      btn.classList.add('done');
-    } else {
-      btn.textContent = 'Ho completato il task';
-      btn.classList.remove('done');
-    }
+    btn.textContent = S.taskCompletato ? 'Vedi i prossimi task' : 'Vai al task';
+    btn.classList.toggle('done', !!S.taskCompletato);
   }
   aggiornaHomeHabits();
 }
+function loadProgressi() {
+  var completati = (S.giorniCompletati || []).length;
+  var totale = 30;
+  var perc = Math.round((completati / totale) * 100);
+  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var rimanenti = Math.max(totale - completati, 0);
+  var streak = completati;
+  var goalTitle = (S.objData && (S.objData.risultato || S.objData.come)) || S.ctx || 'Il tuo percorso';
+  if (goalTitle.length > 86) goalTitle = goalTitle.slice(0, 86) + '…';
+
+  var el;
+  el = document.getElementById('prog-obiettivo'); if (el) el.textContent = goalTitle;
+  el = document.getElementById('prog-perc'); if (el) el.textContent = perc + '%';
+  el = document.getElementById('prog-bar'); if (el) el.style.width = perc + '%';
+  el = document.getElementById('prog-completati'); if (el) el.textContent = completati;
+  el = document.getElementById('prog-streak'); if (el) el.textContent = streak;
+  el = document.getElementById('prog-crescita'); if (el) el.textContent = '+' + crescita + '%';
+  el = document.getElementById('prog-rimanenti'); if (el) el.textContent = rimanenti;
+
+  var milestones = [
+    {n:1, label:'Hai iniziato'},
+    {n:3, label:'Primi 3 giorni'},
+    {n:7, label:'Una settimana'},
+    {n:14, label:'Metà percorso'},
+    {n:21, label:'Costanza consolidata'},
+    {n:30, label:'Percorso completato'}
+  ];
+  var mh = '';
+  milestones.forEach(function(m) {
+    var done = completati >= m.n;
+    mh += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1B2435">';
+    mh += '<div style="display:flex;align-items:center;gap:10px">';
+    mh += '<span style="width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid ' + (done ? '#EA580C' : '#2F3B52') + ';color:' + (done ? '#EA580C' : '#8FA0B8') + ';font-size:12px">' + (done ? '✓' : m.n) + '</span>';
+    mh += '<span style="font-size:13px;color:#fff">' + m.label + '</span>';
+    mh += '</div>';
+    mh += '<span style="font-size:11px;color:' + (done ? '#EA580C' : '#8FA0B8') + '">' + (done ? 'raggiunta' : 'a ' + m.n + ' giorni') + '</span>';
+    mh += '</div>';
+  });
+  el = document.getElementById('prog-milestones'); if (el) el.innerHTML = mh;
+}
+
 async function loadStorico() {
   var list = document.getElementById('storico-list');
   var bot = document.getElementById('storico-bot');
@@ -2250,7 +2310,26 @@ async function loadTaskTab() {
     html += '</div>';
     html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px">' + clean(oggi.title||'') + '</div>';
     html += '<div class="tdesc" style="font-size:12px;white-space:pre-line">' + descFormatted + '</div>';
+    if (oggi.why) {
+      html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #2F3B52">';
+      html += '<div class="tlabel">Perché questo task</div>';
+      html += '<div class="tdesc" style="font-size:12px">' + clean(oggi.why||'') + '</div>';
+      html += '</div>';
+    }
     html += '</div>';
+
+    var habits = getActiveHabits();
+    if (habits.length) {
+      html += '<div class="tblock" style="border-color:#EA580C22">';
+      html += '<div class="tlabel">Abitudini da continuare oggi</div>';
+      habits.forEach(function(h) {
+        html += '<div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #1B2435">';
+        html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
+        html += '<div style="font-size:11px;color:#EA580C;white-space:nowrap">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
   }
   // Prossimi 5 — solo titolo, bloccati; i primi 2 hanno pulsante sblocca se task completato
   var oggiStr = new Date().toISOString().slice(0, 10);
@@ -2304,6 +2383,12 @@ function apriTask(idx) {
   ss('home');
 }
 
+
+function goTaskFromHome() {
+  S_activeNav = 'task';
+  loadTaskTab();
+  ss('storico');
+}
 
 async function completeFromHome() {
   if (S.taskCompletato) {
