@@ -9,85 +9,85 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
-body{background:#0d0d1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.phone{width:100%;height:100vh;background:#1a1a2e;display:flex;flex-direction:column;position:relative;overflow:hidden}
+body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
 .screen.has-nav{bottom:64px}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
-.logo span{color:#00d4aa}
-.tag{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
+.logo span{color:#EA580C}
+.tag{font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:2px;margin-top:3px}
 .h1{font-size:28px;font-weight:700;line-height:1.15;color:#fff;margin:20px 0 8px}
-.sub{font-size:14px;color:#6b7db3;line-height:1.6;margin-bottom:20px}
+.sub{font-size:14px;color:#C7D2E0;line-height:1.6;margin-bottom:20px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.acard{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s}
-.acard:hover,.acard.sel{border-color:#00d4aa;background:#0d1f2d}
-.acard i{font-size:22px;color:#00d4aa;display:block;margin-bottom:10px}
+.acard{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 14px;cursor:pointer;transition:all 0.15s}
+.acard:hover,.acard.sel{border-color:#EA580C;background:#2A1408}
+.acard i{font-size:22px;color:#EA580C;display:block;margin-bottom:10px}
 .acard-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}
-.acard-sub{font-size:11px;color:#4a5580}
+.acard-sub{font-size:11px;color:#8FA0B8}
 .div{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
-.div-line{flex:1;height:0.5px;background:#1e2d4a}
-.div-text{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
-input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:#16213e;border:1px solid #1e2d4a;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6;appearance:none;-webkit-appearance:none}
-input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:#00d4aa}
+.div-line{flex:1;height:0.5px;background:#2F3B52}
+.div-text{font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px}
+input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:#1B2435;border:1px solid #2F3B52;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6;appearance:none;-webkit-appearance:none}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,select:focus,textarea:focus{border-color:#EA580C}
 input::placeholder,textarea::placeholder{color:#2a3a5a}
-select option{background:#1a1a2e;color:#fff}
+select option{background:#111827;color:#fff}
 .field{margin-bottom:14px}
-.field-label{font-size:11px;color:#4a5580;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+.field-label{font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0}
-.chip{padding:8px 14px;border-radius:20px;border:1px solid #1e2d4a;background:#16213e;color:#6b7db3;font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
-.chip:hover,.chip.sel{border-color:#00d4aa;background:#0d1f2d;color:#00d4aa}
-.btn{width:100%;padding:16px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
+.chip{padding:8px 14px;border-radius:20px;border:1px solid #2F3B52;background:#1B2435;color:#C7D2E0;font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.chip:hover,.chip.sel{border-color:#EA580C;background:#2A1408;color:#EA580C}
+.btn{width:100%;padding:16px;background:#EA580C;color:#0B1020;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
 .btn:hover{opacity:0.88}
 .btn:disabled{opacity:0.25;cursor:not-allowed}
-.btn-ghost{width:100%;padding:14px;background:transparent;color:#4a5580;border:1px solid #1e2d4a;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
-.btn-link{background:none;border:none;color:#00d4aa;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
+.btn-ghost{width:100%;padding:14px;background:transparent;color:#8FA0B8;border:1px solid #2F3B52;border-radius:14px;font-size:14px;cursor:pointer;margin-top:10px}
+.btn-link{background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer;text-decoration:underline;padding:0}
 .bot{padding:16px 24px 24px;margin-top:auto}
-.qnum{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
+.qnum{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600}
 .qtext{font-size:20px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:20px}
-.prog{height:2px;background:#16213e;margin:16px 0 24px;border-radius:2px}
-.progbar{height:2px;background:#00d4aa;border-radius:2px;transition:width 0.4s}
-.spin{width:24px;height:24px;border:2px solid #1e2d4a;border-top-color:#00d4aa;border-radius:50%;animation:spin 0.7s linear infinite}
+.prog{height:2px;background:#1B2435;margin:16px 0 24px;border-radius:2px}
+.progbar{height:2px;background:#EA580C;border-radius:2px;transition:width 0.4s}
+.spin{width:24px;height:24px;border:2px solid #2F3B52;border-top-color:#EA580C;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px 24px}
-.ring{width:72px;height:72px;background:#16213e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
-.ring2{width:64px;height:64px;background:#0d1f2d;border:1px solid #00d4aa;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.ring2 i{font-size:26px;color:#00d4aa}
+.ring{width:72px;height:72px;background:#1B2435;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.ring2{width:64px;height:64px;background:#2A1408;border:1px solid #EA580C;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.ring2 i{font-size:26px;color:#EA580C}
 .ltitle{font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
-.lsub{font-size:13px;color:#4a5580;line-height:1.6}
-.pill{display:inline-flex;align-items:center;gap:6px;background:#0d1f2d;color:#00d4aa;border:1px solid #00d4aa;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
-.psum{font-size:14px;color:#6b7db3;line-height:1.7;margin-bottom:20px}
-.tblock{background:#16213e;border:1px solid #1e2d4a;border-radius:16px;padding:18px;margin-bottom:12px}
-.tlabel{font-size:10px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
+.lsub{font-size:13px;color:#8FA0B8;line-height:1.6}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#2A1408;color:#EA580C;border:1px solid #EA580C;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
+.psum{font-size:14px;color:#C7D2E0;line-height:1.7;margin-bottom:20px}
+.tblock{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px;margin-bottom:12px}
+.tlabel{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600}
 .ttitle{font-size:18px;font-weight:600;color:#fff;line-height:1.35;margin-bottom:8px}
-.tdesc{font-size:13px;color:#6b7db3;line-height:1.6}
+.tdesc{font-size:13px;color:#C7D2E0;line-height:1.6}
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px}
-.stat{background:#16213e;border-radius:12px;padding:10px 6px;text-align:center}
+.stat{background:#1B2435;border-radius:12px;padding:10px 6px;text-align:center}
 .stat-n{font-size:20px;font-weight:700;color:#fff}
-.stat-l{font-size:9px;color:#4a5580;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
+.stat-l{font-size:9px;color:#8FA0B8;margin-top:2px;text-transform:uppercase;letter-spacing:1px}
 .emrow{display:flex;gap:12px;justify-content:center;margin:20px 0}
-.embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #1e2d4a;background:#16213e;cursor:pointer;transition:all 0.15s}
-.embtn:hover,.embtn.sel{border-color:#00d4aa;background:#0d1f2d;transform:scale(1.1)}
+.embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #2F3B52;background:#1B2435;cursor:pointer;transition:all 0.15s}
+.embtn:hover,.embtn.sel{border-color:#EA580C;background:#2A1408;transform:scale(1.1)}
 .err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
 .scroll{flex:1;overflow-y:auto;padding:16px 24px}
-.prof-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #16213e}
+.prof-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1B2435}
 .prof-row:last-child{border-bottom:none}
-.prof-key{font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px}
+.prof-key{font-size:12px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px}
 .prof-val{font-size:13px;color:#fff;font-weight:500;text-align:right;max-width:60%}
 .topbar{display:flex;justify-content:space-between;align-items:center}
-.icon-btn{background:none;border:none;color:#4a5580;cursor:pointer;font-size:18px;padding:4px}
-.icon-btn:hover{color:#00d4aa}
-.step-indicator{font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+.icon-btn{background:none;border:none;color:#8FA0B8;cursor:pointer;font-size:18px;padding:4px}
+.icon-btn:hover{color:#EA580C}
+.step-indicator{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
 /* BOTTOM NAV */
-.bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#16213e;border-top:1px solid #1e2d4a;padding:8px 0 16px;z-index:200}
+.bnav{display:none;position:absolute;bottom:0;left:0;right:0;background:#1B2435;border-top:1px solid #2F3B52;padding:8px 0 16px;z-index:200}
 .bnav.visible{display:block}
 .bnav-items{display:flex;width:100%;justify-content:space-around}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#4a5580;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:10px;background:none;border:none;color:#8FA0B8;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-family:inherit;transition:color 0.15s}
 .bnav-item i{font-size:20px}
-.bnav-item.active,.bnav-item:hover{color:#00d4aa}
+.bnav-item.active,.bnav-item:hover{color:#EA580C}
 /* CORREZIONE TASK */
-.corr-panel{display:none;background:#16213e;border:1px solid #1e2d4a;border-radius:14px;padding:16px;margin-bottom:12px}
+.corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
 .corr-panel.open{display:block}
 #sc-reflection .center{padding-bottom:120px}
 </style>
@@ -692,29 +692,29 @@ select option{background:#1a1a2e;color:#fff}
     </div>
     <!-- Barra progresso -->
     <div style="margin-bottom:24px">
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:#4a5580;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#8FA0B8;margin-bottom:8px">
         <span id="an-phase">Analisi in corso...</span>
         <span id="an-perc">0%</span>
       </div>
-      <div style="height:6px;background:#16213e;border-radius:6px;overflow:hidden">
-        <div id="an-bar" style="height:6px;background:#00d4aa;border-radius:6px;width:0%;transition:width 0.8s ease"></div>
+      <div style="height:6px;background:#1B2435;border-radius:6px;overflow:hidden">
+        <div id="an-bar" style="height:6px;background:#EA580C;border-radius:6px;width:0%;transition:width 0.8s ease"></div>
       </div>
     </div>
     <!-- Profilo personalizzato (appare dopo prima chiamata) -->
     <div id="an-profile" style="display:none;margin-bottom:24px">
-      <div class="tblock" style="border-color:#00d4aa22">
+      <div class="tblock" style="border-color:#EA580C22">
         <div class="tlabel" id="an-area">La tua area</div>
         <div style="display:flex;align-items:center;gap:8px;margin:8px 0">
-          <div style="font-size:28px;font-weight:700;color:#00d4aa" id="an-score">0</div>
-          <div style="font-size:11px;color:#4a5580">/100<br>baseline</div>
+          <div style="font-size:28px;font-weight:700;color:#EA580C" id="an-score">0</div>
+          <div style="font-size:11px;color:#8FA0B8">/100<br>baseline</div>
         </div>
-        <div style="font-size:13px;color:#6b7db3;line-height:1.6" id="an-summary"></div>
+        <div style="font-size:13px;color:#C7D2E0;line-height:1.6" id="an-summary"></div>
       </div>
     </div>
     <!-- Citazione rotante -->
     <div style="text-align:center;padding:16px 0">
       <div style="font-size:22px;margin-bottom:12px" id="an-quote-icon">💡</div>
-      <div style="font-size:14px;color:#6b7db3;line-height:1.7;font-style:italic" id="an-quote"></div>
+      <div style="font-size:14px;color:#C7D2E0;line-height:1.7;font-style:italic" id="an-quote"></div>
     </div>
   </div>
 </div>
@@ -744,7 +744,7 @@ select option{background:#1a1a2e;color:#fff}
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
       <div style="display:flex;gap:8px;align-items:center">
-        <div style="font-size:12px;color:#4a5580;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Task 1/30</div>
+        <div style="font-size:12px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px" id="home-giorno">Task 1/30</div>
         <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
       </div>
     </div>
@@ -752,31 +752,31 @@ select option{background:#1a1a2e;color:#fff}
       <div class="stat"><div class="stat-n" id="home-score">0</div><div class="stat-l">Baseline</div></div>
       <div class="stat"><div class="stat-n" id="home-streak">0</div><div class="stat-l">Streak</div></div>
       <div class="stat"><div class="stat-n" id="home-perc">0%</div><div class="stat-l">Completati</div></div>
-      <div class="stat"><div class="stat-n" style="color:#00d4aa" id="home-crescita">+0%</div><div class="stat-l">Crescita</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="home-crescita">+0%</div><div class="stat-l">Crescita</div></div>
     </div>
     <!-- BARRA PROGRESSO -->
     <div style="margin:12px 0 0">
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:#4a5580;margin-bottom:4px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#8FA0B8;margin-bottom:4px">
         <span>Percorso 30 giorni</span><span id="home-giorni-label">0/30</span>
       </div>
-      <div style="height:4px;background:#16213e;border-radius:4px">
-        <div id="home-progbar" style="height:4px;background:#00d4aa;border-radius:4px;transition:width 0.4s;width:0%"></div>
+      <div style="height:4px;background:#1B2435;border-radius:4px">
+        <div id="home-progbar" style="height:4px;background:#EA580C;border-radius:4px;transition:width 0.4s;width:0%"></div>
       </div>
     </div>
   </div>
   <div class="scroll">
     <div class="tblock">
-      <div style="font-size:11px;color:#00d4aa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:4px" id="home-task-num">Task 1 di 30</div>
+      <div style="font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:4px" id="home-task-num">Task 1 di 30</div>
       <div class="tlabel">Task di oggi</div>
       <div class="ttitle" id="task-title"></div>
       <div class="tdesc" id="task-desc"></div>
     </div>
-    <div class="tblock" style="background:transparent;border-color:#16213e">
+    <div class="tblock" style="background:transparent;border-color:#1B2435">
       <div class="tlabel">Perché questo task</div>
       <div class="tdesc" id="task-why" style="font-size:12px"></div>
     </div>
     <!-- ABITUDINI ATTIVE -->
-    <div class="tblock" id="home-habits" style="display:none;border-color:#00d4aa22"></div>
+    <div class="tblock" id="home-habits" style="display:none;border-color:#EA580C22"></div>
   </div>
 </div>
 
@@ -784,13 +784,13 @@ select option{background:#1a1a2e;color:#fff}
 <div class="screen has-nav" id="sc-reflection">
   <div class="scroll">
     <div style="padding:24px 24px 0">
-      <div class="tblock" style="border-color:#00d4aa;margin-bottom:20px">
-        <div class="tlabel" style="color:#00d4aa">Task di oggi</div>
+      <div class="tblock" style="border-color:#EA580C;margin-bottom:20px">
+        <div class="tlabel" style="color:#EA580C">Task di oggi</div>
         <div class="ttitle" style="font-size:15px;margin-bottom:8px" id="refl-task-title"></div>
         <div class="tdesc" style="font-size:12px;white-space:pre-line" id="refl-task-desc"></div>
       </div>
       <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Cosa hai fatto esattamente?</div>
-      <div style="font-size:13px;color:#6b7db3;margin-bottom:16px">Scrivi liberamente — queste note le ritrovi nello storico.</div>
+      <div style="font-size:13px;color:#C7D2E0;margin-bottom:16px">Scrivi liberamente — queste note le ritrovi nello storico.</div>
       <div class="field">
         <textarea id="refl-text" rows="5" placeholder="Es: ho identificato 3 abitudini notturne, ho scelto di togliere il telefono dalla camera..."></textarea>
       </div>
@@ -806,12 +806,12 @@ select option{background:#1a1a2e;color:#fff}
   <div class="s-pad" style="text-align:center;padding-top:40px">
     <div class="ring2" style="margin:0 auto 16px"><i class="ti ti-star"></i></div>
     <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:12px">Ottimo lavoro</div>
-    <div style="font-size:14px;color:#6b7db3;line-height:1.7;margin-bottom:24px" id="done-msg"></div>
+    <div style="font-size:14px;color:#C7D2E0;line-height:1.7;margin-bottom:24px" id="done-msg"></div>
     <div class="stats" style="margin-bottom:0">
       <div class="stat"><div class="stat-n" id="done-score">0</div><div class="stat-l">Punteggio</div></div>
       <div class="stat"><div class="stat-n" id="done-giorno">1</div><div class="stat-l">Giorni ✓</div></div>
       <div class="stat"><div class="stat-n" id="done-perc">0%</div><div class="stat-l">Completati</div></div>
-      <div class="stat"><div class="stat-n" style="color:#00d4aa" id="done-crescita">+0%</div><div class="stat-l">Crescita</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="done-crescita">+0%</div><div class="stat-l">Crescita</div></div>
     </div>
   </div>
   <div class="bot">
@@ -830,7 +830,7 @@ select option{background:#1a1a2e;color:#fff}
     <div class="sub">Modifica le tue info in qualsiasi momento.</div>
   </div>
   <div class="scroll" id="edit-profile-content">
-    <div style="text-align:center;padding:40px 0;color:#4a5580">Caricamento...</div>
+    <div style="text-align:center;padding:40px 0;color:#8FA0B8">Caricamento...</div>
   </div>
   <div class="bot">
     <button class="btn" onclick="goToEditFull()">Modifica profilo</button>
@@ -877,10 +877,10 @@ select option{background:#1a1a2e;color:#fff}
       <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
         <i class="ti ti-check"></i> Ce l'ho fatta
       </button>
-      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#6b7db3;border-color:#1e2d4a">
+      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
         <i class="ti ti-clock"></i> Dammi un giorno in più
       </button>
-      <button class="btn-ghost" onclick="toggleCorr()" style="color:#4a5580;border-color:#1e2d4a">
+      <button class="btn-ghost" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52">
         <i class="ti ti-refresh"></i> Troppo difficile — cambialo
       </button>
     </div>
@@ -892,12 +892,12 @@ select option{background:#1a1a2e;color:#fff}
   <div class="scroll" style="padding:40px 24px;text-align:center">
     <div style="font-size:48px;margin-bottom:16px">🏆</div>
     <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px">Percorso completato!</div>
-    <div style="font-size:15px;color:#6b7db3;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di crescita costante.<br>Questo è il risultato di chi non smette.</div>
+    <div style="font-size:15px;color:#C7D2E0;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di crescita costante.<br>Questo è il risultato di chi non smette.</div>
     <div class="stats" style="margin-bottom:32px">
       <div class="stat"><div class="stat-n" id="comp-giorni">30</div><div class="stat-l">Giorni ✓</div></div>
-      <div class="stat"><div class="stat-n" style="color:#00d4aa" id="comp-crescita">+34%</div><div class="stat-l">Crescita</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="comp-crescita">+34%</div><div class="stat-l">Crescita</div></div>
     </div>
-    <div style="font-size:13px;color:#4a5580;margin-bottom:32px;font-style:italic" id="comp-obiettivo"></div>
+    <div style="font-size:13px;color:#8FA0B8;margin-bottom:32px;font-style:italic" id="comp-obiettivo"></div>
     <button class="btn" onclick="generaCertificato()" style="margin-bottom:12px">
       <i class="ti ti-certificate"></i> Scarica il certificato
     </button>
@@ -1423,7 +1423,7 @@ function showEditProfile() {
     if (r[1]) html += '<div class="prof-row"><span class="prof-key">' + r[0] + '</span><span class="prof-val">' + r[1] + '</span></div>';
   });
   if (p.situazione_attuale) html += '<div class="tblock" style="margin-top:12px"><div class="tlabel">Situazione attuale</div><div class="tdesc">' + p.situazione_attuale + '</div></div>';
-  document.getElementById('edit-profile-content').innerHTML = html || '<div style="color:#4a5580;text-align:center;padding:20px">Nessun dato salvato.</div>';
+  document.getElementById('edit-profile-content').innerHTML = html || '<div style="color:#8FA0B8;text-align:center;padding:20px">Nessun dato salvato.</div>';
   ss('edit-profile');
 }
 
@@ -1948,22 +1948,22 @@ function generaCertificato() {
   var html = '<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">';
   html += '<title>Certificato Persisto</title>';
   html += '<style>';
-  html += 'body{margin:0;padding:40px;background:#fff;font-family:Georgia,serif;color:#1a1a2e}';
-  html += '.cert{max-width:700px;margin:0 auto;border:3px solid #00d4aa;border-radius:16px;padding:60px;text-align:center}';
-  html += '.logo{font-size:32px;font-weight:700;letter-spacing:-1px;color:#1a1a2e;margin-bottom:8px}';
-  html += '.logo span{color:#00d4aa}';
-  html += '.subtitle{font-size:13px;color:#6b7db3;text-transform:uppercase;letter-spacing:3px;margin-bottom:40px}';
-  html += '.titolo{font-size:14px;color:#6b7db3;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}';
-  html += '.nome{font-size:36px;font-weight:700;color:#1a1a2e;margin-bottom:40px;border-bottom:2px solid #00d4aa;padding-bottom:20px}';
-  html += '.obiettivo{font-size:18px;color:#1a1a2e;font-style:italic;margin-bottom:40px;line-height:1.6}';
+  html += 'body{margin:0;padding:40px;background:#fff;font-family:Georgia,serif;color:#111827}';
+  html += '.cert{max-width:700px;margin:0 auto;border:3px solid #EA580C;border-radius:16px;padding:60px;text-align:center}';
+  html += '.logo{font-size:32px;font-weight:700;letter-spacing:-1px;color:#111827;margin-bottom:8px}';
+  html += '.logo span{color:#EA580C}';
+  html += '.subtitle{font-size:13px;color:#C7D2E0;text-transform:uppercase;letter-spacing:3px;margin-bottom:40px}';
+  html += '.titolo{font-size:14px;color:#C7D2E0;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}';
+  html += '.nome{font-size:36px;font-weight:700;color:#111827;margin-bottom:40px;border-bottom:2px solid #EA580C;padding-bottom:20px}';
+  html += '.obiettivo{font-size:18px;color:#111827;font-style:italic;margin-bottom:40px;line-height:1.6}';
   html += '.stats{display:flex;justify-content:center;gap:40px;margin:40px 0}';
   html += '.stat{text-align:center}';
-  html += '.stat-n{font-size:36px;font-weight:700;color:#00d4aa}';
-  html += '.stat-l{font-size:12px;color:#6b7db3;text-transform:uppercase;letter-spacing:1px;margin-top:4px}';
-  html += '.data{font-size:13px;color:#6b7db3;margin-top:40px}';
-  html += '.firma{margin-top:40px;font-size:20px;font-weight:700;color:#00d4aa}';
+  html += '.stat-n{font-size:36px;font-weight:700;color:#EA580C}';
+  html += '.stat-l{font-size:12px;color:#C7D2E0;text-transform:uppercase;letter-spacing:1px;margin-top:4px}';
+  html += '.data{font-size:13px;color:#C7D2E0;margin-top:40px}';
+  html += '.firma{margin-top:40px;font-size:20px;font-weight:700;color:#EA580C}';
   html += '@media print{body{padding:0}.btn-print{display:none}}';
-  html += '.btn-print{margin-top:30px;padding:12px 32px;background:#00d4aa;color:#0d0d1a;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}';
+  html += '.btn-print{margin-top:30px;padding:12px 32px;background:#EA580C;color:#0B1020;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}';
   html += '</style></head><body>';
   html += '<div class="cert">';
   html += '<div class="logo">Per<span>sisto</span></div>';
@@ -1994,7 +1994,7 @@ function showTaskList() {
   document.getElementById('tasks-obiettivo').textContent = obiettivo ? 'Obiettivo: ' + obiettivo : '';
   var list = document.getElementById('tasks-list');
   if (!tasks.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
     return;
   }
   var html = '';
@@ -2046,9 +2046,9 @@ function aggiornaHomeHabits() {
   habitsEl.style.display = 'block';
   var html = '<div class="tlabel" style="margin-bottom:8px">Da continuare oggi</div>';
   attive.forEach(function(h) {
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #16213e">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1B2435">';
     html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
-    html += '<div style="font-size:11px;color:#00d4aa;white-space:nowrap;margin-left:12px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
+    html += '<div style="font-size:11px;color:#EA580C;white-space:nowrap;margin-left:12px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
     html += '</div>';
   });
   habitsEl.innerHTML = html;
@@ -2088,7 +2088,7 @@ async function loadStorico() {
     document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
 
   if (!taskCompletati.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
     bot.style.display = 'none';
     return;
   }
@@ -2112,10 +2112,10 @@ function apriTaskSolaLettura(idx) {
   var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
   var list = document.getElementById('storico-list');
   var html = '<div style="margin-bottom:12px">';
-  html += '<button onclick="loadStorico()" style="background:none;border:none;color:#00d4aa;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
+  html += '<button onclick="loadStorico()" style="background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
   html += '</div>';
-  html += '<div class="tblock" style="border-color:#00d4aa">';
-  html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + day + ' — ✓ completato</div>';
+  html += '<div class="tblock" style="border-color:#EA580C">';
+  html += '<div class="tlabel" style="color:#EA580C">Giorno ' + day + ' — ✓ completato</div>';
   html += '<div class="ttitle" style="font-size:16px;margin-bottom:12px">' + clean(t.title||'') + '</div>';
   html += '<div class="tdesc" style="font-size:13px;white-space:pre-line;margin-bottom:8px">' + descFormatted + '</div>';
   if (t.why) {
@@ -2124,7 +2124,7 @@ function apriTaskSolaLettura(idx) {
   }
   html += '</div>';
   if (refl) {
-    html += '<div class="tblock" style="background:transparent;border-color:#1e2d4a">';
+    html += '<div class="tblock" style="background:transparent;border-color:#2F3B52">';
     html += '<div class="tlabel">Cosa hai fatto</div>';
     html += '<div class="tdesc" style="margin-top:6px;font-size:13px;color:#fff">' + refl + '</div>';
     html += '</div>';
@@ -2143,7 +2143,7 @@ async function loadTaskTab() {
     document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
 
   if (!tasks.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#4a5580">Nessun task disponibile.</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.</div>';
     bot.style.display = 'none';
     return;
   }
@@ -2157,11 +2157,11 @@ async function loadTaskTab() {
     // Formatta descrizione: ogni "Passo N:" va a capo
     var descFormatted = clean(oggi.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
     var completatoOggi = S.taskCompletato;
-    html += '<div class="tblock" style="border-color:#00d4aa">';
+    html += '<div class="tblock" style="border-color:#EA580C">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    html += '<div class="tlabel" style="color:#00d4aa">Giorno ' + giorno + ' — oggi</div>';
+    html += '<div class="tlabel" style="color:#EA580C">Giorno ' + giorno + ' — oggi</div>';
     if (completatoOggi) {
-      html += '<span style="font-size:11px;color:#00d4aa;font-weight:600"><i class="ti ti-check"></i> completato</span>';
+      html += '<span style="font-size:11px;color:#EA580C;font-weight:600"><i class="ti ti-check"></i> completato</span>';
     }
     html += '</div>';
     html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px">' + clean(oggi.title||'') + '</div>';
@@ -2182,17 +2182,17 @@ async function loadTaskTab() {
     var dayNum = t.day || (i+1);
 
     if (puoSbloccare) {
-      html += '<div class="tblock" style="border-color:#00d4aa44">';
+      html += '<div class="tblock" style="border-color:#EA580C44">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
       html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
-      html += '<button onclick="sbloccaProssimoTask()" style="background:#00d4aa;color:#0d0d1a;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">⚡ Sblocca (' + extraRimanenti + ' rimanenti)</button>';
+      html += '<button onclick="sbloccaProssimoTask()" style="background:#EA580C;color:#0B1020;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">⚡ Sblocca (' + extraRimanenti + ' rimanenti)</button>';
       html += '</div>';
-      html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
+      html += '<div class="ttitle" style="font-size:14px;color:#C7D2E0">' + clean(t.title||'') + '</div>';
       html += '</div>';
     } else {
       html += '<div class="tblock" style="opacity:0.35;pointer-events:none">';
       html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
-      html += '<div class="ttitle" style="font-size:14px;color:#6b7db3">' + clean(t.title||'') + '</div>';
+      html += '<div class="ttitle" style="font-size:14px;color:#C7D2E0">' + clean(t.title||'') + '</div>';
       html += '</div>';
     }
   }
