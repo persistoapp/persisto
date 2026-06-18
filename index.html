@@ -770,6 +770,8 @@ select option{background:#1a1a2e;color:#fff}
       <div class="tlabel">Perché questo task</div>
       <div class="tdesc" id="task-why" style="font-size:12px"></div>
     </div>
+    <!-- ABITUDINI ATTIVE -->
+    <div class="tblock" id="home-habits" style="display:none;border-color:#00d4aa22"></div>
   </div>
 </div>
 
@@ -1549,7 +1551,22 @@ async function correggiTask() {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
     var giorno = S.giornoAttuale || 1;
-    var taskPrecedente = S.tasks[giorno - 1] ? '"' + S.tasks[giorno - 1].title + '"' : 'non disponibile';
+    var taskAttuale = S.tasks[giorno - 1];
+    // Se è un'abitudine, chiedi se rimuovere dai giorni successivi
+    if (taskAttuale && taskAttuale.type === 'habit') {
+      var rimuovi = confirm('Questo task fa parte di un\'abitudine attiva (' + taskAttuale.habit_days + ' giorni).\n\nVuoi rimuovere l\'abitudine anche dai giorni successivi?');
+      if (rimuovi) {
+        // Rimuove il flag habit dai giorni successivi
+        var hid = taskAttuale.habit_id;
+        S.tasks.forEach(function(t) {
+          if (t.habit_id === hid && (t.day||0) > giorno) {
+            t.type = 'action';
+            delete t.habit_id;
+            delete t.habit_days;
+          }
+        });
+      }
+    }
     var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
     var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
     var msg = objCtx + '\n\nTask da sostituire: ' + taskPrecedente + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
@@ -1649,9 +1666,9 @@ async function genProfile() {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
     var baseCtx = profCtx + '\n\n' + objCtx + '\n\nRisposte onboarding:\n' + qa;
-    var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. Il task deve essere CHIUSO oggi — non deve rimandare a domani, ai prossimi giorni o alla prossima settimana.\n3. VIETATO usare parole come "domani", "nei prossimi giorni", "questa settimana", "entro X giorni" nel task.\n4. NON dare progetti o piani multi-giorno. Solo: cosa fare e FINIRE oggi.\n5. I task devono essere SEQUENZIALI e direttamente collegati ALL\'OBIETTIVO DICHIARATO.\n6. Esempio SBAGLIATO: "Scegli la cosa su cui agire domani"\n7. Esempio GIUSTO: "Scrivi e invia oggi un messaggio a 2 potenziali clienti"\n8. Personalizzati su questa persona specifica.\n\nJSON senza altro testo: {"baseline_score":42,"area":"Nome area","summary":"2 frasi su questa persona.","approach":"Una frase pratica.","tasks":[{"day":1,"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}]}\nbaseline_score tra 15 e 65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
-    var sys2 = 'Sei un coach pratico. Continua il percorso con i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. Il task deve essere CHIUSO oggi — VIETATO "domani", "nei prossimi giorni", "questa settimana".\n3. SEQUENZIALI e direttamente collegati ALL\'OBIETTIVO DICHIARATO.\n4. Esempio SBAGLIATO: "Pianifica le tue prossime azioni per la settimana"\n5. Esempio GIUSTO: "Manda oggi un messaggio a 3 contatti per chiedere un referral"\n\nJSON senza altro testo: {"tasks":[{"day":11,"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx;
-    var sys3 = 'Sei un coach pratico. Concludi il percorso con i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. Il task deve essere CHIUSO oggi — VIETATO "domani", "nei prossimi giorni", "questa settimana".\n3. SEQUENZIALI, direttamente collegati ALL\'OBIETTIVO DICHIARATO, portano al risultato finale.\n4. Esempio SBAGLIATO: "Scala il tuo business nei prossimi mesi"\n5. Esempio GIUSTO: "Aggiorna oggi il tuo profilo LinkedIn con i 3 risultati raggiunti questo mese"\n\nJSON senza altro testo: {"tasks":[{"day":21,"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
+    var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare a domani o giorni futuri.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO DICHIARATO.\n4. Personalizzati su questa persona specifica.\n\nDUE TIPI DI TASK:\n- type:\"action\" = azione singola, si fa UNA VOLTA SOLA oggi\n- type:\"habit\" = abitudine da ripetere ogni giorno per N giorni (es. movimento, alimentazione, routine). Usa habit_id univoco snake_case (es. \"food_log\", \"morning_walk\") e habit_days (numero giorni).\nMAX 3 abitudini sui 10 task.\n\nJSON senza altro testo: {\"baseline_score\":42,\"area\":\"Nome area\",\"summary\":\"2 frasi su questa persona.\",\"approach\":\"Una frase pratica.\",\"tasks\":[{\"day\":1,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"},{\"day\":2,\"type\":\"habit\",\"habit_id\":\"food_log\",\"habit_days\":7,\"title\":\"Fotografa ogni pasto oggi\",\"description\":\"Fai foto prima di ogni pasto.\",\"why\":\"Crea consapevolezza.\"}]}\nbaseline_score 15-65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
+    var sys2 = 'Sei un coach pratico. Genera i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (con habit_id snake_case e habit_days).\nNON ricreare abitudini già attive nei giorni 1-10 (già mostrate automaticamente).\nMAX 2 nuove abitudini.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":11,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx;
+    var sys3 = 'Sei un coach pratico. Genera i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. Portano al risultato finale.\n\nDUE TIPI: type:\"action\" o type:\"habit\". NON ricreare abitudini già attive. MAX 1 nuova abitudine.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":21,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
 
     // CHIAMATA 1 — task 1-10
     document.getElementById('an-phase').textContent = 'Costruendo i giorni 1-10...';
@@ -1918,7 +1935,38 @@ function showTaskDetail(idx) {
   document.getElementById('nav-home').classList.add('active');
 }
 
-function aggiornaHome() {
+function getActiveHabits() {
+  // Restituisce le abitudini attive per il giorno corrente
+  var giorno = S.giornoAttuale || 1;
+  var attive = [];
+  (S.tasks || []).forEach(function(t, idx) {
+    if (t.type === 'habit' && t.habit_days) {
+      var startDay = t.day || (idx + 1);
+      var endDay = startDay + t.habit_days - 1;
+      // Attiva se siamo nel range ma NON è il giorno di inizio (quello è già il task principale)
+      if (giorno > startDay && giorno <= endDay) {
+        attive.push({task: t, giornoCorrente: giorno - startDay + 1, totale: t.habit_days});
+      }
+    }
+  });
+  return attive;
+}
+
+function aggiornaHomeHabits() {
+  var habitsEl = document.getElementById('home-habits');
+  if (!habitsEl) return;
+  var attive = getActiveHabits();
+  if (!attive.length) { habitsEl.style.display = 'none'; return; }
+  habitsEl.style.display = 'block';
+  var html = '<div class="tlabel" style="margin-bottom:8px">Da continuare oggi</div>';
+  attive.forEach(function(h) {
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #16213e">';
+    html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
+    html += '<div style="font-size:11px;color:#00d4aa;white-space:nowrap;margin-left:12px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
+    html += '</div>';
+  });
+  habitsEl.innerHTML = html;
+}
   var completati = S.giorniCompletati.length;
   var totale = 30;
   var perc = Math.round((completati / totale) * 100);
@@ -1934,6 +1982,7 @@ function aggiornaHome() {
   document.getElementById('home-crescita').textContent = '+' + crescita + '%';
   document.getElementById('home-giorni-label').textContent = completati + '/30';
   document.getElementById('home-progbar').style.width = perc + '%';
+  aggiornaHomeHabits();
 }
 
 async function loadStorico() {
