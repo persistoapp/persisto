@@ -1076,7 +1076,7 @@ select option{background:#111827;color:#fff}
     <div style="font-size:15px;color:#C7D2E0;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di task e tutte le abitudini del percorso.<br>Questo è il risultato di chi non smette.</div>
     <div class="stats" style="margin-bottom:32px">
       <div class="stat"><div class="stat-n" id="comp-giorni">30</div><div class="stat-l">Giorni ✓</div></div>
-      <div class="stat"><div class="stat-n" style="color:#EA580C" id="comp-crescita">+34%</div><div class="stat-l">Crescita</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="comp-crescita">+0%</div><div class="stat-l">Crescita totale</div></div>
     </div>
     <div style="font-size:13px;color:#8FA0B8;margin-bottom:32px;font-style:italic" id="comp-obiettivo"></div>
     <button class="btn" onclick="generaCertificato()" style="margin-bottom:12px">
@@ -1134,7 +1134,8 @@ var S = {
   giorniCompletati: [],
   taskExtraOggi: 0,
   dataUltimoExtra: '',
-  abitudiniStato: {}
+  abitudiniStato: {},
+  giorniTotali: 0
 };
 
 var QUOTES = [
@@ -1358,6 +1359,7 @@ async function afterLogin() {
     return;
   }
   S.userProfile = profilo;
+  S.giorniTotali = profilo.giorni_totali || 0;
 
   // 2. Controlla se c'è un obiettivo attivo salvato
   var {data: obj} = await sb.from('obiettivi')
@@ -2141,6 +2143,25 @@ async function sbloccaProssimoTask() {
 }
 
 
+
+async function salvaCrescitaStorica() {
+  // Somma i giorni del percorso appena completato ai totali storici
+  var giorniPercorso = (S.giorniCompletati || []).length;
+  var nuovoTotale = (S.giorniTotali || 0) + giorniPercorso;
+  if (nuovoTotale <= S.giorniTotali) return; // già salvato
+  S.giorniTotali = nuovoTotale;
+  if (S.user) {
+    await sb.from('profiles').update({ giorni_totali: nuovoTotale }).eq('id', S.user.id);
+  }
+  // Aggiorna display schermata completato
+  var el = document.getElementById('comp-giorni');
+  if (el) el.textContent = (S.giorniCompletati || []).length;
+  el = document.getElementById('comp-crescita');
+  if (el) el.textContent = '+' + calcolaCrescita() + '%';
+  el = document.getElementById('comp-obiettivo');
+  if (el) el.textContent = S.ctx || '';
+}
+
 function percorsoCompletato() {
   // Task: tutti e 30 completati
   if ((S.giorniCompletati || []).length < 30) return false;
@@ -2164,6 +2185,7 @@ function abitudiniMancanti() {
 function tornaHome() {
   // Controlla se tutto è completato (task + abitudini)
   if (percorsoCompletato()) {
+    salvaCrescitaStorica();
     ss('completato');
     return;
   }
@@ -2175,11 +2197,19 @@ function tornaHome() {
   ss('home');
 }
 
+
+function calcolaCrescita() {
+  // Crescita lineare: 1% per ogni giorno completato in tutta la storia
+  var giorniPercorsoAttuale = (S.giorniCompletati || []).length;
+  var totale = (S.giorniTotali || 0) + giorniPercorsoAttuale;
+  return totale; // = percentuale diretta
+}
+
 function generaCertificato() {
   var nome = (S.userProfile && S.userProfile.email) ? S.userProfile.email.split('@')[0] : 'Utente';
   var obiettivo = S.ctx || '';
   var completati = S.giorniCompletati.length;
-  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var crescita = calcolaCrescita();
   var dataInizio = S.objDataInizio ? new Date(S.objDataInizio).toLocaleDateString('it-IT') : '';
   var dataOggi = new Date().toLocaleDateString('it-IT');
 
@@ -2295,8 +2325,8 @@ function aggiornaHomeHabits() {
 function aggiornaHome() {
   var completati = S.giorniCompletati.length;
   var totale = 30;
-  var perc = Math.round((completati / totale) * 100);
-  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var perc = Math.min(Math.round((completati / totale) * 100), 100);
+  var crescita = calcolaCrescita();
   var streak = S.giorniCompletati.length;
   var giorno = S.giornoAttuale || 1;
   var rimanenti = Math.max(totale - completati, 0);
@@ -2330,11 +2360,13 @@ function aggiornaHome() {
       if (mancanti.length > 0) {
         btn.textContent = 'Completa le abitudini per finire →';
         btn.onclick = function(){ navTo('abitudini'); };
+        btn.classList.add('done');
       } else {
-        btn.textContent = '🏆 Vedi il certificato';
-        btn.onclick = function(){ ss('completato'); };
+        btn.textContent = '🏆 Percorso completato — nuovo obiettivo';
+        btn.onclick = function(){ salvaCrescitaStorica().then(function(){ ss('completato'); }); };
+        btn.classList.remove('done');
+        btn.style.background = '#EA580C';
       }
-      btn.classList.add('done');
     } else {
       btn.textContent = S.taskCompletato ? 'Vedi i prossimi task' : 'Vai al task';
       btn.onclick = function(){ goTaskFromHome(); };
@@ -2346,8 +2378,8 @@ function aggiornaHome() {
 function loadProgressi() {
   var completati = (S.giorniCompletati || []).length;
   var totale = 30;
-  var perc = Math.round((completati / totale) * 100);
-  var crescita = (Math.pow(1.01, completati) * 100 - 100).toFixed(1);
+  var perc = Math.min(Math.round((completati / totale) * 100), 100);
+  var crescita = calcolaCrescita();
   var rimanenti = Math.max(totale - completati, 0);
   var streak = completati;
   var goalTitle = (S.objData && (S.objData.risultato || S.objData.come)) || S.ctx || 'Il tuo percorso';
@@ -2816,6 +2848,8 @@ async function resetFlow() {
   S.questions = []; S.answers = []; S.currentQ = 0;
   S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
   S.taskCompletato = false;
+  S.giorniCompletati = [];
+  S.abitudiniStato = {};
   CHIPS.tentativo = null; CHIPS.scadenza = null;
 
   document.getElementById('free-text').value = '';
