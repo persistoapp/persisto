@@ -1377,6 +1377,9 @@ async function afterLogin() {
     S.giornoAttuale = maxCompletato > 0 ? maxCompletato : 1;
     S.giornoAttuale = Math.min(S.giornoAttuale, 30);
 
+    // Segna se il giorno attuale è già completato
+    S.taskCompletato = S.giorniCompletati.indexOf(S.giornoAttuale) !== -1;
+
     // Reset extra solo se è un nuovo giorno di calendario
     var oggi = new Date();
     var oggiStr = oggi.toISOString().slice(0, 10);
