@@ -2454,11 +2454,11 @@ function loadAbitudini() {
     if (!stato.completata) {
       if (!spuntataOggi) {
         // Pulsante spunta oggi
-        html += '<button onclick="spuntaAbitudine(\''+h.habit_id+'\','+h.habit_days+')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:6px">&#10003; Fatto oggi</button>';
+        html += '<button onclick="spuntaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:6px">&#10003; Fatto oggi</button>';
         // Se ha saltato ieri, mostra opzioni
         if (haSaltatoIeri && stato.spunte.length > 0) {
           html += '<div style="display:flex;gap:8px">';
-          html += '<button onclick="ricominciaAbitudine(\''+h.habit_id+'\','+h.habit_days+')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
+          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\','+h.habit_days+')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
           html += '</div>';
         }
       } else {
@@ -2690,14 +2690,14 @@ function apriTask(idx) {
 function goTaskFromHome() {
   S_activeNav = 'task';
   loadTaskTab();
-  ss('storico');
+  ss('abitudini');
 }
 
 async function completeFromHome() {
   if (S.taskCompletato) {
     S_activeNav = 'task';
     loadTaskTab();
-    ss('storico');
+    ss('abitudini');
     return;
   }
   if (confirm('Confermi di aver completato il task di oggi?')) {
