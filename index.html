@@ -1998,7 +1998,8 @@ async function genProfile() {
       document.getElementById('task-desc').textContent = clean(t.description) || '';
       document.getElementById('task-why').textContent = clean(t.why) || '';
     }
-    ss('profile');
+    aggiornaHome();
+    ss('home');
   } catch(e) {
     ss('onboarding');
     document.getElementById('err-onb').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
