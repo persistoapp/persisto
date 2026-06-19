@@ -1228,6 +1228,7 @@ function ss(id) {
     s.style.display = 'none';
   });
   var target = document.getElementById('sc-' + id);
+  if (!target) { console.error('ss(): screen non trovato: sc-' + id); return; }
   target.classList.add('active');
   target.style.display = 'flex';
   // nav
