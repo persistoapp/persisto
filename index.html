@@ -1972,7 +1972,7 @@ async function genProfile() {
     var baseCtx = profCtx + '\n\n' + objCtx + areaExtra + '\n\nRisposte onboarding:\n' + qa;
     var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare a domani o giorni futuri.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO DICHIARATO.\n4. Personalizzati su questa persona specifica.\n\nDUE TIPI DI TASK:\n- type:\"action\" = azione singola, si fa UNA VOLTA SOLA oggi\n- type:\"habit\" = abitudine da ripetere ogni giorno per N giorni (es. movimento, alimentazione, routine). Usa habit_id univoco snake_case (es. \"food_log\", \"morning_walk\") e habit_days (numero giorni).\nMAX 3 abitudini sui 10 task.\n\nJSON senza altro testo: {\"baseline_score\":42,\"area\":\"Nome area\",\"summary\":\"2 frasi su questa persona.\",\"approach\":\"Una frase pratica.\",\"tasks\":[{\"day\":1,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"},{\"day\":2,\"type\":\"habit\",\"habit_id\":\"food_log\",\"habit_days\":7,\"title\":\"Fotografa ogni pasto oggi\",\"description\":\"Fai foto prima di ogni pasto.\",\"why\":\"Crea consapevolezza.\"}]}\nbaseline_score 15-65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
     var sys2 = 'Sei un coach pratico. Genera i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (con habit_id snake_case e habit_days).\nNON ricreare abitudini già attive nei giorni 1-10 (già mostrate automaticamente).\nMAX 2 nuove abitudini.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":11,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx;
-    var sys3 = 'Sei un coach pratico. Genera i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. Portano al risultato finale.\n\nDUE TIPI: type:\"action\" o type:\"habit\". NON ricreare abitudini già attive. MAX 1 nuova abitudine.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":21,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
+    var sys3 = 'Sei un coach pratico. Genera i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. Portano al risultato finale.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (habit_days MAX 21). NON ricreare abitudini già attive. MAX 1 nuova abitudine.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":21,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
 
     // CHIAMATA 1 — task 1-10
     document.getElementById('an-phase').textContent = 'Costruendo i giorni 1-10...';
@@ -2353,18 +2353,21 @@ function loadProgressi() {
 // ─── ABITUDINI ──────────────────────────────────────────────────────────────
 
 function getAbitudiniDalPercorso() {
-  // Estrae tutte le abitudini dai task generati dall'AI
+  // Estrae le abitudini già sbloccate (startDay <= giornoAttuale)
   var habits = [];
+  var giornoCorrente = S.giornoAttuale || 1;
   (S.tasks || []).forEach(function(t) {
     if (t.type === 'habit' && t.habit_id) {
-      // Controlla che non sia già in lista
+      var startDay = t.day || 1;
+      // Mostra solo se l'utente ha raggiunto o superato il giorno di questa abitudine
+      if (startDay > giornoCorrente) return;
       var exists = habits.some(function(h){ return h.habit_id === t.habit_id; });
       if (!exists) {
         habits.push({
           habit_id: t.habit_id,
           title: t.title,
           habit_days: t.habit_days || 7,
-          startDay: t.day || 1
+          startDay: startDay
         });
       }
     }
