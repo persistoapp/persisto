@@ -963,9 +963,22 @@ select option{background:#111827;color:#fff}
   </div>
   <div class="bot">
     <button class="btn" onclick="goToEditFull()">Modifica profilo</button>
+    <button class="btn-ghost" onclick="mostraStoricoInProfilo()" style="margin-top:8px"><i class="ti ti-history"></i> Storico task</button>
     <button class="btn-ghost" onclick="chiudiProfilo()" style="margin-top:8px">Chiudi</button>
     <button class="btn-ghost" onclick="resetFlow()" style="margin-top:8px;color:#ff6b9d;border-color:#2d1a2d">Cambia obiettivo</button>
   </div>
+</div>
+
+<!-- STORICO IN PROFILO -->
+<div class="screen has-nav" id="sc-storico-profilo">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="showEditProfile()"><i class="ti ti-arrow-left"></i></button>
+    </div>
+    <div class="h1" style="font-size:22px;margin-top:20px">Storico task</div>
+  </div>
+  <div class="scroll" id="storico-profilo-list"></div>
 </div>
 
 <!-- LISTA TASK -->
@@ -1020,16 +1033,16 @@ select option{background:#111827;color:#fff}
 </div>
 
 <!-- STORICO -->
-<div class="screen has-nav" id="sc-storico">
+<div class="screen has-nav" id="sc-abitudini">
   <div class="s-pad">
     <div class="topbar">
       <div class="logo">Per<span>sisto</span></div>
     </div>
-    <div class="h1" style="margin-top:20px">I tuoi task</div>
-    <div class="sub" id="tasks-obiettivo-nav" style="margin-bottom:0"></div>
+    <div class="h1" style="margin-top:20px" id="abitudini-title">Le tue abitudini</div>
+    <div class="sub" id="abitudini-sub" style="margin-bottom:0"></div>
   </div>
-  <div class="scroll" id="storico-list"></div>
-  <div class="bot" id="storico-bot" style="display:none">
+  <div class="scroll" id="abitudini-list"></div>
+  <div class="bot" id="storico-bot" style="display:none" style="display:none">
     <!-- PANNELLO CORREZIONE -->
     <div class="corr-panel" id="corr-panel">
       <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
@@ -1085,8 +1098,8 @@ select option{background:#111827;color:#fff}
     <button class="bnav-item" id="nav-progressi" onclick="navTo('progressi')">
       <i class="ti ti-chart-line"></i>Progressi
     </button>
-    <button class="bnav-item" id="nav-storico" onclick="navTo('storico')">
-      <i class="ti ti-history"></i>Storico
+    <button class="bnav-item" id="nav-abitudini" onclick="navTo('abitudini')">
+      <i class="ti ti-repeat"></i>Abitudini
     </button>
     <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
       <i class="ti ti-user"></i>Profilo
@@ -1120,7 +1133,8 @@ var S = {
   giornoAttuale: 1,
   giorniCompletati: [],
   taskExtraOggi: 0,
-  dataUltimoExtra: ''
+  dataUltimoExtra: '',
+  abitudiniStato: {}
 };
 
 var QUOTES = [
@@ -1188,20 +1202,18 @@ function navTo(dest) {
   } else if (dest === 'task-oggi') {
     S_activeNav = 'task';
     document.getElementById('nav-task').classList.add('active');
-    document.getElementById('sc-storico').querySelector('.h1').textContent = 'I tuoi task';
     loadTaskTab();
-    ss('storico');
+    ss('abitudini');
   } else if (dest === 'progressi') {
     S_activeNav = 'progressi';
     document.getElementById('nav-progressi').classList.add('active');
     loadProgressi();
     ss('progressi');
-  } else if (dest === 'storico') {
-    S_activeNav = 'storico';
-    document.getElementById('nav-storico').classList.add('active');
-    document.getElementById('sc-storico').querySelector('.h1').textContent = 'Storico';
-    loadStorico();
-    ss('storico');
+  } else if (dest === 'abitudini') {
+    S_activeNav = 'abitudini';
+    document.getElementById('nav-abitudini').classList.add('active');
+    loadAbitudini();
+    ss('abitudini');
   } else if (dest === 'profilo-menu') {
     document.getElementById('nav-profilo').classList.add('active');
     showEditProfile();
@@ -1219,14 +1231,14 @@ function ss(id) {
   target.classList.add('active');
   target.style.display = 'flex';
   // nav
-  var navScreens = ['home','reflection','storico','progressi','edit-profile','tasks'];
+  var navScreens = ['home','reflection','abitudini','storico-profilo','progressi','edit-profile','tasks'];
   showNav(navScreens.indexOf(id) !== -1);
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
   if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); S_activeNav = 'home'; }
   // storico e task-oggi usano lo stesso screen sc-storico — il nav viene gestito da navTo
   if (S_activeNav === 'progressi' && id === 'progressi') { var np = document.getElementById('nav-progressi'); if(np) np.classList.add('active'); }
-  if (S_activeNav === 'storico' && id === 'storico') { var ns = document.getElementById('nav-storico'); if(ns) ns.classList.add('active'); }
-  if (S_activeNav === 'task' && id === 'storico') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
+  if (S_activeNav === 'abitudini' && id === 'abitudini') { var na = document.getElementById('nav-abitudini'); if(na) na.classList.add('active'); }
+  if (S_activeNav === 'task' && id === 'abitudini') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
   if (id === 'tasks') { var nt2 = document.getElementById('nav-task'); if(nt2) nt2.classList.add('active'); }
 }
 
@@ -1367,6 +1379,7 @@ async function afterLogin() {
     S.tasks = obj.tasks_json || [];
     S.giorniCompletati = obj.giorni_completati || [];
     S.reflections = obj.reflections || {};
+    S.abitudiniStato = obj.abitudini_stato || {};
     S.taskExtraOggi = obj.task_extra_oggi || 0;
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
     S.objDataInizio = obj.created_at || '';
@@ -2317,8 +2330,184 @@ function loadProgressi() {
   el = document.getElementById('prog-milestones'); if (el) el.innerHTML = mh;
 }
 
+
+// ─── ABITUDINI ──────────────────────────────────────────────────────────────
+
+function getAbitudiniDalPercorso() {
+  // Estrae tutte le abitudini dai task generati dall'AI
+  var habits = [];
+  (S.tasks || []).forEach(function(t) {
+    if (t.type === 'habit' && t.habit_id) {
+      // Controlla che non sia già in lista
+      var exists = habits.some(function(h){ return h.habit_id === t.habit_id; });
+      if (!exists) {
+        habits.push({
+          habit_id: t.habit_id,
+          title: t.title,
+          habit_days: t.habit_days || 7,
+          startDay: t.day || 1
+        });
+      }
+    }
+  });
+  return habits;
+}
+
+function getStatoAbitudine(habit_id, habit_days) {
+  // Legge lo stato dal dizionario S.abitudiniStato
+  // Struttura: { [habit_id]: { spunte: ['2026-06-19', ...], completata: false } }
+  var stato = S.abitudiniStato[habit_id];
+  if (!stato) stato = { spunte: [], completata: false };
+  var fatte = stato.spunte ? stato.spunte.length : 0;
+  var totale = habit_days || 7;
+  var completata = fatte >= totale;
+  return { spunte: stato.spunte || [], fatte: fatte, totale: totale, completata: completata };
+}
+
+function oggiStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+async function salvaAbitudiniStato() {
+  if (!S.user) return;
+  await sb.from('obiettivi').update({
+    abitudini_stato: S.abitudiniStato
+  }).eq('user_id', S.user.id);
+}
+
+async function spuntaAbitudine(habit_id, habit_days) {
+  var oggi = oggiStr();
+  if (!S.abitudiniStato[habit_id]) S.abitudiniStato[habit_id] = { spunte: [], completata: false };
+  var stato = S.abitudiniStato[habit_id];
+  // Evita doppia spunta nello stesso giorno
+  if (stato.spunte.indexOf(oggi) !== -1) return;
+  stato.spunte.push(oggi);
+  if (stato.spunte.length >= habit_days) stato.completata = true;
+  await salvaAbitudiniStato();
+  loadAbitudini();
+}
+
+async function rimuoviSpuntaAbitudine(habit_id) {
+  var oggi = oggiStr();
+  if (!S.abitudiniStato[habit_id]) return;
+  var stato = S.abitudiniStato[habit_id];
+  stato.spunte = stato.spunte.filter(function(d){ return d !== oggi; });
+  stato.completata = false;
+  await salvaAbitudiniStato();
+  loadAbitudini();
+}
+
+async function ricominciaAbitudine(habit_id) {
+  if (!confirm('Ricomincia questa abitudine da zero?')) return;
+  S.abitudiniStato[habit_id] = { spunte: [], completata: false };
+  await salvaAbitudiniStato();
+  loadAbitudini();
+}
+
+async function continuaAbitudine(habit_id) {
+  // Continua da dove si era — non azzera, aggiunge solo oggi
+  var oggi = oggiStr();
+  if (!S.abitudiniStato[habit_id]) S.abitudiniStato[habit_id] = { spunte: [], completata: false };
+  var stato = S.abitudiniStato[habit_id];
+  if (stato.spunte.indexOf(oggi) === -1) stato.spunte.push(oggi);
+  await salvaAbitudiniStato();
+  loadAbitudini();
+}
+
+function loadAbitudini() {
+  var list = document.getElementById('abitudini-list');
+  if (!list) return;
+  var habits = getAbitudiniDalPercorso();
+  var oggi = oggiStr();
+
+  if (!habits.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-repeat" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessuna abitudine attiva nel tuo percorso.</div>';
+    return;
+  }
+
+  var html = '';
+  habits.forEach(function(h) {
+    var stato = getStatoAbitudine(h.habit_id, h.habit_days);
+    var spuntataOggi = stato.spunte.indexOf(oggi) !== -1;
+    // Controlla se ha saltato ieri
+    var ieri = new Date(); ieri.setDate(ieri.getDate() - 1);
+    var ieriStr = ieri.toISOString().slice(0, 10);
+    var haSaltatoIeri = stato.spunte.length > 0 && stato.spunte.indexOf(ieriStr) === -1 && !stato.completata;
+    // Colore bordo
+    var borderColor = stato.completata ? '#22c55e' : (spuntataOggi ? '#EA580C' : '#2F3B52');
+
+    html += '<div class="tblock" style="border-color:' + borderColor + ';margin-bottom:12px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+    html += '<div style="font-size:15px;font-weight:600;color:#fff;flex:1;margin-right:8px">' + clean(h.title) + '</div>';
+    if (stato.completata) {
+      html += '<div style="color:#22c55e;font-size:12px;font-weight:700;white-space:nowrap">✓ Completata</div>';
+    }
+    html += '</div>';
+
+    // Barra progresso
+    var perc = Math.round((stato.fatte / stato.totale) * 100);
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    html += '<div style="flex:1;background:#1B2435;border-radius:4px;height:6px"><div style="width:' + perc + '%;background:#EA580C;border-radius:4px;height:6px"></div></div>';
+    html += '<div style="font-size:12px;color:#8FA0B8;white-space:nowrap">' + stato.fatte + '/' + stato.totale + ' giorni</div>';
+    html += '</div>';
+
+    if (!stato.completata) {
+      if (!spuntataOggi) {
+        // Pulsante spunta oggi
+        html += '<button onclick="spuntaAbitudine('' + h.habit_id + '',' + h.habit_days + ')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:6px">✓ L'ho fatto oggi</button>';
+        // Se ha saltato ieri, mostra opzioni
+        if (haSaltatoIeri && stato.spunte.length > 0) {
+          html += '<div style="display:flex;gap:8px">';
+          html += '<button onclick="ricominciaAbitudine('' + h.habit_id + '')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">↺ Ricomincia</button>';
+          html += '</div>';
+        }
+      } else {
+        // Già spuntata oggi
+        html += '<div style="text-align:center;padding:8px 0;color:#EA580C;font-size:13px;font-weight:600">✓ Fatto oggi</div>';
+        html += '<button onclick="rimuoviSpuntaAbitudine('' + h.habit_id + '')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta</button>';
+      }
+    }
+
+    html += '</div>';
+  });
+
+  // Riepilogo in fondo
+  var completate = habits.filter(function(h){ return getStatoAbitudine(h.habit_id, h.habit_days).completata; }).length;
+  html += '<div style="text-align:center;padding:16px 0;color:#8FA0B8;font-size:13px">' + completate + '/' + habits.length + ' abitudini completate</div>';
+
+  list.innerHTML = html;
+}
+
+function mostraStoricoInProfilo() {
+  var list = document.getElementById('storico-profilo-list');
+  var tasks = S.tasks || [];
+  var completati = S.giorniCompletati || [];
+  var taskCompletati = tasks.filter(function(t) {
+    return completati.indexOf(t.day || 0) !== -1;
+  });
+  var html = '';
+  if (!taskCompletati.length) {
+    html = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
+  } else {
+    taskCompletati.forEach(function(t) {
+      var idx = tasks.indexOf(t);
+      var day = t.day || (idx + 1);
+      var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
+      html += '<div class="tblock">';
+      html += '<div class="tlabel">Task ' + day + ' — ✓ completato</div>';
+      html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div>';
+      if (refl) {
+        html += '<div class="tdesc" style="font-size:12px;margin-top:8px;color:#8FA0B8">' + refl + '</div>';
+      }
+      html += '</div>';
+    });
+  }
+  if (list) list.innerHTML = html;
+  ss('storico-profilo');
+}
+
 async function loadStorico() {
-  var list = document.getElementById('storico-list');
+  var list = document.getElementById('abitudini-list');
   var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
   var completati = S.giorniCompletati || [];
@@ -2354,9 +2543,9 @@ function apriTaskSolaLettura(idx) {
   var day = t.day || (idx + 1);
   var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
   var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-  var list = document.getElementById('storico-list');
+  var list = document.getElementById('abitudini-list');
   var html = '<div style="margin-bottom:12px">';
-  html += '<button onclick="loadStorico()" style="background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
+  html += '<button onclick="loadTaskTab()" style="background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
   html += '</div>';
   html += '<div class="tblock" style="border-color:#EA580C">';
   html += '<div class="tlabel" style="color:#EA580C">Giorno ' + day + ' — ✓ completato</div>';
@@ -2378,13 +2567,27 @@ function apriTaskSolaLettura(idx) {
 }
 
 async function loadTaskTab() {
-  var list = document.getElementById('storico-list');
+  var list = document.getElementById('abitudini-list');
   var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
   var giorno = S.giornoAttuale || 1;
 
-  if (document.getElementById('tasks-obiettivo-nav'))
-    document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
+  if (document.getElementById('abitudini-sub'))
+    document.getElementById('abitudini-sub').textContent = S.ctx || '';
+  if (document.getElementById('abitudini-title'))
+    document.getElementById('abitudini-title').textContent = 'I tuoi task';
+  // Link storico piccolo in cima
+  var storicoLink = document.getElementById('task-storico-link');
+  if (!storicoLink) {
+    var pad = document.querySelector('#sc-abitudini .s-pad');
+    if (pad) {
+      var lnk = document.createElement('div');
+      lnk.id = 'task-storico-link';
+      lnk.style = 'text-align:right;margin-top:-8px;margin-bottom:4px';
+      lnk.innerHTML = '<button onclick="mostraStoricoInProfilo()" style="background:none;border:none;color:#8FA0B8;font-size:12px;cursor:pointer"><i class="ti ti-history"></i> Storico →</button>';
+      pad.appendChild(lnk);
+    }
+  }
 
   if (!tasks.length) {
     list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.</div>';
