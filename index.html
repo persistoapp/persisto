@@ -2733,14 +2733,14 @@ function apriTask(idx) {
 function goTaskFromHome() {
   S_activeNav = 'task';
   loadTaskTab();
-  ss('storico');
+  ss('abitudini');
 }
 
 async function completeFromHome() {
   if (S.taskCompletato) {
     S_activeNav = 'task';
     loadTaskTab();
-    ss('storico');
+    ss('abitudini');
     return;
   }
   if (confirm('Confermi di aver completato il task di oggi?')) {
