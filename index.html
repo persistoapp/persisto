@@ -2060,7 +2060,7 @@ async function saveRefl() {
 
 async function sbloccaProssimoTask() {
   var oggiStr = new Date().toISOString().slice(0, 10);
-  // FIX 2: reset se nuovo giorno, non cumulativo
+  // Reset se nuovo giorno
   if (S.dataUltimoExtra !== oggiStr) {
     S.taskExtraOggi = 0;
     S.dataUltimoExtra = oggiStr;
@@ -2069,7 +2069,9 @@ async function sbloccaProssimoTask() {
     alert('Hai già sbloccato 2 task extra oggi. Torna domani.');
     return;
   }
-  S.giornoAttuale++;
+  // NON incrementare S.giornoAttuale — le abitudini devono restare ferme
+  // Usiamo taskVisualizzato per mostrare il task extra senza spostare il giorno ufficiale
+  S.taskVisualizzato = (S.taskVisualizzato || S.giornoAttuale) + 1;
   S.taskCompletato = false;
   S.taskExtraOggi++;
   S.dataUltimoExtra = oggiStr;
@@ -2080,8 +2082,8 @@ async function sbloccaProssimoTask() {
       data_ultimo_extra: S.dataUltimoExtra
     }).eq('user_id', S.user.id);
   }
-  // Aggiorna home col nuovo task
-  var t = S.tasks[S.giornoAttuale - 1];
+  // Mostra il task extra (taskVisualizzato) senza toccare giornoAttuale
+  var t = S.tasks[S.taskVisualizzato - 1];
   if (t) {
     document.getElementById('task-title').textContent = clean(t.title) || '';
     var df = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
@@ -2101,8 +2103,10 @@ function tornaHome() {
     ss('completato');
     return;
   }
+  // Reset taskVisualizzato — torniamo al task ufficiale del giorno
+  S.taskVisualizzato = null;
   // NON avanza il giorno — rimane sul task attuale
-  // Il giorno avanza solo con sblocca esplicito dal tab Task
+  // Il giorno avanza solo con saveRefl dopo avanzamento('fatto')
   aggiornaHome();
   ss('home');
 }
