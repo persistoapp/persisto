@@ -1371,9 +1371,10 @@ async function afterLogin() {
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
     S.objDataInizio = obj.created_at || '';
 
-    // Giorno attuale = ultimo completato + 1 (non dipende dalla data)
+    // Giorno attuale = ultimo completato (non avanza automaticamente)
+    // L'utente decide quando sbloccare il task successivo
     var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
-    S.giornoAttuale = maxCompletato + 1;
+    S.giornoAttuale = maxCompletato > 0 ? maxCompletato : 1;
     S.giornoAttuale = Math.min(S.giornoAttuale, 30);
 
     // Reset extra solo se è un nuovo giorno di calendario
@@ -1664,9 +1665,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function avanzamento(tipo) {
   if (tipo === 'fatto') {
     if (confirm('Confermi di aver completato il task di oggi?')) {
-      markDone();
+      // Usa il giorno visualizzato (extra o principale)
+      var giornoCompletato = S.taskVisualizzato || S.giornoAttuale || 1;
+      markDone(giornoCompletato);
+      // Aggiorna giornoAttuale al giorno appena completato, resetta taskVisualizzato
+      S.giornoAttuale = giornoCompletato;
+      S.taskVisualizzato = null;
       // Popola il task nella schermata reflection
-      var giorno = S.giornoAttuale || 1;
+      var giorno = giornoCompletato;
       var t = S.tasks[giorno - 1] || S.tasks[0] || {};
       var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
       document.getElementById('refl-task-title').textContent = clean(t.title || '');
@@ -2015,10 +2021,11 @@ function selEmoji(btn, e) {
   document.getElementById('btn-refl').disabled = false;
 }
 
-async function markDone() {
+async function markDone(giorno) {
+  giorno = giorno || S.giornoAttuale || 1;
   S.taskCompletato = true;
-  if (S.giorniCompletati.indexOf(S.giornoAttuale) === -1) {
-    S.giorniCompletati.push(S.giornoAttuale);
+  if (S.giorniCompletati.indexOf(giorno) === -1) {
+    S.giorniCompletati.push(giorno);
   }
   // Salva SUBITO su Supabase con await
   if (S.user) {
@@ -2071,6 +2078,7 @@ async function sbloccaProssimoTask() {
   }
   // NON incrementare S.giornoAttuale — le abitudini devono restare ferme
   // Usiamo taskVisualizzato per mostrare il task extra senza spostare il giorno ufficiale
+  // giornoAttuale è il giorno corrente (completato o no), il prossimo è +1
   S.taskVisualizzato = (S.taskVisualizzato || S.giornoAttuale) + 1;
   S.taskCompletato = false;
   S.taskExtraOggi++;
