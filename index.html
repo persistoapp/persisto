@@ -1073,7 +1073,7 @@ select option{background:#111827;color:#fff}
   <div class="scroll" style="padding:40px 24px;text-align:center">
     <div style="font-size:48px;margin-bottom:16px">🏆</div>
     <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px">Percorso completato!</div>
-    <div style="font-size:15px;color:#C7D2E0;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di crescita costante.<br>Questo è il risultato di chi non smette.</div>
+    <div style="font-size:15px;color:#C7D2E0;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di task e tutte le abitudini del percorso.<br>Questo è il risultato di chi non smette.</div>
     <div class="stats" style="margin-bottom:32px">
       <div class="stat"><div class="stat-n" id="comp-giorni">30</div><div class="stat-l">Giorni ✓</div></div>
       <div class="stat"><div class="stat-n" style="color:#EA580C" id="comp-crescita">+34%</div><div class="stat-l">Crescita</div></div>
@@ -2140,9 +2140,30 @@ async function sbloccaProssimoTask() {
   loadTaskTab();
 }
 
+
+function percorsoCompletato() {
+  // Task: tutti e 30 completati
+  if ((S.giorniCompletati || []).length < 30) return false;
+  if ((S.giornoAttuale || 1) < 30) return false;
+  // Abitudini: tutte al loro numero di giorni
+  var habits = getAbitudiniDalPercorso();
+  if (!habits.length) return true; // nessuna abitudine = solo task
+  return habits.every(function(h) {
+    var stato = getStatoAbitudine(h.habit_id, h.habit_days);
+    return stato.completata;
+  });
+}
+
+function abitudiniMancanti() {
+  var habits = getAbitudiniDalPercorso();
+  return habits.filter(function(h) {
+    return !getStatoAbitudine(h.habit_id, h.habit_days).completata;
+  });
+}
+
 function tornaHome() {
-  // Se ha completato il giorno 30, vai alla schermata completamento percorso
-  if (S.giornoAttuale >= 30 && S.giorniCompletati.length >= 30) {
+  // Controlla se tutto è completato (task + abitudini)
+  if (percorsoCompletato()) {
     ss('completato');
     return;
   }
@@ -2303,8 +2324,22 @@ function aggiornaHome() {
 
   var btn = document.getElementById('home-complete-btn');
   if (btn) {
-    btn.textContent = S.taskCompletato ? 'Vedi i prossimi task' : 'Vai al task';
-    btn.classList.toggle('done', !!S.taskCompletato);
+    var task30ok = (S.giorniCompletati || []).length >= 30;
+    if (task30ok) {
+      var mancanti = abitudiniMancanti ? abitudiniMancanti() : [];
+      if (mancanti.length > 0) {
+        btn.textContent = 'Completa le abitudini per finire →';
+        btn.onclick = function(){ navTo('abitudini'); };
+      } else {
+        btn.textContent = '🏆 Vedi il certificato';
+        btn.onclick = function(){ ss('completato'); };
+      }
+      btn.classList.add('done');
+    } else {
+      btn.textContent = S.taskCompletato ? 'Vedi i prossimi task' : 'Vai al task';
+      btn.onclick = function(){ goTaskFromHome(); };
+      btn.classList.toggle('done', !!S.taskCompletato);
+    }
   }
   aggiornaHomeHabits();
 }
