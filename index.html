@@ -1514,7 +1514,21 @@ async function saveProfile() {
     return;
   }
   S.userProfile = payload;
-  ss('welcome');
+  // Se c'è già un obiettivo attivo, torna in home, altrimenti vai alla welcome
+  if (S.tasks && S.tasks.length > 0) {
+    aggiornaHome();
+    ss('home');
+  } else {
+    sb.from('obiettivi').select('tasks_json').eq('user_id', S.user.id).limit(1).single().then(function(res) {
+      if (res.data && res.data.tasks_json && res.data.tasks_json.length > 0) {
+        S.tasks = res.data.tasks_json;
+        aggiornaHome();
+        ss('home');
+      } else {
+        ss('welcome');
+      }
+    });
+  }
 }
 
 function preselChip(key, val) {
@@ -1548,7 +1562,8 @@ function goToEditFull() {
       preselChip('figli', 'no');
     }
     preselChip('supporto', p.supporto_familiare);
-    preselChip('carico', p.debiti ? 'si' : 'no');
+    preselChip('custody', p.custody);
+    preselChip('debiti', p.debiti === true || p.debiti === 'si' ? 'si' : (p.debiti === 'leggero' ? 'leggero' : 'no'));
     if (p.luogo) document.getElementById('demo-luogo').value = p.luogo || '';
     // step 2
     preselChip('tipolavoro', p.tipo_lavoro);
@@ -1558,12 +1573,15 @@ function goToEditFull() {
     preselChip('fascia', p.reddito_fascia);
     preselChip('soddisfazione', p.soddisfazione_lavoro);
     preselChip('energialavoro', p.energia_fine_giornata);
+    preselChip('debiti', p.debiti === true ? 'si' : (p.debiti || 'no'));
+    preselChip('business', p.business);
     // step 3
     preselChip('sveglia', p.sveglia);
     preselChip('nanna', p.ora_nanna);
     preselChip('tempolibero', p.tempo_libero_giorno);
     preselChip('casa', p.gestione_casa);
-    preselChip('weekend', p.weekend_lavoro ? 'lavoro' : 'libero');
+    preselChip('momentosolo', p.momento_solo);
+    preselChip('weekend', p.weekend_lavoro === true ? 'lavoro' : 'libero');
     // step 4
     preselChip('salute', p.salute_generale);
     preselChip('sport', p.attivita_fisica);
@@ -2458,13 +2476,13 @@ function loadAbitudini() {
         // Se ha saltato ieri, mostra opzioni
         if (haSaltatoIeri && stato.spunte.length > 0) {
           html += '<div style="display:flex;gap:8px">';
-          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\','+h.habit_days+')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
+          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
           html += '</div>';
         }
       } else {
         // Già spuntata oggi
         html += '<div style="text-align:center;padding:8px 0;color:#EA580C;font-size:13px;font-weight:600">✓ Fatto oggi</div>';
-        html += '<button onclick="rimuoviSpuntaAbitudine(\''+h.habit_id+'\')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta</button>';
+        html += '<button onclick="rimuoviSpuntaAbitudine(\'' + h.habit_id + '\')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta</button>';
       }
     }
 
@@ -2476,6 +2494,19 @@ function loadAbitudini() {
   html += '<div style="text-align:center;padding:16px 0;color:#8FA0B8;font-size:13px">' + completate + '/' + habits.length + ' abitudini completate</div>';
 
   list.innerHTML = html;
+}
+
+
+function toggleStoricoDetail(el) {
+  var detail = el.querySelector('.storico-detail');
+  var icon = el.querySelector('.ti-chevron-down, .ti-chevron-up');
+  if (!detail) return;
+  var isOpen = detail.style.display !== 'none';
+  detail.style.display = isOpen ? 'none' : 'block';
+  if (icon) {
+    icon.className = icon.className.replace('ti-chevron-down', 'TEMP').replace('ti-chevron-up', 'TEMP');
+    icon.className = icon.className.replace('TEMP', isOpen ? 'ti-chevron-down' : 'ti-chevron-up');
+  }
 }
 
 function mostraStoricoInProfilo() {
@@ -2493,12 +2524,23 @@ function mostraStoricoInProfilo() {
       var idx = tasks.indexOf(t);
       var day = t.day || (idx + 1);
       var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
-      html += '<div class="tblock">';
-      html += '<div class="tlabel">Task ' + day + ' — ✓ completato</div>';
-      html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div>';
+      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, 'Passo $1:');
+      html += '<div class="tblock" style="cursor:pointer" onclick="toggleStoricoDetail(this)">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html += '<div><div class="tlabel">Task ' + day + ' — ✓ completato</div>';
+      html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div></div>';
+      html += '<i class="ti ti-chevron-down" style="color:#8FA0B8;font-size:16px;flex-shrink:0"></i>';
+      html += '</div>';
+      html += '<div class="storico-detail" style="display:none;margin-top:12px">';
+      html += '<div class="tdesc" style="font-size:12px;white-space:pre-line;color:#C7D2E0;margin-bottom:8px">' + descFormatted + '</div>';
+      if (t.why) html += '<div class="tdesc" style="font-size:11px;color:#8FA0B8;font-style:italic;margin-bottom:8px">' + clean(t.why) + '</div>';
       if (refl) {
-        html += '<div class="tdesc" style="font-size:12px;margin-top:8px;color:#8FA0B8">' + refl + '</div>';
+        html += '<div style="background:#1B2435;border-radius:8px;padding:10px;margin-top:8px">';
+        html += '<div class="tlabel" style="margin-bottom:4px">Le tue note</div>';
+        html += '<div class="tdesc" style="font-size:13px;color:#fff">' + refl + '</div>';
+        html += '</div>';
       }
+      html += '</div>';
       html += '</div>';
     });
   }
@@ -2690,14 +2732,14 @@ function apriTask(idx) {
 function goTaskFromHome() {
   S_activeNav = 'task';
   loadTaskTab();
-  ss('abitudini');
+  ss('storico');
 }
 
 async function completeFromHome() {
   if (S.taskCompletato) {
     S_activeNav = 'task';
     loadTaskTab();
-    ss('abitudini');
+    ss('storico');
     return;
   }
   if (confirm('Confermi di aver completato il task di oggi?')) {
