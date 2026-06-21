@@ -1370,6 +1370,7 @@ async function afterLogin() {
     .single();
 
   if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
+    S.objId = obj.id;
     S.ctx = obj.obiettivo_testo || '';
     S.objData = {
       come: obj.come || '',
@@ -1732,7 +1733,7 @@ function avanzamento(tipo) {
       }
       // Salva su Supabase
       if (S.user) {
-        sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('user_id', S.user.id);
+        sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
       }
     }
     if (confirm('Ok! Il task rimane per domani. Vuoi andare avanti lo stesso oggi?')) {
@@ -1802,7 +1803,7 @@ async function correggiTask() {
     S.tasks[giorno - 1] = task;
     // Salva su Supabase
     if (S.user) {
-      await sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('user_id', S.user.id);
+      await sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
     }
     chiudiCorr();
     loadTaskTab(); // ricarica la vista
@@ -2068,7 +2069,7 @@ async function markDone(giorno) {
   if (S.user) {
     var {error} = await sb.from('obiettivi').update({
       giorni_completati: S.giorniCompletati
-    }).eq('user_id', S.user.id);
+    }).eq('id', S.objId);
     if (error) console.error('Errore salvataggio giorno:', error);
     else console.log('Giorno salvato:', S.giorniCompletati);
   }
@@ -2125,7 +2126,7 @@ async function sbloccaProssimoTask() {
       giorni_completati: S.giorniCompletati,
       task_extra_oggi: S.taskExtraOggi,
       data_ultimo_extra: S.dataUltimoExtra
-    }).eq('user_id', S.user.id);
+    }).eq('id', S.objId);
   }
   // Mostra il task extra (taskVisualizzato) senza toccare giornoAttuale
   var t = S.tasks[S.taskVisualizzato - 1];
@@ -2458,10 +2459,10 @@ function oggiStr() {
 }
 
 async function salvaAbitudiniStato() {
-  if (!S.user) return;
+  if (!S.user || !S.objId) return;
   await sb.from('obiettivi').update({
     abitudini_stato: S.abitudiniStato
-  }).eq('user_id', S.user.id);
+  }).eq('id', S.objId);
 }
 
 async function spuntaAbitudine(habit_id, habit_days) {
