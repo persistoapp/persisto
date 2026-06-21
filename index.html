@@ -1389,11 +1389,11 @@ async function afterLogin() {
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
     S.objDataInizio = obj.created_at || '';
 
-    // Giorno attuale = ultimo completato (non avanza automaticamente)
-    // L'utente decide quando sbloccare il task successivo
+    // Giorno attuale = primo giorno non ancora completato
     var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
-    S.giornoAttuale = maxCompletato > 0 ? maxCompletato : 1;
+    S.giornoAttuale = maxCompletato + 1;
     S.giornoAttuale = Math.min(S.giornoAttuale, 30);
+    if (S.giornoAttuale < 1) S.giornoAttuale = 1;
 
     // Segna se il giorno attuale è già completato
     S.taskCompletato = S.giorniCompletati.indexOf(S.giornoAttuale) !== -1;
@@ -2083,6 +2083,13 @@ async function saveRefl() {
   if (!S.reflections) S.reflections = {};
   if (reflText) S.reflections[giorno] = reflText;
 
+  // Avanza al giorno successivo
+  var prossimoGiorno = giorno + 1;
+  if (prossimoGiorno <= 30 && prossimoGiorno <= S.tasks.length) {
+    S.giornoAttuale = prossimoGiorno;
+    S.taskCompletato = S.giorniCompletati.indexOf(prossimoGiorno) !== -1;
+  }
+
   // Salva reflection su Supabase, se presente
   if (S.user) {
     var payload = { giorni_completati: S.giorniCompletati };
@@ -2090,7 +2097,7 @@ async function saveRefl() {
 
     var { error } = await sb.from('obiettivi')
       .update(payload)
-      .eq('user_id', S.user.id);
+      .eq('id', S.objId);
 
     if (error) {
       alert('Errore salvataggio: ' + error.message);
@@ -2100,8 +2107,8 @@ async function saveRefl() {
 
   aggiornaHome();
   loadProgressi();
-  S_activeNav = 'progressi';
-  ss('progressi');
+  S_activeNav = 'home';
+  ss('home');
 }
 
 async function sbloccaProssimoTask() {
