@@ -1796,7 +1796,7 @@ async function correggiTask() {
     }
     var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
     var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask da sostituire: ' + taskPrecedente + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
+    var msg = objCtx + '\n\nTask da sostituire: ' + (taskAttuale ? JSON.stringify(taskAttuale) : '') + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
     var raw = await callAI(sys, msg);
     var task = safeJSON(raw);
     console.log('TASK RIGENERATO', task);
