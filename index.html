@@ -966,6 +966,7 @@ select option{background:#111827;color:#fff}
     <button class="btn-ghost" onclick="mostraStoricoInProfilo()" style="margin-top:8px"><i class="ti ti-history"></i> Storico task</button>
     <button class="btn-ghost" onclick="chiudiProfilo()" style="margin-top:8px">Chiudi</button>
     <button class="btn-ghost" onclick="resetFlow()" style="margin-top:8px;color:#ff6b9d;border-color:#2d1a2d">Cambia obiettivo</button>
+    <button class="btn-ghost" onclick="resetTotale()" style="margin-top:8px;color:#ff4444;border-color:#3d1a1a;font-size:13px">&#9888; Azzera tutto (storico incluso)</button>
   </div>
 </div>
 
@@ -2835,9 +2836,34 @@ function confirmDone() {
   }
 }
 
+async function resetTotale() {
+  var conf = confirm("⚠️ ATTENZIONE: questa azione cancella il percorso attuale E azzera tutto lo storico di crescita (giorni totali, progressi storici).\n\nÈ irreversibile. Vuoi davvero continuare?");
+  if (!conf) return;
+  if (S.user) {
+    await sb.from("obiettivi").delete().eq("user_id", S.user.id);
+    await sb.from("profiles").update({ giorni_totali: 0 }).eq("id", S.user.id);
+  }
+  S.giorniTotali = 0;
+  S.arch = null; S.freeText = ""; S.ctx = "";
+  S.questions = []; S.answers = []; S.currentQ = 0;
+  S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
+  S.taskCompletato = false;
+  S.giorniCompletati = [];
+  S.abitudiniStato = {};
+  CHIPS.tentativo = null; CHIPS.scadenza = null;
+  document.getElementById("free-text").value = "";
+  document.querySelectorAll(".acard").forEach(function(c){ c.classList.remove("sel"); });
+  document.getElementById("btn-start").disabled = true;
+  document.getElementById("err-welcome").innerHTML = "";
+  ss("welcome");
+}
+
 async function resetFlow() {
   var conf = confirm('⚠️ Stai per cancellare il percorso attuale.\n\nTutti i task e i progressi verranno eliminati definitivamente e non sono recuperabili.\n\nVuoi continuare?');
   if (!conf) return;
+
+  // Salva i giorni fatti prima di cancellare
+  await salvaCrescitaStorica();
 
   // Cancella tutti gli obiettivi dell'utente da Supabase
   if (S.user) {
