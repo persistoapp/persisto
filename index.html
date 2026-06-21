@@ -2268,7 +2268,7 @@ async function sbloccaProssimoTask() {
   // NON incrementare S.giornoAttuale — le abitudini devono restare ferme
   // Usiamo taskVisualizzato per mostrare il task extra senza spostare il giorno ufficiale
   // giornoAttuale è il giorno corrente (completato o no), il prossimo è +1
-  S.taskVisualizzato = S.giornoAttuale;
+  S.taskVisualizzato = S.giornoAttuale + 1;
   S.taskCompletato = false;
   S.taskExtraOggi++;
   S.dataUltimoExtra = oggiStr;
@@ -2855,7 +2855,8 @@ async function loadTaskTab() {
     var idx = tasks.indexOf(oggi);
     // Formatta descrizione: ogni "Passo N:" va a capo
     var descFormatted = clean(oggi.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    var completatoOggi = S.taskCompletato;
+    var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
+    var completatoOggi = taskFattoOggi;
     html += '<div class="tblock" style="border-color:#EA580C">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
     html += '<div class="tlabel" style="color:#EA580C">Giorno ' + giorno + ' — oggi</div>';
