@@ -1431,10 +1431,6 @@ async function afterLogin() {
     if (S.dataUltimoExtra !== oggiStr) {
       S.taskExtraOggi = 0;
     }
-    // Se il task principale è già stato fatto oggi, segna come completato
-    if (S.dataUltimoTask === oggiStr) {
-      S.taskCompletato = true;
-    }
 
     // Popola la home col task del giorno attuale
     document.getElementById('home-score').textContent = obj.baseline_score || 0;
@@ -2898,13 +2894,13 @@ async function loadTaskTab() {
   var oggiStr = new Date().toISOString().slice(0, 10);
   if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
   var extraRimanenti = 2 - (S.taskExtraOggi || 0);
+  var taskFattoOggi = S.dataUltimoTask === oggiStr;
 
   for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
     var t = tasks[i];
     if (!t) continue;
     var posizione = i - giorno; // 0 = prossimo, 1 = dopo, ecc.
-    // Sblocca solo il PROSSIMO immediato, non entrambi insieme
-    var puoSbloccare = S.taskCompletato && posizione === 0 && extraRimanenti > 0;
+    var puoSbloccare = taskFattoOggi && posizione === 0 && extraRimanenti > 0;
     var dayNum = t.day || (i+1);
 
     if (puoSbloccare) {
