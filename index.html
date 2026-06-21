@@ -1160,6 +1160,7 @@ var S = {
   giorniCompletati: [],
   taskExtraOggi: 0,
   dataUltimoExtra: '',
+  dataUltimoTask: '',
   abitudiniStato: {},
   giorniTotali: 0
 };
@@ -1412,6 +1413,7 @@ async function afterLogin() {
     S.abitudiniStato = obj.abitudini_stato || {};
     S.taskExtraOggi = obj.task_extra_oggi || 0;
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
+    S.dataUltimoTask = obj.data_ultimo_task || '';
     S.objDataInizio = obj.created_at || '';
 
     // Giorno attuale = primo giorno non ancora completato
@@ -1428,6 +1430,10 @@ async function afterLogin() {
     var oggiStr = oggi.toISOString().slice(0, 10);
     if (S.dataUltimoExtra !== oggiStr) {
       S.taskExtraOggi = 0;
+    }
+    // Se il task principale è già stato fatto oggi, segna come completato
+    if (S.dataUltimoTask === oggiStr) {
+      S.taskCompletato = true;
     }
 
     // Popola la home col task del giorno attuale
@@ -1768,6 +1774,8 @@ async function avviaPercorso(percorsoId) {
   S.taskCompletato = false;
   S.taskExtraOggi = 0;
   S.abitudiniStato = {};
+  S.dataUltimoTask = '';
+  S.dataUltimoExtra = '';
 
   // Salva su Supabase
   if (S.user) {
@@ -2216,20 +2224,27 @@ async function markDone(giorno) {
 async function saveRefl() {
   var reflText = document.getElementById('refl-text').value.trim();
   var giorno = S.giornoAttuale || 1;
+  var oggiStr = new Date().toISOString().slice(0, 10);
 
   if (!S.reflections) S.reflections = {};
   if (reflText) S.reflections[giorno] = reflText;
+
+  // Salva la data di oggi come ultimo task completato
+  S.dataUltimoTask = oggiStr;
 
   // Avanza al giorno successivo
   var prossimoGiorno = giorno + 1;
   if (prossimoGiorno <= 30 && prossimoGiorno <= S.tasks.length) {
     S.giornoAttuale = prossimoGiorno;
-    S.taskCompletato = S.giorniCompletati.indexOf(prossimoGiorno) !== -1;
+    S.taskCompletato = true; // già fatto oggi — blocca il prossimo fino a domani
   }
 
-  // Salva reflection su Supabase, se presente
+  // Salva su Supabase
   if (S.user) {
-    var payload = { giorni_completati: S.giorniCompletati };
+    var payload = {
+      giorni_completati: S.giorniCompletati,
+      data_ultimo_task: S.dataUltimoTask
+    };
     if (reflText) payload.reflections = S.reflections;
 
     var { error } = await sb.from('obiettivi')
