@@ -2203,11 +2203,9 @@ function selEmoji(btn, e) {
 
 async function markDone(giorno) {
   giorno = giorno || S.giornoAttuale || 1;
-  S.taskCompletato = true;
   if (S.giorniCompletati.indexOf(giorno) === -1) {
     S.giorniCompletati.push(giorno);
   }
-  // Salva SUBITO su Supabase con await
   if (S.user) {
     var {error} = await sb.from('obiettivi').update({
       giorni_completati: S.giorniCompletati
