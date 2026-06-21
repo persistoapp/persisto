@@ -2271,7 +2271,7 @@ async function sbloccaProssimoTask() {
   // NON incrementare S.giornoAttuale — le abitudini devono restare ferme
   // Usiamo taskVisualizzato per mostrare il task extra senza spostare il giorno ufficiale
   // giornoAttuale è il giorno corrente (completato o no), il prossimo è +1
-  S.taskVisualizzato = (S.taskVisualizzato || S.giornoAttuale) + 1;
+  S.taskVisualizzato = S.giornoAttuale;
   S.taskCompletato = false;
   S.taskExtraOggi++;
   S.dataUltimoExtra = oggiStr;
