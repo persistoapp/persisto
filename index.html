@@ -2226,12 +2226,9 @@ async function saveRefl() {
   // Salva la data di oggi come ultimo task completato
   S.dataUltimoTask = oggiStr;
 
-  // Avanza al giorno successivo
-  var prossimoGiorno = giorno + 1;
-  if (prossimoGiorno <= 30 && prossimoGiorno <= S.tasks.length) {
-    S.giornoAttuale = prossimoGiorno;
-    S.taskCompletato = false; // il prossimo giorno non è ancora completato
-  }
+  // NON avanzare giornoAttuale qui — resta sul giorno completato
+  // Il giorno successivo si sblocca domani quando afterLogin calcola maxCompletato+1
+  S.taskCompletato = false;
 
   // Salva su Supabase
   if (S.user) {
