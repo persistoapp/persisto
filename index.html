@@ -991,6 +991,30 @@ select option{background:#111827;color:#fff}
     <div class="sub" id="tasks-obiettivo" style="margin-bottom:12px"></div>
   </div>
   <div class="scroll" id="tasks-list"></div>
+  <div class="bot" id="storico-bot" style="display:none">
+    <!-- PANNELLO CORREZIONE -->
+    <div class="corr-panel" id="corr-panel">
+      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
+      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
+        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
+      </div>
+      <div id="err-corr"></div>
+    </div>
+    <!-- PANNELLO AVANZAMENTO -->
+    <div id="avanz-panel">
+      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
+        <i class="ti ti-check"></i> Ce l'ho fatta
+      </button>
+      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
+        <i class="ti ti-clock"></i> Dammi un giorno in più
+      </button>
+      <button class="btn-ghost" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52">
+        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
+      </button>
+    </div>
+  </div>
 </div>
 
 
@@ -1042,30 +1066,6 @@ select option{background:#111827;color:#fff}
     <div class="sub" id="abitudini-sub" style="margin-bottom:0"></div>
   </div>
   <div class="scroll" id="abitudini-list"></div>
-  <div class="bot" id="storico-bot" style="display:none" style="display:none">
-    <!-- PANNELLO CORREZIONE -->
-    <div class="corr-panel" id="corr-panel">
-      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
-      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
-        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
-      </div>
-      <div id="err-corr"></div>
-    </div>
-    <!-- PANNELLO AVANZAMENTO -->
-    <div id="avanz-panel">
-      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
-        <i class="ti ti-check"></i> Ce l'ho fatta
-      </button>
-      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
-        <i class="ti ti-clock"></i> Dammi un giorno in più
-      </button>
-      <button class="btn-ghost" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52">
-        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
-      </button>
-    </div>
-  </div>
 </div>
 
 <!-- PERCORSO COMPLETATO -->
