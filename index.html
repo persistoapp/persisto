@@ -687,39 +687,64 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="h1">Su cosa vuoi lavorare?</div>
-    <div class="sub">Scegli un'area o scrivi cosa vuoi cambiare.</div>
-    <div class="grid">
-      <div class="acard" id="arch-corpo" onclick="selArch('corpo')">
-        <i class="ti ti-barbell"></i>
-        <div class="acard-label">Corpo</div>
-        <div class="acard-sub">Forma, energia, salute</div>
-      </div>
-      <div class="acard" id="arch-mente" onclick="selArch('mente')">
+    <div class="sub">Scegli un'area di crescita.</div>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <div class="acard" onclick="selArea('Mente')">
         <i class="ti ti-brain"></i>
         <div class="acard-label">Mente</div>
-        <div class="acard-sub">Focus, stress, abitudini</div>
+        <div class="acard-sub">Focus, chiarezza, abitudini</div>
       </div>
-      <div class="acard" id="arch-relazioni" onclick="selArch('relazioni')">
+      <div class="acard" onclick="selArea('Lavoro')">
+        <i class="ti ti-rocket"></i>
+        <div class="acard-label">Lavoro</div>
+        <div class="acard-sub">Carriera, tempo, crescita</div>
+      </div>
+      <div class="acard" onclick="selArea('Relazioni')">
         <i class="ti ti-heart"></i>
         <div class="acard-label">Relazioni</div>
         <div class="acard-sub">Coppia, famiglia, amici</div>
       </div>
-      <div class="acard" id="arch-lavoro" onclick="selArch('lavoro')">
-        <i class="ti ti-rocket"></i>
-        <div class="acard-label">Lavoro</div>
-        <div class="acard-sub">Carriera, soldi, crescita</div>
+      <div class="acard" onclick="selArea('Scopo')">
+        <i class="ti ti-compass"></i>
+        <div class="acard-label">Scopo</div>
+        <div class="acard-sub">Valori, visione, direzione</div>
+      </div>
+      <div class="acard" onclick="selArea('Benessere')">
+        <i class="ti ti-leaf"></i>
+        <div class="acard-label">Benessere</div>
+        <div class="acard-sub">Energia, corpo, routine</div>
+      </div>
+      <div class="acard" onclick="selArea('Emozioni')">
+        <i class="ti ti-mood-smile"></i>
+        <div class="acard-label">Emozioni</div>
+        <div class="acard-sub">Gestire, capire, regolare</div>
+      </div>
+      <div class="acard" onclick="selArea('Autostima')">
+        <i class="ti ti-star"></i>
+        <div class="acard-label">Autostima</div>
+        <div class="acard-sub">Fiducia, confini, dialogo</div>
+      </div>
+      <div class="acard" onclick="selArea('Ripartenza')">
+        <i class="ti ti-refresh"></i>
+        <div class="acard-label">Ripartenza</div>
+        <div class="acard-sub">Resilienza, cambiamento</div>
       </div>
     </div>
-    <div class="div">
-      <div class="div-line"></div>
-      <div class="div-text">oppure scrivi tu</div>
-      <div class="div-line"></div>
-    </div>
-    <textarea id="free-text" rows="3" placeholder="Es: voglio guadagnare 10.000 euro al mese..."></textarea>
-    <div id="err-welcome"></div>
   </div>
-  <div class="bot">
-    <button class="btn" id="btn-start" onclick="startFlow()" disabled>Inizia</button>
+</div>
+
+<!-- SELEZIONE PERCORSO -->
+<div class="screen" id="sc-percorsi">
+  <div class="s-pad">
+    <div class="topbar">
+      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-arrow-left"></i></button>
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="width:36px"></div>
+    </div>
+    <div class="h1" id="percorsi-area-title">Mente</div>
+    <div class="sub">Scegli il percorso da 30 giorni.</div>
+    <div id="percorsi-list" style="margin-top:16px;display:flex;flex-direction:column;gap:12px"></div>
+    <div id="err-percorsi"></div>
   </div>
 </div>
 
@@ -1651,26 +1676,123 @@ function selArch(a) {
     S.arch = null;
   } else {
     S.arch = a;
-    document.getElementById('arch-' + a).classList.add('sel');
-    document.getElementById('free-text').value = '';
+    var el = document.getElementById('arch-' + a);
+    if (el) el.classList.add('sel');
+    var ft = document.getElementById('free-text');
+    if (ft) ft.value = '';
     S.freeText = '';
   }
-  updateBtn();
+  var btn = document.getElementById('btn-start');
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  if (btn) btn.disabled = !(S.arch || val);
+}
+
+async function selArea(area) {
+  S.areaScelta = area;
+  document.getElementById('percorsi-area-title').textContent = area;
+  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento...</div>';
+  ss('percorsi');
+
+  var FREE_IDS = [1, 7, 13, 31]; // percorsi free per numero
+
+  var {data: percorsi, error} = await sb.from('percorsi')
+    .select('*')
+    .eq('area', area)
+    .order('numero', {ascending: true});
+
+  if (error || !percorsi || percorsi.length === 0) {
+    document.getElementById('percorsi-list').innerHTML = '<div class="err">Errore nel caricamento. Riprova.</div>';
+    return;
+  }
+
+  var html = '';
+  percorsi.forEach(function(p) {
+    var isFree = FREE_IDS.indexOf(p.numero) !== -1 || !p.is_premium;
+    var lockIcon = isFree ? '' : '<i class="ti ti-lock" style="color:var(--fg2);font-size:18px"></i>';
+    var clickable = isFree ? 'onclick="avviaPercorso(' + p.id + ')"' : 'onclick="mostraLock()"';
+    var opacity = isFree ? '' : 'opacity:0.6;';
+    html += '<div class="acard" style="flex-direction:row;align-items:center;gap:12px;padding:16px;' + opacity + '" ' + clickable + '>' +
+      '<div style="flex:1">' +
+        '<div style="font-weight:600;font-size:15px">' + p.titolo + '</div>' +
+        '<div style="font-size:13px;color:var(--fg2);margin-top:2px">' + (p.descrizione ? p.descrizione.substring(0, 60) + '...' : '30 giorni') + '</div>' +
+      '</div>' +
+      lockIcon +
+      '</div>';
+  });
+  document.getElementById('percorsi-list').innerHTML = html;
+}
+
+async function avviaPercorso(percorsoId) {
+  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
+
+  var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
+  var {data: taskRows} = await sb.from('tasks').select('*').eq('percorso_id', percorsoId).order('giorno', {ascending: true});
+
+  if (!percorso || !taskRows || taskRows.length === 0) {
+    document.getElementById('err-percorsi').innerHTML = '<div class="err">Errore nel caricamento del percorso.</div>';
+    return;
+  }
+
+  // Converte i task nel formato che l'app già usa
+  var tasks = taskRows.map(function(t) {
+    return {
+      day: t.giorno,
+      type: 'action',
+      title: t.titolo,
+      description: t.cosa_fare + '\n\n' + t.come_farlo,
+      why: t.perche_funziona,
+      esempio: t.esempio
+    };
+  });
+
+  S.tasks = tasks;
+  S.ctx = percorso.titolo;
+  S.percorsoId = percorsoId;
+  S.giornoAttuale = 1;
+  S.giorniCompletati = [];
+  S.taskCompletato = false;
+  S.taskExtraOggi = 0;
+  S.abitudiniStato = {};
+
+  // Salva su Supabase
+  if (S.user) {
+    await sb.from('obiettivi').delete().eq('user_id', S.user.id);
+    var ins = await sb.from('obiettivi').insert({
+      user_id: S.user.id,
+      obiettivo_testo: percorso.titolo,
+      area: percorso.area,
+      tasks_json: tasks,
+      baseline_score: 0,
+      giorni_completati: [],
+      percorso_id: percorsoId
+    }).select().single();
+    if (ins.data) S.objId = ins.data.id;
+  }
+
+  document.getElementById('home-score').textContent = 0;
+  var t = tasks[0];
+  if (t) {
+    document.getElementById('task-title').textContent = t.title || '';
+    document.getElementById('task-desc').textContent = t.description || '';
+    document.getElementById('task-why').textContent = t.why || '';
+  }
+  aggiornaHome();
+  ss('home');
+}
+
+function mostraLock() {
+  alert('Questo percorso è disponibile con Persisto Premium. Prossimamente!');
 }
 
 function onFreeText() {
-  var val = document.getElementById('free-text').value.trim();
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
   S.freeText = val;
-  if (val) {
-    document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
-    S.arch = null;
-  }
-  updateBtn();
 }
 
 function updateBtn() {
-  var val = document.getElementById('free-text').value.trim();
-  document.getElementById('btn-start').disabled = !(S.arch || val);
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  var btn = document.getElementById('btn-start');
+  if (btn) btn.disabled = !(S.arch || val);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
