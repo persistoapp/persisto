@@ -1205,7 +1205,7 @@ function navTo(dest) {
     S_activeNav = 'task';
     document.getElementById('nav-task').classList.add('active');
     loadTaskTab();
-    ss('abitudini');
+    ss('tasks');
   } else if (dest === 'progressi') {
     S_activeNav = 'progressi';
     document.getElementById('nav-progressi').classList.add('active');
@@ -2682,27 +2682,13 @@ function apriTaskSolaLettura(idx) {
 }
 
 async function loadTaskTab() {
-  var list = document.getElementById('abitudini-list');
+  var list = document.getElementById('tasks-list');
   var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
   var giorno = S.giornoAttuale || 1;
 
-  if (document.getElementById('abitudini-sub'))
-    document.getElementById('abitudini-sub').textContent = S.ctx || '';
-  if (document.getElementById('abitudini-title'))
-    document.getElementById('abitudini-title').textContent = 'I tuoi task';
-  // Link storico piccolo in cima
-  var storicoLink = document.getElementById('task-storico-link');
-  if (!storicoLink) {
-    var pad = document.querySelector('#sc-abitudini .s-pad');
-    if (pad) {
-      var lnk = document.createElement('div');
-      lnk.id = 'task-storico-link';
-      lnk.style = 'text-align:right;margin-top:-8px;margin-bottom:4px';
-      lnk.innerHTML = '<button onclick="mostraStoricoInProfilo()" style="background:none;border:none;color:#8FA0B8;font-size:12px;cursor:pointer"><i class="ti ti-history"></i> Storico →</button>';
-      pad.appendChild(lnk);
-    }
-  }
+  if (document.getElementById('tasks-obiettivo'))
+    document.getElementById('tasks-obiettivo').textContent = S.ctx || '';
 
   if (!tasks.length) {
     list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.</div>';
@@ -2805,14 +2791,14 @@ function apriTask(idx) {
 function goTaskFromHome() {
   S_activeNav = 'task';
   loadTaskTab();
-  ss('abitudini');
+  ss('tasks');
 }
 
 async function completeFromHome() {
   if (S.taskCompletato) {
     S_activeNav = 'task';
     loadTaskTab();
-    ss('abitudini');
+    ss('tasks');
     return;
   }
   if (confirm('Confermi di aver completato il task di oggi?')) {
