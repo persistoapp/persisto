@@ -1842,16 +1842,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
-function avanzamento(tipo) {
+async function avanzamento(tipo) {
   if (tipo === 'fatto') {
-    if (confirm('Confermi di aver completato il task di oggi?')) {
-      // Usa il giorno visualizzato (extra o principale)
+    if (confirm('Confermi di aver completato il task visualizzato?')) {
+      // Usa il giorno visualizzato: task ufficiale oppure task extra sbloccato.
       var giornoCompletato = S.taskVisualizzato || S.giornoAttuale || 1;
-      markDone(giornoCompletato);
-      // Aggiorna giornoAttuale al giorno appena completato, resetta taskVisualizzato
+      await markDone(giornoCompletato);
+
+      // Dopo il completamento, quel task diventa il riferimento corrente.
       S.giornoAttuale = giornoCompletato;
       S.taskVisualizzato = null;
-      // Popola il task nella schermata reflection
+
+      // Popola la schermata reflection col task appena completato.
       var giorno = giornoCompletato;
       var t = S.tasks[giorno - 1] || S.tasks[0] || {};
       var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
@@ -2256,22 +2258,39 @@ async function saveRefl() {
 
 async function sbloccaProssimoTask() {
   var oggiStr = new Date().toISOString().slice(0, 10);
-  // Reset se nuovo giorno
+
+  // Reset del limite giornaliero se cambia il giorno di calendario.
   if (S.dataUltimoExtra !== oggiStr) {
     S.taskExtraOggi = 0;
     S.dataUltimoExtra = oggiStr;
   }
+
   if (S.taskExtraOggi >= 2) {
     alert('Hai già sbloccato 2 task extra oggi. Torna domani.');
     return;
   }
-  // NON incrementare S.giornoAttuale — le abitudini devono restare ferme
-  // Usiamo taskVisualizzato per mostrare il task extra senza spostare il giorno ufficiale
-  // giornoAttuale è il giorno corrente (completato o no), il prossimo è +1
-  S.taskVisualizzato = S.giornoAttuale + 1;
+
+  // Evita doppi click: se esiste già un extra sbloccato e non completato, mostralo senza consumare un altro sblocco.
+  if (S.taskVisualizzato && (S.giorniCompletati || []).indexOf(S.taskVisualizzato) === -1) {
+    S_activeNav = 'task';
+    loadTaskTab();
+    return;
+  }
+
+  // Sblocca il task immediatamente successivo al task corrente ufficiale.
+  var prossimoGiorno = (S.giornoAttuale || 1) + 1;
+  if (!S.tasks || !S.tasks[prossimoGiorno - 1]) {
+    alert('Non ci sono altri task da sbloccare.');
+    return;
+  }
+
+  // NON incrementare S.giornoAttuale: il giorno ufficiale resta fermo.
+  // Il task extra viene mostrato tramite S.taskVisualizzato.
+  S.taskVisualizzato = prossimoGiorno;
   S.taskCompletato = false;
   S.taskExtraOggi++;
   S.dataUltimoExtra = oggiStr;
+
   if (S.user) {
     await sb.from('obiettivi').update({
       giorni_completati: S.giorniCompletati,
@@ -2279,17 +2298,9 @@ async function sbloccaProssimoTask() {
       data_ultimo_extra: S.dataUltimoExtra
     }).eq('id', S.objId);
   }
-  // Mostra il task extra (taskVisualizzato) senza toccare giornoAttuale
-  var t = S.tasks[S.taskVisualizzato - 1];
-  if (t) {
-    document.getElementById('task-title').textContent = clean(t.title) || '';
-    var df = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    document.getElementById('task-desc').style.whiteSpace = 'pre-line';
-    document.getElementById('task-desc').textContent = df;
-    document.getElementById('task-why').textContent = clean(t.why) || '';
-  }
+
+  // Ricarica la scheda Task: ora loadTaskTab leggerà S.taskVisualizzato e mostrerà davvero il task sbloccato.
   aggiornaHome();
-  // Ricarica il tab task per aggiornare la lista
   S_activeNav = 'task';
   loadTaskTab();
 }
@@ -2836,7 +2847,12 @@ async function loadTaskTab() {
   var list = document.getElementById('tasks-list');
   var bot = document.getElementById('storico-bot');
   var tasks = S.tasks || [];
-  var giorno = S.giornoAttuale || 1;
+
+  // giornoUfficiale = task del percorso fermo sul giorno corrente.
+  // giorno = task da mostrare: può essere un extra appena sbloccato.
+  var giornoUfficiale = S.giornoAttuale || 1;
+  var giorno = S.taskVisualizzato || giornoUfficiale;
+  var isExtraSbloccato = !!S.taskVisualizzato && S.taskVisualizzato !== giornoUfficiale;
 
   if (document.getElementById('tasks-obiettivo'))
     document.getElementById('tasks-obiettivo').textContent = S.ctx || '';
@@ -2848,18 +2864,18 @@ async function loadTaskTab() {
   }
 
   var html = '';
-  // Task di oggi
-  // FIX 3: usa indice array, non campo day (evita salti se AI non rispetta sequenza)
+  // Task visualizzato: task ufficiale oppure extra sbloccato.
+  // Usa indice array, non solo campo day, così evita salti se i dati non sono perfettamente sequenziali.
   var oggi = tasks[giorno-1] || tasks.find(function(t){ return (t.day||0) === giorno; });
   if (oggi) {
     var idx = tasks.indexOf(oggi);
-    // Formatta descrizione: ogni "Passo N:" va a capo
     var descFormatted = clean(oggi.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
-    var completatoOggi = taskFattoOggi;
+    var completatoOggi = (S.giorniCompletati || []).indexOf(giorno) !== -1;
+    var labelGiorno = isExtraSbloccato ? 'Giorno ' + giorno + ' — extra sbloccato' : 'Giorno ' + giorno + ' — oggi';
+
     html += '<div class="tblock" style="border-color:#EA580C">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    html += '<div class="tlabel" style="color:#EA580C">Giorno ' + giorno + ' — oggi</div>';
+    html += '<div class="tlabel" style="color:#EA580C">' + labelGiorno + '</div>';
     if (completatoOggi) {
       html += '<span style="font-size:11px;color:#EA580C;font-weight:600"><i class="ti ti-check"></i> completato</span>';
     }
@@ -2887,18 +2903,21 @@ async function loadTaskTab() {
       html += '</div>';
     }
   }
-  // Prossimi 5 — solo titolo, bloccati; i primi 2 hanno pulsante sblocca se task completato
+
+  // Prossimi 5: se sei sul task ufficiale già completato, il prossimo può essere sbloccato.
+  // Se stai già vedendo un extra, non mostra un secondo pulsante finché non lo completi.
   var oggiStr = new Date().toISOString().slice(0, 10);
   if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
-  var extraRimanenti = 2 - (S.taskExtraOggi || 0);
-  var taskFattoOggi = S.dataUltimoTask === oggiStr;
+  var extraRimanenti = Math.max(2 - (S.taskExtraOggi || 0), 0);
+  var taskUfficialeFattoOggi = S.dataUltimoTask === oggiStr;
+  var giornoVisualizzatoCompletato = (S.giorniCompletati || []).indexOf(giorno) !== -1;
 
   for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
     var t = tasks[i];
     if (!t) continue;
     var posizione = i - giorno; // 0 = prossimo, 1 = dopo, ecc.
-    var puoSbloccare = taskFattoOggi && posizione === 0 && extraRimanenti > 0;
     var dayNum = t.day || (i+1);
+    var puoSbloccare = !isExtraSbloccato && taskUfficialeFattoOggi && giornoVisualizzatoCompletato && posizione === 0 && extraRimanenti > 0;
 
     if (puoSbloccare) {
       html += '<div class="tblock" style="border-color:#EA580C44">';
@@ -2915,17 +2934,22 @@ async function loadTaskTab() {
       html += '</div>';
     }
   }
+
   list.innerHTML = html;
+
   var avanzPanel = document.getElementById('avanz-panel');
   var corrPanel = document.getElementById('corr-panel');
-  var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
-  if (taskFattoOggi) {
+  var completatoVisualizzato = (S.giorniCompletati || []).indexOf(giorno) !== -1;
+
+  // Se è un extra sbloccato e non ancora completato, i pulsanti devono restare visibili.
+  if (completatoVisualizzato) {
     bot.style.display = 'none';
   } else {
     bot.style.display = 'block';
     if (avanzPanel) avanzPanel.style.display = 'block';
     if (corrPanel) corrPanel.classList.remove('open');
   }
+
   var btnC = document.getElementById('btn-completa');
   if (btnC) btnC.style.display = 'none';
 }
