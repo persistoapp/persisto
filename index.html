@@ -1036,7 +1036,7 @@ select option{background:#111827;color:#fff}
       <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
         <i class="ti ti-clock"></i> Dammi un giorno in più
       </button>
-      <button class="btn-ghost" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52">
+      <button class="btn-ghost" id="btn-cambialo" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52;display:none">
         <i class="ti ti-refresh"></i> Troppo difficile — cambialo
       </button>
     </div>
@@ -1705,21 +1705,36 @@ async function selArea(area) {
     return;
   }
 
+
   var html = '';
   percorsi.forEach(function(p) {
     var isFree = FREE_IDS.indexOf(p.numero) !== -1 || !p.is_premium;
-    var lockIcon = isFree ? '' : '<i class="ti ti-lock" style="color:var(--fg2);font-size:18px"></i>';
+    var lockIcon = isFree ? '' : '<i class="ti ti-lock" style="color:#8FA0B8;font-size:18px;flex-shrink:0"></i>';
     var clickable = isFree ? 'onclick="avviaPercorso(' + p.id + ')"' : 'onclick="mostraLock()"';
-    var opacity = isFree ? '' : 'opacity:0.6;';
-    html += '<div class="acard" style="flex-direction:row;align-items:center;gap:12px;padding:16px;' + opacity + '" ' + clickable + '>' +
+    var opacity = isFree ? '1' : '0.5';
+    html += '<div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;opacity:' + opacity + '" ' + clickable + '>' +
       '<div style="flex:1">' +
-        '<div style="font-weight:600;font-size:15px">' + p.titolo + '</div>' +
-        '<div style="font-size:13px;color:var(--fg2);margin-top:2px">' + (p.descrizione ? p.descrizione.substring(0, 60) + '...' : '30 giorni') + '</div>' +
+        '<div style="font-weight:600;font-size:15px;color:#fff">' + p.titolo + '</div>' +
+        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px">' + (p.descrizione ? p.descrizione.substring(0, 70) + '...' : '30 giorni') + '</div>' +
       '</div>' +
       lockIcon +
       '</div>';
   });
   document.getElementById('percorsi-list').innerHTML = html;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 async function avviaPercorso(percorsoId) {
