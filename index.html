@@ -2035,7 +2035,7 @@ async function genProfile() {
     document.getElementById('prof-sum').textContent = clean(p1.summary) || '';
     document.getElementById('prof-app').textContent = clean(p1.approach) || '';
     document.getElementById('home-score').textContent = p1.baseline_score || 0;
-    document.getElementById('done-score').textContent = (p1.baseline_score || 0) + 1;
+    var doneScoreEl = document.getElementById('done-score'); if (doneScoreEl) doneScoreEl.textContent = (p1.baseline_score || 0) + 1;
 
     if (S.tasks[0]) {
       var t = S.tasks[0];
