@@ -2525,9 +2525,10 @@ function aggiornaHome() {
         btn.style.background = '#EA580C';
       }
     } else {
-      btn.textContent = S.taskCompletato ? 'Vedi i prossimi task' : 'Vai al task';
+      var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
+      btn.textContent = taskFattoOggi ? 'Vedi i prossimi task' : 'Vai al task';
       btn.onclick = function(){ goTaskFromHome(); };
-      btn.classList.toggle('done', !!S.taskCompletato);
+      btn.classList.toggle('done', taskFattoOggi);
     }
   }
   aggiornaHomeHabits();
@@ -2921,7 +2922,8 @@ async function loadTaskTab() {
   list.innerHTML = html;
   var avanzPanel = document.getElementById('avanz-panel');
   var corrPanel = document.getElementById('corr-panel');
-  if (S.taskCompletato) {
+  var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
+  if (taskFattoOggi) {
     bot.style.display = 'none';
   } else {
     bot.style.display = 'block';
