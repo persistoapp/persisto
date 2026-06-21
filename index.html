@@ -2965,11 +2965,6 @@ async function resetTotale() {
   S.taskCompletato = false;
   S.giorniCompletati = [];
   S.abitudiniStato = {};
-  CHIPS.tentativo = null; CHIPS.scadenza = null;
-  document.getElementById("free-text").value = "";
-  document.querySelectorAll(".acard").forEach(function(c){ c.classList.remove("sel"); });
-  document.getElementById("btn-start").disabled = true;
-  document.getElementById("err-welcome").innerHTML = "";
   ss("welcome");
 }
 
@@ -2977,27 +2972,19 @@ async function resetFlow() {
   var conf = confirm('⚠️ Stai per cancellare il percorso attuale.\n\nTutti i task e i progressi verranno eliminati definitivamente e non sono recuperabili.\n\nVuoi continuare?');
   if (!conf) return;
 
-  // Salva i giorni fatti prima di cancellare
   await salvaCrescitaStorica();
 
-  // Cancella tutti gli obiettivi dell'utente da Supabase
   if (S.user) {
     await sb.from('obiettivi').delete().eq('user_id', S.user.id);
   }
 
-  // Reset stato locale
   S.arch = null; S.freeText = ''; S.ctx = '';
   S.questions = []; S.answers = []; S.currentQ = 0;
   S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
   S.taskCompletato = false;
   S.giorniCompletati = [];
   S.abitudiniStato = {};
-  CHIPS.tentativo = null; CHIPS.scadenza = null;
 
-  document.getElementById('free-text').value = '';
-  document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
-  document.getElementById('btn-start').disabled = true;
-  document.getElementById('err-welcome').innerHTML = '';
   ss('welcome');
 }
 </script>
