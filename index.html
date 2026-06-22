@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone{width:100%;height:100dvh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
 .screen.has-nav{bottom:118px}
@@ -201,14 +201,6 @@ select option{background:#111827;color:#fff}
     font-size:10px;
     letter-spacing:.8px;
   }
-}
-/* Tablet fix nav */
-@media (min-width:600px) and (min-height:600px){
-  .bnav{
-    padding-bottom:16px;
-    min-height:70px;
-  }
-  .screen.has-nav{bottom:70px}
 }
 /* CORREZIONE TASK */
 .corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
