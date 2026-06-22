@@ -10,10 +10,10 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.phone{width:100%;height:100dvh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
 .screen.active{display:flex}
-.screen.has-nav{bottom:70px}
+.screen.has-nav{bottom:118px}
 .s-pad{padding:28px 24px 0}
 .logo{font-size:26px;font-weight:700;color:#fff;letter-spacing:-1px}
 .logo span{color:#EA580C}
@@ -118,8 +118,8 @@ select option{background:#111827;color:#fff}
   bottom:0;
   background:#1B2435;
   border-top:1px solid #2F3B52;
-  padding:10px 6px 16px;
-  min-height:70px;
+  padding:10px 6px calc(34px + env(safe-area-inset-bottom));
+  min-height:112px;
   z-index:200;
 }
 .bnav.visible{display:block}
