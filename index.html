@@ -118,6 +118,2060 @@ select option{background:#111827;color:#fff}
   bottom:0;
   background:#1B2435;
   border-top:1px solid #2F3B52;
+  padding:10px 6px 34px;
+  padding-bottom:max(34px, calc(10px + env(safe-area-inset-bottom, 0px)));
+  min-height:80px;
+  z-index:200;
+}
+.bnav.visible{display:block}
+.bnav-items{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  align-items:center;
+  gap:2px;
+  width:100%;
+}
+.bnav-item{
+  min-width:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  cursor:pointer;
+  padding:8px 1px;
+  border-radius:14px;
+  background:none;
+  border:none;
+  color:#9FB0C8;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+  font-family:inherit;
+  line-height:1.05;
+  white-space:nowrap;
+  overflow:visible;
+  transition:color .15s, background .15s;
+}
+.bnav-item i{
+  font-size:22px;
+  line-height:1;
+  flex-shrink:0;
+}
+.bnav-item.active,.bnav-item:hover{
+  color:#EA580C;
+  background:#2A140844;
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)){
+  .bot{padding-bottom:calc(34px + env(safe-area-inset-bottom))}
+}
+
+/* Telefoni stretti: mantieni parole complete, riduci solo font e spazi */
+@media (max-width:390px){
+  .bnav{
+    padding-left:3px;
+    padding-right:3px;
+  }
+  .bnav-item{
+    font-size:8.5px;
+    letter-spacing:.15px;
+    padding-left:0;
+    padding-right:0;
+  }
+  .bnav-item i{font-size:21px}
+}
+
+/* Browser mobile con barra di sistema visibile */
+@media (max-height:760px){
+  .screen.has-nav{bottom:80px}
+  .bnav{
+    min-height:80px;
+    padding-bottom:20px;
+  }
+}
+
+/* Tablet e desktop */
+@media (min-width:700px){
+  .screen.has-nav{bottom:80px}
+  .bnav{
+    min-height:70px;
+    padding-bottom:16px;
+    padding-top:8px;
+  }
+  .bnav-item{
+    font-size:10px;
+    letter-spacing:.8px;
+  }
+}
+/* CORREZIONE TASK */
+.corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
+.corr-panel.open{display:block}
+#sc-reflection .center{padding-bottom:120px}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- LOGIN -->
+<div class="screen active" id="sc-login">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="tag">+1% ogni giorno</div>
+    <div class="h1">Bentornato</div>
+    <div class="sub">Accedi per continuare il tuo percorso.</div>
+    <div class="field">
+      <div class="field-label">Email</div>
+      <input type="email" id="login-email" placeholder="la tua@email.com">
+    </div>
+    <div class="field">
+      <div class="field-label">Password</div>
+      <input type="password" id="login-pass" placeholder="••••••••">
+    </div>
+    <div id="err-login"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="doLogin()">Accedi</button>
+    <button class="btn-ghost" onclick="ss('register')">Non hai un account? Registrati</button>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="screen" id="sc-register">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="tag">+1% ogni giorno</div>
+    <div class="h1">Crea il tuo account</div>
+    <div class="sub">Inizia il tuo percorso di crescita.</div>
+    <div class="field">
+      <div class="field-label">Email</div>
+      <input type="email" id="reg-email" placeholder="la tua@email.com">
+    </div>
+    <div class="field">
+      <div class="field-label">Password</div>
+      <input type="password" id="reg-pass" placeholder="minimo 6 caratteri">
+    </div>
+    <div id="err-register"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="doRegister()">Registrati</button>
+    <button class="btn-ghost" onclick="ss('login')">Hai già un account? Accedi</button>
+  </div>
+</div>
+
+<!-- VERIFICA EMAIL -->
+<div class="screen" id="sc-verify">
+  <div class="center">
+    <div class="ring2"><i class="ti ti-mail"></i></div>
+    <div class="ltitle">Controlla la tua email</div>
+    <div class="lsub">Ti abbiamo mandato un link di conferma. Cliccalo e poi torna qui.</div>
+    <div style="margin-top:24px">
+      <button class="btn-ghost" style="width:auto;padding:10px 24px" onclick="ss('login')">Ho confermato, accedi</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 1: Identità -->
+<div class="screen" id="sc-demo1">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 1 di 5</div>
+    <div class="prog"><div class="progbar" style="width:20%"></div></div>
+    <div class="h1" style="font-size:22px">Chi sei</div>
+    <div class="sub">Queste info non le richiediamo mai più.</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Età</div>
+      <div class="chips" id="chips-eta">
+        <div class="chip" onclick="selChip('eta','under25',this)">Under 25</div>
+        <div class="chip" onclick="selChip('eta','25-35',this)">25–35</div>
+        <div class="chip" onclick="selChip('eta','36-45',this)">36–45</div>
+        <div class="chip" onclick="selChip('eta','46+',this)">46+</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Sesso</div>
+      <div class="chips" id="chips-sesso">
+        <div class="chip" onclick="selChip('sesso','donna',this)">Donna</div>
+        <div class="chip" onclick="selChip('sesso','uomo',this)">Uomo</div>
+        <div class="chip" onclick="selChip('sesso','altro',this)">Altro</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Dove vivi</div>
+      <input type="text" id="demo-luogo" placeholder="Es: Roma, Milano, piccola città...">
+    </div>
+    <div class="field">
+      <div class="field-label">Situazione sentimentale</div>
+      <div class="chips" id="chips-sentimentale">
+        <div class="chip" onclick="selChip('sentimentale','single',this)">Single</div>
+        <div class="chip" onclick="selChip('sentimentale','coppia-non-convivente',this)">Coppia (non convivente)</div>
+        <div class="chip" onclick="selChip('sentimentale','coppia-convivente',this)">Coppia (convivente)</div>
+        <div class="chip" onclick="selChip('sentimentale','sposato',this)">Sposato/a</div>
+        <div class="chip" onclick="selChip('sentimentale','separato',this)">Separato/a</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Figli</div>
+      <div class="chips" id="chips-figli">
+        <div class="chip" onclick="selChip('figli','no',this)">Nessuno</div>
+        <div class="chip" onclick="selChip('figli','1',this)">1</div>
+        <div class="chip" onclick="selChip('figli','2',this)">2</div>
+        <div class="chip" onclick="selChip('figli','3',this)">3</div>
+        <div class="chip" onclick="selChip('figli','4+',this)">4+</div>
+      </div>
+    </div>
+    <div class="field" id="field-figli-eta" style="display:none">
+      <div class="field-label">Età dei figli (approssimativa)</div>
+      <input type="text" id="demo-figli-eta" placeholder="Es: 3, 7, 15 anni">
+    </div>
+    <div class="field" id="field-figli-custody" style="display:none">
+      <div class="field-label">I figli vivono con te</div>
+      <div class="chips" id="chips-custody">
+        <div class="chip" onclick="selChip('custody','no',this)">No, vivono altrove</div>
+        <div class="chip" onclick="selChip('custody','fulltime',this)">Full time</div>
+        <div class="chip" onclick="selChip('custody','parttime',this)">Part time (settimane alterne o simili)</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Supporto familiare / rete di aiuto</div>
+      <div class="chips" id="chips-supporto">
+        <div class="chip" onclick="selChip('supporto','nessuno',this)">Nessuno, faccio tutto da solo/a</div>
+        <div class="chip" onclick="selChip('supporto','parziale',this)">Qualcuno mi aiuta ogni tanto</div>
+        <div class="chip" onclick="selChip('supporto','buono',this)">Ho una buona rete intorno</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Persone a carico oltre ai figli</div>
+      <div class="chips" id="chips-carico">
+        <div class="chip" onclick="selChip('carico','no',this)">No</div>
+        <div class="chip" onclick="selChip('carico','si',this)">Sì (genitori, parenti)</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(1)">Avanti</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 2: Lavoro -->
+<div class="screen" id="sc-demo2">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 2 di 5</div>
+    <div class="prog"><div class="progbar" style="width:40%"></div></div>
+    <div class="h1" style="font-size:22px">Lavoro e soldi</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Che lavoro fai</div>
+      <input type="text" id="demo-lavoro" placeholder="Es: closing sales, insegnante, imprenditrice...">
+    </div>
+    <div class="field">
+      <div class="field-label">Tipo di rapporto lavorativo</div>
+      <div class="chips" id="chips-tipolavoro">
+        <div class="chip" onclick="selChip('tipolavoro','dipendente',this)">Dipendente</div>
+        <div class="chip" onclick="selChip('tipolavoro','freelance',this)">Freelance</div>
+        <div class="chip" onclick="selChip('tipolavoro','imprenditore',this)">Imprenditore/a</div>
+        <div class="chip" onclick="selChip('tipolavoro','disoccupato',this)">Non lavoro</div>
+        <div class="chip" onclick="selChip('tipolavoro','studente',this)">Studente</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Ore di lavoro al giorno (in media)</div>
+      <div class="chips" id="chips-orelavoro">
+        <div class="chip" onclick="selChip('orelavoro','meno4',this)">Meno di 4</div>
+        <div class="chip" onclick="selChip('orelavoro','4-6',this)">4–6 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','6-8',this)">6–8 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','8-10',this)">8–10 ore</div>
+        <div class="chip" onclick="selChip('orelavoro','piu10',this)">Più di 10</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Dove lavori</div>
+      <div class="chips" id="chips-luogolavoro">
+        <div class="chip" onclick="selChip('luogolavoro','casa',this)">Da casa</div>
+        <div class="chip" onclick="selChip('luogolavoro','ufficio',this)">In ufficio</div>
+        <div class="chip" onclick="selChip('luogolavoro','ibrido',this)">Ibrido</div>
+        <div class="chip" onclick="selChip('luogolavoro','giro',this)">In giro / trasferte</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Reddito</div>
+      <div class="chips" id="chips-reddito">
+        <div class="chip" onclick="selChip('reddito','fisso',this)">Fisso</div>
+        <div class="chip" onclick="selChip('reddito','variabile',this)">Variabile</div>
+        <div class="chip" onclick="selChip('reddito','entrambi',this)">Entrambi</div>
+        <div class="chip" onclick="selChip('reddito','nessuno',this)">Nessuno al momento</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Fascia di reddito mensile attuale</div>
+      <div class="chips" id="chips-fascia">
+        <div class="chip" onclick="selChip('fascia','0',this)">0 / non lavoro</div>
+        <div class="chip" onclick="selChip('fascia','sotto1000',this)">Sotto 1.000€</div>
+        <div class="chip" onclick="selChip('fascia','1000-2500',this)">1.000–2.500€</div>
+        <div class="chip" onclick="selChip('fascia','2500-5000',this)">2.500–5.000€</div>
+        <div class="chip" onclick="selChip('fascia','5000-10000',this)">5.000–10.000€</div>
+        <div class="chip" onclick="selChip('fascia','oltre10000',this)">Oltre 10.000€</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Soddisfazione del lavoro attuale</div>
+      <div class="chips" id="chips-soddisfazione">
+        <div class="chip" onclick="selChip('soddisfazione','no',this)">Per niente</div>
+        <div class="chip" onclick="selChip('soddisfazione','poco',this)">Poco</div>
+        <div class="chip" onclick="selChip('soddisfazione','abbastanza',this)">Abbastanza</div>
+        <div class="chip" onclick="selChip('soddisfazione','molto',this)">Molto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Energia a fine giornata lavorativa</div>
+      <div class="chips" id="chips-energia-lavoro">
+        <div class="chip" onclick="selChip('energialavoro','a-pezzi',this)">A pezzi, zero energie</div>
+        <div class="chip" onclick="selChip('energialavoro','stanco',this)">Stanco ma funziono</div>
+        <div class="chip" onclick="selChip('energialavoro','ok',this)">Abbastanza ok</div>
+        <div class="chip" onclick="selChip('energialavoro','carico',this)">Ancora carico/a</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Pressioni finanziarie attive</div>
+      <div class="chips" id="chips-debiti">
+        <div class="chip" onclick="selChip('debiti','no',this)">No, situazione stabile</div>
+        <div class="chip" onclick="selChip('debiti','leggero',this)">Qualche preoccupazione</div>
+        <div class="chip" onclick="selChip('debiti','si',this)">Sì, debiti o difficoltà serie</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Hai già un business o vuoi crearne uno?</div>
+      <div class="chips" id="chips-business">
+        <div class="chip" onclick="selChip('business','no',this)">No e non mi interessa</div>
+        <div class="chip" onclick="selChip('business','voglio',this)">Voglio crearne uno</div>
+        <div class="chip" onclick="selChip('business','hocreato-crescere',this)">Ne ho già uno, voglio crescerlo</div>
+        <div class="chip" onclick="selChip('business','hocreato-altri',this)">Ne ho già uno, voglio crearne altri</div>
+        <div class="chip" onclick="selChip('business','multipli',this)">Ne ho più di uno</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(2)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo1')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 3: Tempo e Routine -->
+<div class="screen" id="sc-demo3">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 3 di 5</div>
+    <div class="prog"><div class="progbar" style="width:60%"></div></div>
+    <div class="h1" style="font-size:22px">Tempo e routine</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">A che ora ti svegli</div>
+      <div class="chips" id="chips-sveglia">
+        <div class="chip" onclick="selChip('sveglia','prima5',this)">Prima delle 5</div>
+        <div class="chip" onclick="selChip('sveglia','5-6',this)">5:00–6:00</div>
+        <div class="chip" onclick="selChip('sveglia','6-7',this)">6:00–7:00</div>
+        <div class="chip" onclick="selChip('sveglia','7-8',this)">7:00–8:00</div>
+        <div class="chip" onclick="selChip('sveglia','dopo8',this)">Dopo le 8</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">A che ora vai a dormire</div>
+      <div class="chips" id="chips-nanna">
+        <div class="chip" onclick="selChip('nanna','prima22',this)">Prima delle 22</div>
+        <div class="chip" onclick="selChip('nanna','22-23',this)">22:00–23:00</div>
+        <div class="chip" onclick="selChip('nanna','23-24',this)">23:00–00:00</div>
+        <div class="chip" onclick="selChip('nanna','dopo24',this)">Dopo mezzanotte</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Tempo libero reale al giorno</div>
+      <div class="chips" id="chips-tempol">
+        <div class="field-label" style="font-size:10px;margin-bottom:4px;color:#2a3a5a">(quello vero, non quello che vorresti)</div>
+        <div class="chip" onclick="selChip('tempolibero','quasi-niente',this)">Quasi zero</div>
+        <div class="chip" onclick="selChip('tempolibero','meno30',this)">Meno di 30 min</div>
+        <div class="chip" onclick="selChip('tempolibero','30-60',this)">30–60 min</div>
+        <div class="chip" onclick="selChip('tempolibero','1-2h',this)">1–2 ore</div>
+        <div class="chip" onclick="selChip('tempolibero','piu2h',this)">Più di 2 ore</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Chi gestisce la casa</div>
+      <div class="chips" id="chips-casa">
+        <div class="chip" onclick="selChip('casa','io-tutto',this)">Io, tutto</div>
+        <div class="chip" onclick="selChip('casa','diviso',this)">Diviso col partner</div>
+        <div class="chip" onclick="selChip('casa','aiuto',this)">Ho aiuto (colf, collaboratori)</div>
+        <div class="chip" onclick="selChip('casa','mix',this)">Mix di tutto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Momenti della giornata solo tuoi</div>
+      <div class="chips" id="chips-momentosolо">
+        <div class="chip" onclick="selChip('momentosolo','mattina',this)">Mattina presto</div>
+        <div class="chip" onclick="selChip('momentosolo','pausa',this)">Pausa pranzo</div>
+        <div class="chip" onclick="selChip('momentosolo','sera',this)">Sera tardi</div>
+        <div class="chip" onclick="selChip('momentosolo','nessuno',this)">Quasi mai</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Weekend</div>
+      <div class="chips" id="chips-weekend">
+        <div class="chip" onclick="selChip('weekend','libero',this)">Li tengo liberi</div>
+        <div class="chip" onclick="selChip('weekend','lavoro',this)">Lavoro anche nel weekend</div>
+        <div class="chip" onclick="selChip('weekend','mix',this)">Mix, dipende</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(3)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo2')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 4: Corpo e Salute -->
+<div class="screen" id="sc-demo4">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 4 di 5</div>
+    <div class="prog"><div class="progbar" style="width:80%"></div></div>
+    <div class="h1" style="font-size:22px">Corpo e mente</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">Salute fisica generale</div>
+      <div class="chips" id="chips-salute">
+        <div class="chip" onclick="selChip('salute','male',this)">Non benissimo</div>
+        <div class="chip" onclick="selChip('salute','cosi-cosi',this)">Così così</div>
+        <div class="chip" onclick="selChip('salute','bene',this)">Bene</div>
+        <div class="chip" onclick="selChip('salute','ottimo',this)">Ottimo</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Attività fisica</div>
+      <div class="chips" id="chips-sport">
+        <div class="chip" onclick="selChip('sport','mai',this)">Mai</div>
+        <div class="chip" onclick="selChip('sport','raramente',this)">Raramente</div>
+        <div class="chip" onclick="selChip('sport','1-2',this)">1–2 volte/settimana</div>
+        <div class="chip" onclick="selChip('sport','3-4',this)">3–4 volte/settimana</div>
+        <div class="chip" onclick="selChip('sport','tutti-giorni',this)">Tutti i giorni</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come mangi</div>
+      <div class="chips" id="chips-alimentazione">
+        <div class="chip" onclick="selChip('alimentazione','salto-pasti',this)">Salto pasti spesso</div>
+        <div class="chip" onclick="selChip('alimentazione','male',this)">Male, mangio di fretta</div>
+        <div class="chip" onclick="selChip('alimentazione','abbastanza',this)">Abbastanza bene</div>
+        <div class="chip" onclick="selChip('alimentazione','bene',this)">Bene, ci faccio attenzione</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Limitazioni fisiche che condizionano la vita</div>
+      <div class="chips" id="chips-limitazioni">
+        <div class="chip" onclick="selChip('limitazioni','no',this)">Nessuna</div>
+        <div class="chip" onclick="selChip('limitazioni','lievi',this)">Qualcosa di lieve</div>
+        <div class="chip" onclick="selChip('limitazioni','importanti',this)">Sì, condizionano molto</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Qualità del sonno</div>
+      <div class="chips" id="chips-sonno">
+        <div class="chip" onclick="selChip('sonno','pessimo',this)">Pessima, mi sveglio stanco/a</div>
+        <div class="chip" onclick="selChip('sonno','irregolare',this)">Irregolare</div>
+        <div class="chip" onclick="selChip('sonno','ok',this)">Ok</div>
+        <div class="chip" onclick="selChip('sonno','ottimo',this)">Ottima</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come gestisci lo stress</div>
+      <div class="chips" id="chips-stress">
+        <div class="chip" onclick="selChip('stress','male',this)">Male, mi travolge</div>
+        <div class="chip" onclick="selChip('stress','tengo-duro',this)">Tengo duro ma fatico</div>
+        <div class="chip" onclick="selChip('stress','bene',this)">Abbastanza bene</div>
+        <div class="chip" onclick="selChip('stress','ottimo',this)">Ho strategie che funzionano</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Energia mentale in questo periodo</div>
+      <div class="chips" id="chips-energiamente">
+        <div class="chip" onclick="selChip('energiamente','esaurita',this)">Esaurita</div>
+        <div class="chip" onclick="selChip('energiamente','bassa',this)">Bassa</div>
+        <div class="chip" onclick="selChip('energiamente','media',this)">Media</div>
+        <div class="chip" onclick="selChip('energiamente','alta',this)">Alta</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Ti consideri</div>
+      <div class="chips" id="chips-organizzazione">
+        <div class="chip" onclick="selChip('organizzazione','caotica',this)">Caotica/o, vivo nell'improvvisazione</div>
+        <div class="chip" onclick="selChip('organizzazione','medio',this)">Nel mezzo</div>
+        <div class="chip" onclick="selChip('organizzazione','organizzata',this)">Organizzata/o</div>
+        <div class="chip" onclick="selChip('organizzazione','maniacale',this)">Maniacalmente organizzata/o</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Procrastini?</div>
+      <div class="chips" id="chips-procrastinazione">
+        <div class="chip" onclick="selChip('procrastinazione','sempre',this)">Sempre, è il mio sport</div>
+        <div class="chip" onclick="selChip('procrastinazione','spesso',this)">Spesso</div>
+        <div class="chip" onclick="selChip('procrastinazione','poco',this)">Poco</div>
+        <div class="chip" onclick="selChip('procrastinazione','mai',this)">Quasi mai</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Come reagisci ai fallimenti</div>
+      <div class="chips" id="chips-fallimenti">
+        <div class="chip" onclick="selChip('fallimenti','mi-crollo',this)">Mi blocco e mollo tutto</div>
+        <div class="chip" onclick="selChip('fallimenti','ci-metto',this)">Ci metto tempo a rialzarmi</div>
+        <div class="chip" onclick="selChip('fallimenti','imparo',this)">Mi rialzo e imparo</div>
+        <div class="chip" onclick="selChip('fallimenti','carburante',this)">Li uso come carburante</div>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextDemo(4)">Avanti</button>
+    <button class="btn-ghost" onclick="ss('demo3')">Indietro</button>
+  </div>
+</div>
+
+<!-- PROFILO DEMOGRAFICO - STEP 5: Contesto libero -->
+<div class="screen" id="sc-demo5">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+    </div>
+    <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 5 di 5</div>
+    <div class="prog"><div class="progbar" style="width:95%"></div></div>
+    <div class="h1" style="font-size:22px">Il tuo contesto</div>
+    <div class="sub">Scrivi liberamente, questa è la parte più importante.</div>
+  </div>
+  <div class="scroll">
+    <div class="field">
+      <div class="field-label">La tua situazione attuale in 2-3 righe</div>
+      <textarea id="demo-situazione" rows="3" placeholder="Es: lavoro 10h al giorno, ho 4 figli, zero tempo per me, il caos è la mia normalità..."></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Le tue paure vere rispetto al cambiamento</div>
+      <textarea id="demo-paure" rows="3" placeholder="Es: ho paura di iniziare e mollare di nuovo, di non avere tempo, di deludere me stessa..."></textarea>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="saveProfile()">Salva il profilo</button>
+    <button class="btn-ghost" onclick="ss('demo4')">Indietro</button>
+  </div>
+</div>
+
+<!-- WELCOME (dopo login, profilo già compilato) -->
+<div class="screen" id="sc-welcome">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="icon-btn" onclick="showEditProfile()" title="Modifica profilo"><i class="ti ti-user"></i></button>
+        <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+    <div class="h1">Su cosa vuoi lavorare?</div>
+    <div class="sub">Scegli un'area di crescita.</div>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <div class="acard" onclick="selArea('Mente')">
+        <i class="ti ti-brain"></i>
+        <div class="acard-label">Mente</div>
+        <div class="acard-sub">Focus, chiarezza, abitudini</div>
+      </div>
+      <div class="acard" onclick="selArea('Lavoro')">
+        <i class="ti ti-rocket"></i>
+        <div class="acard-label">Lavoro</div>
+        <div class="acard-sub">Carriera, tempo, crescita</div>
+      </div>
+      <div class="acard" onclick="selArea('Relazioni')">
+        <i class="ti ti-heart"></i>
+        <div class="acard-label">Relazioni</div>
+        <div class="acard-sub">Coppia, famiglia, amici</div>
+      </div>
+      <div class="acard" onclick="selArea('Scopo')">
+        <i class="ti ti-compass"></i>
+        <div class="acard-label">Scopo</div>
+        <div class="acard-sub">Valori, visione, direzione</div>
+      </div>
+      <div class="acard" onclick="selArea('Benessere')">
+        <i class="ti ti-leaf"></i>
+        <div class="acard-label">Benessere</div>
+        <div class="acard-sub">Energia, corpo, routine</div>
+      </div>
+      <div class="acard" onclick="selArea('Emozioni')">
+        <i class="ti ti-mood-smile"></i>
+        <div class="acard-label">Emozioni</div>
+        <div class="acard-sub">Gestire, capire, regolare</div>
+      </div>
+      <div class="acard" onclick="selArea('Autostima')">
+        <i class="ti ti-star"></i>
+        <div class="acard-label">Autostima</div>
+        <div class="acard-sub">Fiducia, confini, dialogo</div>
+      </div>
+      <div class="acard" onclick="selArea('Ripartenza')">
+        <i class="ti ti-refresh"></i>
+        <div class="acard-label">Ripartenza</div>
+        <div class="acard-sub">Resilienza, cambiamento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SELEZIONE PERCORSO -->
+<div class="screen" id="sc-percorsi">
+  <div class="s-pad">
+    <div class="topbar">
+      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-arrow-left"></i></button>
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="width:36px"></div>
+    </div>
+    <div class="h1" id="percorsi-area-title">Mente</div>
+    <div class="sub">Scegli il percorso da 30 giorni.</div>
+    <div id="percorsi-list" style="margin-top:16px;display:flex;flex-direction:column;gap:12px"></div>
+    <div id="err-percorsi"></div>
+  </div>
+</div>
+
+<!-- OBIETTIVO SPECIFICO - DINAMICO PER AREA -->
+<div class="screen" id="sc-obiettivo">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="prog"><div class="progbar" id="obj-prog" style="width:0%"></div></div>
+    <div class="h1" style="font-size:22px" id="obj-title">Il tuo obiettivo</div>
+    <div class="sub" id="obj-sub">Dimmi cosa vuoi ottenere esattamente.</div>
+    <!-- CHIPS OBIETTIVO SPECIFICO PER AREA -->
+    <div class="field" id="obj-chips-field">
+      <div class="field-label" id="obj-chips-label">Cosa vuoi ottenere?</div>
+      <div class="chips" id="chips-obj-tipo"></div>
+    </div>
+    <div class="field">
+      <div class="field-label" id="obj-come-label">Descrivilo con parole tue</div>
+      <textarea id="obj-come" rows="3" placeholder=""></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Hai già provato? Come è andata?</div>
+      <div class="chips" id="chips-tentativo">
+        <div class="chip" onclick="selChip('tentativo','mai',this)">Non ho mai provato</div>
+        <div class="chip" onclick="selChip('tentativo','provato-male',this)">Ho provato, non ha funzionato</div>
+        <div class="chip" onclick="selChip('tentativo','provato-parziale',this)">Ho iniziato ma ho mollato</div>
+        <div class="chip" onclick="selChip('tentativo','in-corso',this)">Sto già lavorandoci</div>
+      </div>
+    </div>
+    <div class="field" id="field-cosa-bloccato" style="display:none">
+      <div class="field-label">Cosa ti ha bloccato</div>
+      <textarea id="obj-bloccato" rows="2" placeholder="Sii onesta, non fare la versione bella..."></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label" id="obj-risultato-label">Risultato concreto che definisce il successo</div>
+      <input type="text" id="obj-risultato" placeholder="">
+    </div>
+    <div class="field">
+      <div class="field-label">Entro quando</div>
+      <div class="chips" id="chips-scadenza">
+        <div class="chip" onclick="selChip('scadenza','1mese',this)">1 mese</div>
+        <div class="chip" onclick="selChip('scadenza','3mesi',this)">3 mesi</div>
+        <div class="chip" onclick="selChip('scadenza','6mesi',this)">6 mesi</div>
+        <div class="chip" onclick="selChip('scadenza','1anno',this)">1 anno</div>
+        <div class="chip" onclick="selChip('scadenza','oltre',this)">Oltre 1 anno</div>
+      </div>
+    </div>
+    <div id="err-obiettivo"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="startOnboarding()">Avanti</button>
+    <button class="btn-ghost" onclick="ss('welcome')">Indietro</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="screen" id="sc-loading">
+  <div class="center">
+    <div class="ring"><div class="spin"></div></div>
+    <div class="ltitle">Persisto sta elaborando...</div>
+    <div class="lsub">Stiamo costruendo il percorso giusto per te</div>
+  </div>
+</div>
+
+<!-- ONBOARDING DOMANDE AI -->
+<div class="screen" id="sc-onboarding">
+  <div class="s-pad">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="prog"><div class="progbar" id="progbar" style="width:0%"></div></div>
+    <div class="qnum" id="qnum">Domanda 1 di 3</div>
+    <div class="qtext" id="qtext"></div>
+    <textarea id="qans" rows="4" placeholder="Scrivi qui..."></textarea>
+    <div id="err-onb"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="nextQ()">Avanti</button>
+  </div>
+</div>
+
+<!-- ANALYZING -->
+<div class="screen" id="sc-analyzing">
+  <div class="scroll" style="padding:32px 24px">
+    <!-- Avviso fisso -->
+    <div style="background:#1a0d0d;border:1px solid #ff6b9d33;border-radius:12px;padding:12px 16px;margin-bottom:24px;display:flex;align-items:center;gap:10px">
+      <i class="ti ti-lock" style="color:#ff6b9d;font-size:18px;flex-shrink:0"></i>
+      <div style="font-size:12px;color:#ff6b9d;line-height:1.5">Non chiudere l'app — stiamo costruendo il tuo percorso completo di 30 giorni</div>
+    </div>
+    <!-- Barra progresso -->
+    <div style="margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#8FA0B8;margin-bottom:8px">
+        <span id="an-phase">Analisi in corso...</span>
+        <span id="an-perc">0%</span>
+      </div>
+      <div style="height:6px;background:#1B2435;border-radius:6px;overflow:hidden">
+        <div id="an-bar" style="height:6px;background:#EA580C;border-radius:6px;width:0%;transition:width 0.8s ease"></div>
+      </div>
+    </div>
+    <!-- Profilo personalizzato (appare dopo prima chiamata) -->
+    <div id="an-profile" style="display:none;margin-bottom:24px">
+      <div class="tblock" style="border-color:#EA580C22">
+        <div class="tlabel" id="an-area">La tua area</div>
+        <div style="display:flex;align-items:center;gap:8px;margin:8px 0">
+          <div style="font-size:28px;font-weight:700;color:#EA580C" id="an-score">0</div>
+          <div style="font-size:11px;color:#8FA0B8">/100<br>baseline</div>
+        </div>
+        <div style="font-size:13px;color:#C7D2E0;line-height:1.6" id="an-summary"></div>
+      </div>
+    </div>
+    <!-- Citazione rotante -->
+    <div style="text-align:center;padding:16px 0">
+      <div style="font-size:22px;margin-bottom:12px" id="an-quote-icon">💡</div>
+      <div style="font-size:14px;color:#C7D2E0;line-height:1.7;font-style:italic" id="an-quote"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILO RISULTATO -->
+<div class="screen" id="sc-profile">
+  <div class="s-pad" style="padding-bottom:0">
+    <div class="logo">Per<span>sisto</span></div>
+    <div class="h1" style="font-size:22px;margin-top:20px" id="prof-area">Il tuo profilo</div>
+  </div>
+  <div class="scroll">
+    <div class="pill"><i class="ti ti-trending-up"></i> Baseline: <span id="prof-score">0</span>/100</div>
+    <div class="psum" id="prof-sum"></div>
+    <div class="tblock">
+      <div class="tlabel">Approccio consigliato</div>
+      <div class="tdesc" id="prof-app" style="color:#8892b0;font-size:14px"></div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="showHome()">Vedi il task di oggi</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen has-nav" id="sc-home">
+  <div class="s-pad home-head">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="home-day-pill" id="home-giorno">Task 1/30</div>
+        <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+    <div class="home-kicker">Il prossimo passo conta</div>
+    <div class="home-title" id="home-main-title">Completa il task di oggi.</div>
+    <div class="home-sub">Non devi fare tutto oggi. Devi solo non saltare il prossimo passo.</div>
+  </div>
+
+  <div class="scroll home-scroll">
+    <!-- CARD OBIETTIVO ATTIVO -->
+    <div class="goal-card">
+      <div class="goal-top">
+        <div>
+          <div class="goal-label">Obiettivo attivo</div>
+          <div class="goal-title" id="home-goal-title">Il tuo percorso</div>
+        </div>
+        <div class="goal-badge" id="home-giorni-label">0/30</div>
+      </div>
+      <div class="goal-progress-row">
+        <span>Avanzamento</span>
+        <strong id="home-perc">0%</strong>
+      </div>
+      <div class="goal-bar">
+        <div id="home-progbar" style="width:0%"></div>
+      </div>
+      <div class="goal-meta">
+        <span><i class="ti ti-calendar-check"></i> Fine stimata: <b id="home-end-date">—</b></span>
+        <span><i class="ti ti-flame"></i> <b id="home-streak">0</b> giorni</span>
+      </div>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="home-mini-stats">
+      <div class="mini-stat">
+        <div class="mini-icon">🎯</div>
+        <div><strong id="home-day-copy">1</strong><span>Giorno</span></div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-icon">🔥</div>
+        <div><strong id="home-streak-copy">0</strong><span>Streak</span></div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-icon">✅</div>
+        <div><strong id="home-perc-copy">0%</strong><span>Completati</span></div>
+      </div>
+    </div>
+    <span id="home-score" style="display:none">0</span>
+    <span id="home-crescita" style="display:none">+0%</span>
+
+    <!-- TASK DI OGGI -->
+    <div class="today-card">
+      <div class="today-label" id="home-task-num">Task 1 di 30</div>
+      <div class="today-title" id="task-title"></div>
+      <div class="today-desc" id="task-desc"></div>
+      <div class="today-why">
+        <div class="tlabel">Perché oggi</div>
+        <div class="tdesc" id="task-why"></div>
+      </div>
+      <button class="btn home-complete" id="home-complete-btn" onclick="goTaskFromHome()">Vai al task</button>
+    </div>
+
+    <!-- ABITUDINI ATTIVE -->
+    <div class="tblock" id="home-habits" style="display:none;border-color:#EA580C22"></div>
+  </div>
+</div>
+
+<!-- REFLECTION -->
+<div class="screen has-nav" id="sc-reflection">
+  <div class="scroll">
+    <div style="padding:24px 24px 0">
+      <div class="tblock" style="border-color:#EA580C;margin-bottom:20px">
+        <div class="tlabel" style="color:#EA580C">Task di oggi</div>
+        <div class="ttitle" style="font-size:15px;margin-bottom:8px" id="refl-task-title"></div>
+        <div class="tdesc" style="font-size:12px;white-space:pre-line" id="refl-task-desc"></div>
+      </div>
+      <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Cosa hai fatto esattamente?</div>
+      <div style="font-size:13px;color:#C7D2E0;margin-bottom:16px">Scrivi liberamente — queste note le ritrovi nello storico.</div>
+      <div class="field">
+        <textarea id="refl-text" rows="5" placeholder="Es: ho identificato 3 abitudini notturne, ho scelto di togliere il telefono dalla camera..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="saveRefl()">Conferma completamento</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILO -->
+<div class="screen has-nav" id="sc-edit-profile">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="chiudiProfilo()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="h1" style="font-size:22px;margin-top:20px">Il tuo profilo</div>
+    <div class="sub">Modifica le tue info in qualsiasi momento.</div>
+  </div>
+  <div class="scroll" id="edit-profile-content">
+    <div style="text-align:center;padding:40px 0;color:#8FA0B8">Caricamento...</div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="goToEditFull()">Modifica profilo</button>
+    <button class="btn-ghost" onclick="mostraStoricoInProfilo()" style="margin-top:8px"><i class="ti ti-history"></i> Storico task</button>
+    <button class="btn-ghost" onclick="chiudiProfilo()" style="margin-top:8px">Chiudi</button>
+    <button class="btn-ghost" onclick="resetFlow()" style="margin-top:8px;color:#ff6b9d;border-color:#2d1a2d">Cambia obiettivo</button>
+    <button class="btn-ghost" onclick="resetTotale()" style="margin-top:8px;color:#ff4444;border-color:#3d1a1a;font-size:13px">&#9888; Azzera tutto (storico incluso)</button>
+  </div>
+</div>
+
+<!-- STORICO IN PROFILO -->
+<div class="screen has-nav" id="sc-storico-profilo">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+      <button class="icon-btn" onclick="showEditProfile()"><i class="ti ti-arrow-left"></i></button>
+    </div>
+    <div class="h1" style="font-size:22px;margin-top:20px">Storico task</div>
+  </div>
+  <div class="scroll" id="storico-profilo-list"></div>
+</div>
+
+<!-- LISTA TASK -->
+<div class="screen has-nav" id="sc-tasks">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">I tuoi task</div>
+    <div class="sub" id="tasks-obiettivo" style="margin-bottom:12px"></div>
+  </div>
+  <div class="scroll" id="tasks-list"></div>
+  <div class="bot" id="storico-bot" style="display:none">
+    <!-- PANNELLO CORREZIONE -->
+    <div class="corr-panel" id="corr-panel">
+      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
+      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
+        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
+      </div>
+      <div id="err-corr"></div>
+    </div>
+    <!-- PANNELLO AVANZAMENTO -->
+    <div id="avanz-panel">
+      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
+        <i class="ti ti-check"></i> Ce l'ho fatta
+      </button>
+      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
+        <i class="ti ti-clock"></i> Dammi un giorno in più
+      </button>
+      <button class="btn-ghost" id="btn-cambialo" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52;display:none">
+        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- PROGRESSI -->
+<div class="screen has-nav" id="sc-progressi">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px">Progressi</div>
+    <div class="sub">La misura del tuo percorso, senza rumore.</div>
+  </div>
+  <div class="scroll">
+    <div class="tblock" style="border-color:#EA580C33">
+      <div class="tlabel">Percorso attivo</div>
+      <div class="ttitle" id="prog-obiettivo" style="font-size:17px"></div>
+      <div style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#C7D2E0;margin-bottom:8px">
+          <span>Avanzamento 30 giorni</span>
+          <strong id="prog-perc" style="color:#fff">0%</strong>
+        </div>
+        <div style="height:8px;background:#0B1020;border-radius:999px;overflow:hidden;border:1px solid #2F3B52">
+          <div id="prog-bar" style="height:100%;background:#EA580C;border-radius:999px;width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:12px">
+      <div class="stat"><div class="stat-n" id="prog-completati">0</div><div class="stat-l">Giorni completati</div></div>
+      <div class="stat"><div class="stat-n" id="prog-streak">0</div><div class="stat-l">Streak</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="prog-crescita">+0%</div><div class="stat-l">Crescita stimata</div></div>
+      <div class="stat"><div class="stat-n" id="prog-rimanenti">30</div><div class="stat-l">Giorni rimanenti</div></div>
+    </div>
+
+    <div class="tblock">
+      <div class="tlabel">Milestone</div>
+      <div id="prog-milestones"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STORICO -->
+<div class="screen has-nav" id="sc-abitudini">
+  <div class="s-pad">
+    <div class="topbar">
+      <div class="logo">Per<span>sisto</span></div>
+    </div>
+    <div class="h1" style="margin-top:20px" id="abitudini-title">Le tue abitudini</div>
+    <div class="sub" id="abitudini-sub" style="margin-bottom:0"></div>
+  </div>
+  <div class="scroll" id="abitudini-list"></div>
+</div>
+
+<!-- PERCORSO COMPLETATO -->
+<div class="screen" id="sc-completato">
+  <div class="scroll" style="padding:40px 24px;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🏆</div>
+    <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px">Percorso completato!</div>
+    <div style="font-size:15px;color:#C7D2E0;line-height:1.7;margin-bottom:32px">Hai completato 30 giorni di task e tutte le abitudini del percorso.<br>Questo è il risultato di chi non smette.</div>
+    <div class="stats" style="margin-bottom:32px">
+      <div class="stat"><div class="stat-n" id="comp-giorni">30</div><div class="stat-l">Giorni ✓</div></div>
+      <div class="stat"><div class="stat-n" style="color:#EA580C" id="comp-crescita">+0%</div><div class="stat-l">Crescita totale</div></div>
+    </div>
+    <div style="font-size:13px;color:#8FA0B8;margin-bottom:32px;font-style:italic" id="comp-obiettivo"></div>
+    <button class="btn" onclick="generaCertificato()" style="margin-bottom:12px">
+      <i class="ti ti-certificate"></i> Scarica il certificato
+    </button>
+    <button class="btn-ghost" onclick="resetFlow()">Inizia un nuovo percorso</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV — fisso in fondo alla phone -->
+<div class="bnav" id="bottom-nav">
+  <div class="bnav-items">
+    <button class="bnav-item" id="nav-home" onclick="navTo('home')">
+      <i class="ti ti-home"></i>Home
+    </button>
+    <button class="bnav-item" id="nav-task" onclick="navTo('task-oggi')">
+      <i class="ti ti-checkbox"></i>Task
+    </button>
+    <button class="bnav-item" id="nav-progressi" onclick="navTo('progressi')">
+      <i class="ti ti-chart-line"></i>Progressi
+    </button>
+    <button class="bnav-item" id="nav-abitudini" onclick="navTo('abitudini')">
+      <i class="ti ti-repeat"></i>Abitudini
+    </button>
+    <button class="bnav-item" id="nav-profilo" onclick="navTo('profilo-menu')">
+      <i class="ti ti-user"></i>Profilo
+    </button>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ─── SUPABASE ───────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://ssngfxdviefytqnzljmf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_MhxlV9kHfukREFKcn2wBWg_mOxMlHxh';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── STATO ──────────────────────────────────────────────────────────────────
+var ARCH = {
+  corpo: 'forma fisica, energia e salute',
+  mente: 'focus mentale, gestione dello stress e abitudini cognitive',
+  relazioni: 'relazioni interpersonali, coppia o famiglia',
+  lavoro: 'produttività, carriera e crescita professionale'
+};
+
+var S = {
+  arch: null, freeText: '', ctx: '',
+  questions: [], answers: [], currentQ: 0,
+  profile: {}, tasks: [], emoji: null,
+  demoData: {}, objData: {},
+  user: null, userProfile: null,
+  taskCompletato: false,
+  giornoAttuale: 1,
+  giorniCompletati: [],
+  taskExtraOggi: 0,
+  dataUltimoExtra: '',
+  dataUltimoTask: '',
+  abitudiniStato: {},
+  giorniTotali: 0
+};
+
+var QUOTES = [
+  {icon:'💡', text:'Il cambiamento non richiede grandi gesti. Richiede gesti piccoli, fatti ogni giorno.'},
+  {icon:'🎯', text:'Un obiettivo senza un piano è solo un desiderio. Tu stai costruendo il piano.'},
+  {icon:'⚡', text:'Il 1% al giorno sembra poco. In 30 giorni è una persona diversa.'},
+  {icon:'🔥', text:'La costanza batte il talento quando il talento non è costante.'},
+  {icon:'🧭', text:'Non devi essere perfetta. Devi solo non smettere.'},
+  {icon:'💪', text:'Ogni task completato è una prova che sei capace. Raccoglila.'},
+  {icon:'🌱', text:'I risultati grandi nascono da abitudini piccole ripetute.'},
+  {icon:'⏰', text:'30 minuti al giorno dedicati a te cambiano tutto in 30 giorni.'},
+  {icon:'🚀', text:'Il momento migliore per iniziare era ieri. Il secondo migliore è adesso.'},
+  {icon:'✨', text:'Non aspettare di sentirti pronta. Agisci e la motivazione arriva dopo.'}
+];
+
+var _quoteInterval = null;
+
+function startQuotes() {
+  var idx = 0;
+  function show() {
+    var q = QUOTES[idx % QUOTES.length];
+    document.getElementById('an-quote-icon').textContent = q.icon;
+    document.getElementById('an-quote').textContent = q.text;
+    idx++;
+  }
+  show();
+  _quoteInterval = setInterval(show, 4000);
+}
+
+function stopQuotes() {
+  if (_quoteInterval) { clearInterval(_quoteInterval); _quoteInterval = null; }
+}
+
+function animateBar(fromPerc, toPerc, durationMs, onDone) {
+  var start = null;
+  var bar = document.getElementById('an-bar');
+  var percEl = document.getElementById('an-perc');
+  function step(ts) {
+    if (!start) start = ts;
+    var progress = Math.min((ts - start) / durationMs, 1);
+    var current = Math.round(fromPerc + (toPerc - fromPerc) * progress);
+    if (bar) bar.style.width = current + '%';
+    if (percEl) percEl.textContent = current + '%';
+    if (progress < 1) requestAnimationFrame(step);
+    else if (onDone) onDone();
+  }
+  requestAnimationFrame(step);
+}
+
+var CHIPS = {};
+
+// ─── BOTTOM NAV ──────────────────────────────────────────────────────────────
+function showNav(visible) {
+  var nav = document.getElementById('bottom-nav');
+  if (visible) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+}
+
+function navTo(dest) {
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (dest === 'home') {
+    document.getElementById('nav-home').classList.add('active');
+    aggiornaHome();
+    ss('home');
+  } else if (dest === 'task-oggi') {
+    S_activeNav = 'task';
+    document.getElementById('nav-task').classList.add('active');
+    loadTaskTab();
+    ss('tasks');
+  } else if (dest === 'progressi') {
+    S_activeNav = 'progressi';
+    document.getElementById('nav-progressi').classList.add('active');
+    loadProgressi();
+    ss('progressi');
+  } else if (dest === 'abitudini') {
+    S_activeNav = 'abitudini';
+    document.getElementById('nav-abitudini').classList.add('active');
+    loadAbitudini();
+    ss('abitudini');
+  } else if (dest === 'profilo-menu') {
+    document.getElementById('nav-profilo').classList.add('active');
+    showEditProfile();
+  }
+}
+
+// ─── UTILS ──────────────────────────────────────────────────────────────────
+var S_activeNav = '';
+function ss(id) {
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  var target = document.getElementById('sc-' + id);
+  if (!target) { console.error('ss(): screen non trovato: sc-' + id); return; }
+  target.classList.add('active');
+  target.style.display = 'flex';
+  // nav
+  var navScreens = ['home','reflection','abitudini','storico-profilo','progressi','edit-profile','tasks'];
+  showNav(navScreens.indexOf(id) !== -1);
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('active'); });
+  if (id === 'home') { var nh = document.getElementById('nav-home'); if(nh) nh.classList.add('active'); S_activeNav = 'home'; }
+  // storico e task-oggi usano lo stesso screen sc-storico — il nav viene gestito da navTo
+  if (S_activeNav === 'progressi' && id === 'progressi') { var np = document.getElementById('nav-progressi'); if(np) np.classList.add('active'); }
+  if (S_activeNav === 'abitudini' && id === 'abitudini') { var na = document.getElementById('nav-abitudini'); if(na) na.classList.add('active'); }
+  if (S_activeNav === 'task' && id === 'abitudini') { var nt = document.getElementById('nav-task'); if(nt) nt.classList.add('active'); }
+  if (id === 'tasks') { var nt2 = document.getElementById('nav-task'); if(nt2) nt2.classList.add('active'); }
+}
+
+function clean(t) {
+  return (t || '').replace(/\*\*/g,'').replace(/\*/g,'').replace(/^#+\s*/gm,'').trim();
+}
+
+function safeJSON(t) {
+  var s = t.replace(/```json/g,'').replace(/```/g,'').trim();
+  var a = s.indexOf('{'); var b = s.lastIndexOf('}');
+  if (a === -1 || b === -1) throw new Error('No JSON');
+  return JSON.parse(s.slice(a, b+1));
+}
+
+function selChip(key, val, el) {
+  var group = el.parentElement;
+  group.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  CHIPS[key] = val;
+  // mostra campi condizionali
+  if (key === 'figli') {
+    var hasFigli = val !== 'no';
+    document.getElementById('field-figli-eta').style.display = hasFigli ? 'block' : 'none';
+    document.getElementById('field-figli-custody').style.display = hasFigli ? 'block' : 'none';
+  }
+  if (key === 'tentativo') {
+    var hadTry = val === 'provato-male' || val === 'provato-parziale';
+    document.getElementById('field-cosa-bloccato').style.display = hadTry ? 'block' : 'none';
+  }
+}
+
+async function callAI(system, userMsg) {
+  var res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({system: system, messages: [{role:'user', content: userMsg}]})
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Errore API');
+  return data.content.filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
+}
+
+function buildProfileContext() {
+  var p = S.userProfile || {};
+  var lines = [];
+  if (p.eta) lines.push('Età: ' + p.eta);
+  if (p.sesso) lines.push('Sesso: ' + p.sesso);
+  if (p.situazione_familiare) lines.push('Situazione sentimentale: ' + p.situazione_familiare);
+  if (p.figli_numero) lines.push('Figli: ' + p.figli_numero + (p.figli_eta ? ' (età: ' + p.figli_eta + ')' : ''));
+  if (p.supporto_familiare) lines.push('Supporto familiare: ' + p.supporto_familiare);
+  if (p.lavoro_attuale) lines.push('Lavoro: ' + p.lavoro_attuale);
+  if (p.tipo_lavoro) lines.push('Tipo rapporto: ' + p.tipo_lavoro);
+  if (p.ore_lavoro_giorno) lines.push('Ore lavoro/giorno: ' + p.ore_lavoro_giorno);
+  if (p.reddito_fascia) lines.push('Reddito attuale: ' + p.reddito_fascia);
+  if (p.energia_fine_giornata) lines.push('Energia fine giornata: ' + p.energia_fine_giornata);
+  if (p.tempo_libero_giorno) lines.push('Tempo libero reale: ' + p.tempo_libero_giorno);
+  if (p.gestione_casa) lines.push('Gestione casa: ' + p.gestione_casa);
+  if (p.salute_generale) lines.push('Salute: ' + p.salute_generale);
+  if (p.attivita_fisica) lines.push('Sport: ' + p.attivita_fisica);
+  if (p.qualita_sonno) lines.push('Sonno: ' + p.qualita_sonno);
+  if (p.energia_mentale) lines.push('Energia mentale: ' + p.energia_mentale);
+  if (p.organizzazione) lines.push('Organizzazione: ' + p.organizzazione);
+  if (p.procrastinazione) lines.push('Procrastinazione: ' + p.procrastinazione);
+  if (p.reazione_fallimenti) lines.push('Reazione fallimenti: ' + p.reazione_fallimenti);
+  if (p.gestione_stress) lines.push('Gestione stress: ' + p.gestione_stress);
+  if (p.situazione_attuale) lines.push('Situazione attuale: ' + p.situazione_attuale);
+  if (p.paure_cambiamento) lines.push('Paure: ' + p.paure_cambiamento);
+  return lines.join('\n');
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  document.getElementById('err-login').innerHTML = '';
+  if (!email || !pass) {
+    document.getElementById('err-login').innerHTML = '<div class="err">Inserisci email e password.</div>';
+    return;
+  }
+  var {data, error} = await sb.auth.signInWithPassword({email: email, password: pass});
+  if (error) {
+    document.getElementById('err-login').innerHTML = '<div class="err">' + error.message + '</div>';
+    return;
+  }
+  S.user = data.user;
+  await afterLogin();
+}
+
+async function doRegister() {
+  var email = document.getElementById('reg-email').value.trim();
+  var pass = document.getElementById('reg-pass').value;
+  document.getElementById('err-register').innerHTML = '';
+  if (!email || !pass) {
+    document.getElementById('err-register').innerHTML = '<div class="err">Inserisci email e password.</div>';
+    return;
+  }
+  var {data, error} = await sb.auth.signUp({email: email, password: pass});
+  if (error) {
+    document.getElementById('err-register').innerHTML = '<div class="err">' + error.message + '</div>';
+    return;
+  }
+  ss('verify');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  S.user = null; S.userProfile = null;
+  ss('login');
+}
+
+async function afterLogin() {
+  // 1. Controlla profilo demografico
+  var {data: profilo} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
+  if (!profilo || !profilo.eta) {
+    ss('demo1');
+    return;
+  }
+  S.userProfile = profilo;
+  S.giorniTotali = profilo.giorni_totali || 0;
+
+  // 2. Controlla se c'è un obiettivo attivo salvato
+  var {data: obj} = await sb.from('obiettivi')
+    .select('*')
+    .eq('user_id', S.user.id)
+    .order('created_at', {ascending: false})
+    .limit(1)
+    .single();
+
+  if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
+    S.objId = obj.id;
+    S.ctx = obj.obiettivo_testo || '';
+    S.objData = {
+      come: obj.come || '',
+      tentativo: obj.tentativo_precedente || 'mai',
+      bloccato: obj.cosa_ha_bloccato || '',
+      risultato: obj.risultato_concreto || '',
+      scadenza: obj.scadenza || 'non specificata'
+    };
+    S.profile = obj.profile_json || {};
+    S.tasks = obj.tasks_json || [];
+    S.giorniCompletati = obj.giorni_completati || [];
+    S.reflections = obj.reflections || {};
+    S.abitudiniStato = obj.abitudini_stato || {};
+    S.taskExtraOggi = obj.task_extra_oggi || 0;
+    S.dataUltimoExtra = obj.data_ultimo_extra || '';
+    S.dataUltimoTask = obj.data_ultimo_task || '';
+    S.objDataInizio = obj.created_at || '';
+
+    // Giorno attuale = primo giorno non ancora completato
+    var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
+    S.giornoAttuale = maxCompletato + 1;
+    S.giornoAttuale = Math.min(S.giornoAttuale, 30);
+    if (S.giornoAttuale < 1) S.giornoAttuale = 1;
+
+    // Segna se il giorno attuale è già completato
+    S.taskCompletato = S.giorniCompletati.indexOf(S.giornoAttuale) !== -1;
+
+    // Reset extra solo se è un nuovo giorno di calendario
+    var oggi = new Date();
+    var oggiStr = oggi.toISOString().slice(0, 10);
+    if (S.dataUltimoExtra !== oggiStr) {
+      S.taskExtraOggi = 0;
+    }
+
+    // Popola la home col task del giorno attuale
+    document.getElementById('home-score').textContent = obj.baseline_score || 0;
+    var t = S.tasks[S.giornoAttuale - 1] || S.tasks[0];
+    if (t) {
+      document.getElementById('task-title').textContent = clean(t.title) || '';
+      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+      document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+      document.getElementById('task-desc').textContent = descFormatted;
+      document.getElementById('task-why').textContent = clean(t.why) || '';
+    }
+    aggiornaHome();
+    ss('home');
+  } else {
+    ss('welcome');
+  }
+}
+
+// ─── PROFILO DEMOGRAFICO ─────────────────────────────────────────────────────
+function nextDemo(step) {
+  if (step === 1) {
+    S.demoData.eta = CHIPS.eta || '';
+    S.demoData.sesso = CHIPS.sesso || '';
+    S.demoData.luogo = document.getElementById('demo-luogo').value.trim();
+    S.demoData.situazione_familiare = CHIPS.sentimentale || '';
+    S.demoData.figli_numero = CHIPS.figli || '';
+    S.demoData.figli_eta = document.getElementById('demo-figli-eta').value.trim();
+    S.demoData.custody = CHIPS.custody || '';
+    S.demoData.supporto_familiare = CHIPS.supporto || '';
+    S.demoData.carico = CHIPS.carico || '';
+    ss('demo2');
+  } else if (step === 2) {
+    S.demoData.lavoro_attuale = document.getElementById('demo-lavoro').value.trim();
+    S.demoData.tipo_lavoro = CHIPS.tipolavoro || '';
+    S.demoData.ore_lavoro_giorno = CHIPS.orelavoro || '';
+    S.demoData.luogo_lavoro = CHIPS.luogolavoro || '';
+    S.demoData.reddito_tipo = CHIPS.reddito || '';
+    S.demoData.reddito_fascia = CHIPS.fascia || '';
+    S.demoData.soddisfazione_lavoro = CHIPS.soddisfazione || '';
+    S.demoData.energia_fine_giornata = CHIPS.energialavoro || '';
+    S.demoData.debiti = CHIPS.debiti || '';
+    S.demoData.business = CHIPS.business || '';
+    ss('demo3');
+  } else if (step === 3) {
+    S.demoData.sveglia = CHIPS.sveglia || '';
+    S.demoData.ora_nanna = CHIPS.nanna || '';
+    S.demoData.tempo_libero_giorno = CHIPS.tempolibero || '';
+    S.demoData.gestione_casa = CHIPS.casa || '';
+    S.demoData.momento_solo = CHIPS.momentosolo || '';
+    S.demoData.weekend_lavoro = CHIPS.weekend || '';
+    ss('demo4');
+  } else if (step === 4) {
+    S.demoData.salute_generale = CHIPS.salute || '';
+    S.demoData.attivita_fisica = CHIPS.sport || '';
+    S.demoData.alimentazione = CHIPS.alimentazione || '';
+    S.demoData.limitazioni_fisiche = CHIPS.limitazioni || '';
+    S.demoData.qualita_sonno = CHIPS.sonno || '';
+    S.demoData.gestione_stress = CHIPS.stress || '';
+    S.demoData.energia_mentale = CHIPS.energiamente || '';
+    S.demoData.organizzazione = CHIPS.organizzazione || '';
+    S.demoData.procrastinazione = CHIPS.procrastinazione || '';
+    S.demoData.reazione_fallimenti = CHIPS.fallimenti || '';
+    ss('demo5');
+  }
+}
+
+async function saveProfile() {
+  S.demoData.situazione_attuale = document.getElementById('demo-situazione').value.trim();
+  S.demoData.paure_cambiamento = document.getElementById('demo-paure').value.trim();
+
+  var payload = {
+    id: S.user.id,
+    email: S.user.email,
+    eta: S.demoData.eta,
+    sesso: S.demoData.sesso,
+    situazione_familiare: S.demoData.situazione_familiare,
+    figli_numero: S.demoData.figli_numero ? parseInt(S.demoData.figli_numero) || null : null,
+    figli_eta: S.demoData.figli_eta,
+    convivente: S.demoData.situazione_familiare === 'coppia-convivente' || S.demoData.situazione_familiare === 'sposato',
+    supporto_familiare: S.demoData.supporto_familiare,
+    lavoro_attuale: S.demoData.lavoro_attuale,
+    tipo_lavoro: S.demoData.tipo_lavoro,
+    ore_lavoro_giorno: S.demoData.ore_lavoro_giorno,
+    luogo_lavoro: S.demoData.luogo_lavoro,
+    reddito_tipo: S.demoData.reddito_tipo,
+    reddito_fascia: S.demoData.reddito_fascia,
+    soddisfazione_lavoro: S.demoData.soddisfazione_lavoro,
+    energia_fine_giornata: S.demoData.energia_fine_giornata,
+    debiti: S.demoData.debiti === 'si',
+    sveglia: S.demoData.sveglia,
+    ora_nanna: S.demoData.ora_nanna,
+    gestione_casa: S.demoData.gestione_casa,
+    tempo_libero_giorno: S.demoData.tempo_libero_giorno,
+    weekend_lavoro: S.demoData.weekend_lavoro === 'lavoro',
+    salute_generale: S.demoData.salute_generale,
+    attivita_fisica: S.demoData.attivita_fisica,
+    alimentazione: S.demoData.alimentazione,
+    limitazioni_fisiche: S.demoData.limitazioni_fisiche,
+    qualita_sonno: S.demoData.qualita_sonno,
+    gestione_stress: S.demoData.gestione_stress,
+    energia_mentale: S.demoData.energia_mentale,
+    organizzazione: S.demoData.organizzazione,
+    procrastinazione: S.demoData.procrastinazione,
+    reazione_fallimenti: S.demoData.reazione_fallimenti,
+    situazione_attuale: S.demoData.situazione_attuale,
+    paure_cambiamento: S.demoData.paure_cambiamento,
+    updated_at: new Date().toISOString()
+  };
+
+  var {error} = await sb.from('profiles').upsert(payload);
+  if (error) {
+    alert('Errore salvataggio: ' + error.message);
+    return;
+  }
+  S.userProfile = payload;
+  // Se c'è già un obiettivo attivo, torna in home, altrimenti vai alla welcome
+  if (S.tasks && S.tasks.length > 0) {
+    aggiornaHome();
+    ss('home');
+  } else {
+    sb.from('obiettivi').select('tasks_json').eq('user_id', S.user.id).limit(1).single().then(function(res) {
+      if (res.data && res.data.tasks_json && res.data.tasks_json.length > 0) {
+        S.tasks = res.data.tasks_json;
+        aggiornaHome();
+        ss('home');
+      } else {
+        ss('welcome');
+      }
+    });
+  }
+}
+
+function preselChip(key, val) {
+  if (!val) return;
+  CHIPS[key] = val;
+  document.querySelectorAll('.chip').forEach(function(el) {
+    var oc = el.getAttribute('onclick') || '';
+    var match = oc.match(/selChip\('([^']+)','([^']+)'/);
+    if (match && match[1] === key) {
+      if (match[2] === String(val)) { el.classList.add('sel'); }
+      else { el.classList.remove('sel'); }
+    }
+  });
+}
+
+function goToEditFull() {
+  CHIPS = {};
+  ss('demo1');
+  var p = S.userProfile || {};
+  setTimeout(function() {
+    preselChip('eta', p.eta);
+    preselChip('sesso', p.sesso);
+    preselChip('sentimentale', p.situazione_familiare);
+    if (p.figli_numero) {
+      var fn = p.figli_numero >= 4 ? '4+' : String(p.figli_numero);
+      preselChip('figli', fn);
+      document.getElementById('field-figli-eta').style.display = 'block';
+      document.getElementById('field-figli-custody').style.display = 'block';
+      if (p.figli_eta) document.getElementById('demo-figli-eta').value = p.figli_eta;
+    } else {
+      preselChip('figli', 'no');
+    }
+    preselChip('supporto', p.supporto_familiare);
+    preselChip('custody', p.custody);
+    preselChip('debiti', p.debiti === true || p.debiti === 'si' ? 'si' : (p.debiti === 'leggero' ? 'leggero' : 'no'));
+    if (p.luogo) document.getElementById('demo-luogo').value = p.luogo || '';
+    // step 2
+    preselChip('tipolavoro', p.tipo_lavoro);
+    preselChip('orelavoro', p.ore_lavoro_giorno);
+    preselChip('luogolavoro', p.luogo_lavoro);
+    preselChip('reddito', p.reddito_tipo);
+    preselChip('fascia', p.reddito_fascia);
+    preselChip('soddisfazione', p.soddisfazione_lavoro);
+    preselChip('energialavoro', p.energia_fine_giornata);
+    preselChip('debiti', p.debiti === true ? 'si' : (p.debiti || 'no'));
+    preselChip('business', p.business);
+    // step 3
+    preselChip('sveglia', p.sveglia);
+    preselChip('nanna', p.ora_nanna);
+    preselChip('tempolibero', p.tempo_libero_giorno);
+    preselChip('casa', p.gestione_casa);
+    preselChip('momentosolo', p.momento_solo);
+    preselChip('weekend', p.weekend_lavoro === true ? 'lavoro' : 'libero');
+    // step 4
+    preselChip('salute', p.salute_generale);
+    preselChip('sport', p.attivita_fisica);
+    preselChip('alimentazione', p.alimentazione);
+    preselChip('limitazioni', p.limitazioni_fisiche);
+    preselChip('sonno', p.qualita_sonno);
+    preselChip('stress', p.gestione_stress);
+    preselChip('energiamente', p.energia_mentale);
+    preselChip('organizzazione', p.organizzazione);
+    preselChip('procrastinazione', p.procrastinazione);
+    preselChip('fallimenti', p.reazione_fallimenti);
+    if (p.lavoro_attuale) document.getElementById('demo-lavoro').value = p.lavoro_attuale;
+    // step 5
+    if (p.situazione_attuale) document.getElementById('demo-situazione').value = p.situazione_attuale;
+    if (p.paure_cambiamento) document.getElementById('demo-paure').value = p.paure_cambiamento;
+  }, 100);
+}
+
+async function chiudiProfilo() {
+  if (S.tasks && S.tasks.length > 0) {
+    aggiornaHome();
+    ss('home');
+  } else {
+    // Controlla Supabase prima di mandare alla welcome
+    var {data: obj} = await sb.from('obiettivi')
+      .select('tasks_json')
+      .eq('user_id', S.user.id)
+      .limit(1)
+      .single();
+    if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
+      S.tasks = obj.tasks_json;
+      aggiornaHome();
+      ss('home');
+    } else {
+      ss('welcome');
+    }
+  }
+}
+
+function showEditProfile() {
+  var p = S.userProfile || {};
+  var html = '';
+  var rows = [
+    ['Età', p.eta], ['Sesso', p.sesso], ['Situazione', p.situazione_familiare],
+    ['Figli', p.figli_numero], ['Lavoro', p.lavoro_attuale], ['Tipo lavoro', p.tipo_lavoro],
+    ['Ore/giorno', p.ore_lavoro_giorno], ['Reddito', p.reddito_fascia],
+    ['Tempo libero', p.tempo_libero_giorno], ['Sport', p.attivita_fisica],
+    ['Energia mentale', p.energia_mentale], ['Sonno', p.qualita_sonno]
+  ];
+  rows.forEach(function(r) {
+    if (r[1]) html += '<div class="prof-row"><span class="prof-key">' + r[0] + '</span><span class="prof-val">' + r[1] + '</span></div>';
+  });
+  if (p.situazione_attuale) html += '<div class="tblock" style="margin-top:12px"><div class="tlabel">Situazione attuale</div><div class="tdesc">' + p.situazione_attuale + '</div></div>';
+  document.getElementById('edit-profile-content').innerHTML = html || '<div style="color:#8FA0B8;text-align:center;padding:20px">Nessun dato salvato.</div>';
+  ss('edit-profile');
+}
+
+// ─── FLUSSO OBIETTIVO ────────────────────────────────────────────────────────
+function selArch(a) {
+  document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
+  if (S.arch === a) {
+    S.arch = null;
+  } else {
+    S.arch = a;
+    var el = document.getElementById('arch-' + a);
+    if (el) el.classList.add('sel');
+    var ft = document.getElementById('free-text');
+    if (ft) ft.value = '';
+    S.freeText = '';
+  }
+  var btn = document.getElementById('btn-start');
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  if (btn) btn.disabled = !(S.arch || val);
+}
+
+async function selArea(area) {
+  S.areaScelta = area;
+  document.getElementById('percorsi-area-title').textContent = area;
+  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento...</div>';
+  ss('percorsi');
+
+  var FREE_IDS = [1, 7, 13, 31]; // percorsi free per numero
+
+  var {data: percorsi, error} = await sb.from('percorsi')
+    .select('*')
+    .eq('area', area)
+    .order('numero', {ascending: true});
+
+  if (error || !percorsi || percorsi.length === 0) {
+    document.getElementById('percorsi-list').innerHTML = '<div class="err">Errore nel caricamento. Riprova.</div>';
+    return;
+  }
+
+
+  var html = '';
+  percorsi.forEach(function(p) {
+    var isFree = FREE_IDS.indexOf(p.numero) !== -1 || !p.is_premium;
+    var lockIcon = isFree ? '' : '<i class="ti ti-lock" style="color:#8FA0B8;font-size:18px;flex-shrink:0"></i>';
+    var clickable = isFree ? 'onclick="avviaPercorso(' + p.id + ')"' : 'onclick="mostraLock()"';
+    var opacity = isFree ? '1' : '0.5';
+    html += '<div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;opacity:' + opacity + '" ' + clickable + '>' +
+      '<div style="flex:1">' +
+        '<div style="font-weight:600;font-size:15px;color:#fff">' + p.titolo + '</div>' +
+        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px">' + (p.descrizione ? p.descrizione.substring(0, 70) + '...' : '30 giorni') + '</div>' +
+      '</div>' +
+      lockIcon +
+      '</div>';
+  });
+  document.getElementById('percorsi-list').innerHTML = html;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+async function avviaPercorso(percorsoId) {
+  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
+
+  var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
+  var {data: taskRows} = await sb.from('tasks').select('*').eq('percorso_id', percorsoId).order('giorno', {ascending: true});
+
+  if (!percorso || !taskRows || taskRows.length === 0) {
+    document.getElementById('err-percorsi').innerHTML = '<div class="err">Errore nel caricamento del percorso.</div>';
+    return;
+  }
+
+  // Converte i task nel formato che l'app già usa
+  var tasks = taskRows.map(function(t) {
+    return {
+      day: t.giorno,
+      type: 'action',
+      title: t.titolo,
+      description: t.cosa_fare + '\n\n' + t.come_farlo,
+      why: t.perche_funziona,
+      esempio: t.esempio
+    };
+  });
+
+  S.tasks = tasks;
+  S.ctx = percorso.titolo;
+  S.percorsoId = percorsoId;
+  S.giornoAttuale = 1;
+  S.giorniCompletati = [];
+  S.taskCompletato = false;
+  S.taskExtraOggi = 0;
+  S.abitudiniStato = {};
+  S.dataUltimoTask = '';
+  S.dataUltimoExtra = '';
+
+  // Salva su Supabase
+  if (S.user) {
+    await sb.from('obiettivi').delete().eq('user_id', S.user.id);
+    var ins = await sb.from('obiettivi').insert({
+      user_id: S.user.id,
+      obiettivo_testo: percorso.titolo,
+      area: percorso.area,
+      tasks_json: tasks,
+      baseline_score: 0,
+      giorni_completati: [],
+      percorso_id: percorsoId
+    }).select().single();
+    if (ins.data) S.objId = ins.data.id;
+  }
+
+  document.getElementById('home-score').textContent = 0;
+  var t = tasks[0];
+  if (t) {
+    document.getElementById('task-title').textContent = t.title || '';
+    document.getElementById('task-desc').textContent = t.description || '';
+    document.getElementById('task-why').textContent = t.why || '';
+  }
+  aggiornaHome();
+  ss('home');
+}
+
+function mostraLock() {
+  alert('Questo percorso è disponibile con Persisto Premium. Prossimamente!');
+}
+
+function onFreeText() {
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  S.freeText = val;
+}
+
+function updateBtn() {
+  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  var btn = document.getElementById('btn-start');
+  if (btn) btn.disabled = !(S.arch || val);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var ta = document.getElementById('free-text');
+  if (ta) {
+    ta.addEventListener('input', onFreeText);
+    ta.addEventListener('keyup', onFreeText);
+  }
+  // SESSIONE PERSISTENTE — Supabase ricorda il login automaticamente
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (session && session.user) {
+      S.user = session.user;
+      if (!S.userProfile) afterLogin();
+    } else if (event === 'SIGNED_OUT') {
+      S.user = null; S.userProfile = null;
+      showNav(false);
+      ss('login');
+    }
+  });
+  sb.auth.getSession().then(function(r) {
+    if (r.data && r.data.session) {
+      S.user = r.data.session.user;
+      afterLogin();
+    } else {
+      ss('login');
+    }
+  });
+});
+
+// ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
+async function avanzamento(tipo) {
+  if (tipo === 'fatto') {
+    if (confirm('Confermi di aver completato il task visualizzato?')) {
+      // Usa il giorno visualizzato: task ufficiale oppure task extra sbloccato.
+      var giornoCompletato = S.taskVisualizzato || S.giornoAttuale || 1;
+      await markDone(giornoCompletato);
+
+      // Dopo il completamento, quel task diventa il riferimento corrente.
+      S.giornoAttuale = giornoCompletato;
+      S.taskVisualizzato = null;
+
+      // Popola la schermata reflection col task appena completato.
+      var giorno = giornoCompletato;
+      var t = S.tasks[giorno - 1] || S.tasks[0] || {};
+      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+      document.getElementById('refl-task-title').textContent = clean(t.title || '');
+      document.getElementById('refl-task-desc').textContent = descFormatted;
+      document.getElementById('refl-task-desc').style.whiteSpace = 'pre-line';
+      document.getElementById('refl-text').value = '';
+      document.getElementById('refl-text').style.borderColor = '';
+      ss('reflection');
+    }
+  } else if (tipo === 'domani') {
+    // Shifta il percorso di 1 giorno — il task di oggi diventa anche domani
+    var giorno = S.giornoAttuale || 1;
+    var taskOggi = S.tasks[giorno - 1];
+    if (taskOggi) {
+      // Inserisce una copia del task di oggi come nuovo giorno
+      S.tasks.splice(giorno, 0, Object.assign({}, taskOggi, {day: giorno + 1}));
+      // Riallinea i day dei task successivi
+      for (var i = giorno + 1; i < S.tasks.length; i++) {
+        S.tasks[i].day = i + 1;
+      }
+      // Salva su Supabase
+      if (S.user) {
+        sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
+      }
+    }
+    if (confirm('Ok! Il task rimane per domani. Vuoi andare avanti lo stesso oggi?')) {
+      // non fa nulla, rimane sul task tab
+    }
+    loadTaskTab();
+  }
+}
+
+function toggleCorr() {
+  var p = document.getElementById('corr-panel');
+  var a = document.getElementById('avanz-panel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) {
+    if (a) a.style.display = 'none';
+    document.getElementById('corr-text').focus();
+  } else {
+    if (a) a.style.display = 'block';
+  }
+}
+
+function chiudiCorr() {
+  document.getElementById('corr-panel').classList.remove('open');
+  document.getElementById('corr-text').value = '';
+  document.getElementById('err-corr').innerHTML = '';
+  var a = document.getElementById('avanz-panel');
+  if (a) a.style.display = 'block';
+}
+
+async function correggiTask() {
+  var correzione = document.getElementById('corr-text').value.trim();
+  if (!correzione) {
+    document.getElementById('err-corr').innerHTML = '<div class="err">Dimmi cosa non va.</div>';
+    return;
+  }
+  document.getElementById('err-corr').innerHTML = '';
+  var btnCorr = document.querySelector('#corr-panel .btn');
+  btnCorr.disabled = true;
+  btnCorr.textContent = 'Persisto sta ricalcolando...';
+  try {
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
+    var giorno = S.giornoAttuale || 1;
+    var taskAttuale = S.tasks[giorno - 1];
+    // Se è un'abitudine, chiedi se rimuovere dai giorni successivi
+    if (taskAttuale && taskAttuale.type === 'habit') {
+      var rimuovi = confirm('Questo task fa parte di un\'abitudine attiva (' + taskAttuale.habit_days + ' giorni).\n\nVuoi rimuovere l\'abitudine anche dai giorni successivi?');
+      if (rimuovi) {
+        // Rimuove il flag habit dai giorni successivi
+        var hid = taskAttuale.habit_id;
+        S.tasks.forEach(function(t) {
+          if (t.habit_id === hid && (t.day||0) > giorno) {
+            t.type = 'action';
+            delete t.habit_id;
+            delete t.habit_days;
+          }
+        });
+      }
+    }
+    var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
+    var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
+    var msg = objCtx + '\n\nTask da sostituire: ' + (taskAttuale ? JSON.stringify(taskAttuale) : '') + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
+    var raw = await callAI(sys, msg);
+    var task = safeJSON(raw);
+    console.log('TASK RIGENERATO', task);
+    task.day = giorno;
+    S.tasks[giorno - 1] = task;
+    // Salva su Supabase
+    if (S.user) {
+      await sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
+    }
+    chiudiCorr();
+    loadTaskTab(); // ricarica la vista
+  } catch(e) {
+    document.getElementById('err-corr').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
+  }
+  btnCorr.disabled = false;
+  btnCorr.textContent = 'Rigenera task';
+}
+
+var AREA_CONFIG = {
+  corpo: {
+    title: 'Obiettivo corpo',
+    sub: 'Cosa vuoi cambiare nel tuo corpo?',
+    chips: ['Perdere peso','Tonificare e definire','Recuperare dopo infortunio/malattia','Avere più energia','Ricominciare a muovermi','Migliorare alimentazione','Dormire meglio'],
+    comeLabel: 'Come pensi di arrivarci?',
+    risultatoLabel: 'Risultato concreto (es: -10kg, correre 5km, dormire 7h)',
+    risultatoPlaceholder: 'Es: perdere 10kg, correre 5km senza fermarmi, dormire 7 ore ogni notte'
+  },
+  mente: {
+    title: 'Obiettivo mente',
+    sub: 'Su cosa vuoi lavorare mentalmente?',
+    chips: ['Ridurre stress e ansia','Migliorare il focus','Cambiare mindset e credenze','Migliorare la memoria','Smettere di procrastinare','Gestire le emozioni','Aumentare la fiducia in me'],
+    comeLabel: 'Come si manifesta il problema oggi?',
+    risultatoLabel: 'Come ti sentiresti se fosse risolto?',
+    risultatoPlaceholder: 'Es: riuscire a concentrarmi 2 ore senza distrarmi, non avere attacchi d\'ansia'
+  },
+  lavoro: {
+    title: 'Obiettivo lavoro',
+    sub: 'Cosa vuoi cambiare nel tuo lavoro?',
+    chips: ['Aumentare il fatturato','Avviare un nuovo business','Cambiare lavoro o carriera','Scalare un business esistente','Trovare nuovi clienti','Lavorare meno ore','Diventare indipendente'],
+    comeLabel: 'Descrivilo in dettaglio — settore, metodo, situazione attuale',
+    risultatoLabel: 'Risultato concreto (es: 10.000€/mese, 5 nuovi clienti)',
+    risultatoPlaceholder: 'Es: 10.000€ netti al mese, 5 clienti ricorrenti, lasciare il lavoro dipendente'
+  },
+  relazioni: {
+    title: 'Obiettivo relazioni',
+    sub: 'Su quale relazione vuoi lavorare?',
+    chips: ['Migliorare il rapporto di coppia','Gestire meglio il rapporto con i figli','Ricostruire un rapporto familiare','Uscire da una relazione tossica','Fare nuove amicizie','Migliorare le relazioni al lavoro','Trovare un partner'],
+    comeLabel: 'Descrivi la situazione attuale',
+    risultatoLabel: 'Come sarebbe la situazione ideale?',
+    risultatoPlaceholder: 'Es: comunicare senza litigare, passare tempo di qualità con i figli ogni giorno'
+  }
+};
+
+function startFlow() {
+  var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
+  S.ctx = ctx;
+  CHIPS.tentativo = null;
+  CHIPS['obj-tipo'] = null;
+  document.getElementById('obj-come').value = '';
+  document.getElementById('obj-risultato').value = '';
+  document.getElementById('field-cosa-bloccato').style.display = 'none';
+  document.getElementById('err-obiettivo').innerHTML = '';
+
+  // Personalizza la schermata obiettivo per area
+  var cfg = S.arch ? AREA_CONFIG[S.arch] : null;
+  if (cfg) {
+    document.getElementById('obj-title').textContent = cfg.title;
+    document.getElementById('obj-sub').textContent = cfg.sub;
+    document.getElementById('obj-come-label').textContent = cfg.comeLabel;
+    document.getElementById('obj-risultato-label').textContent = cfg.risultatoLabel;
+    document.getElementById('obj-risultato').placeholder = cfg.risultatoPlaceholder;
+    document.getElementById('obj-come').placeholder = '';
+    // Popola chips specifiche
+    var chipsEl = document.getElementById('chips-obj-tipo');
+    chipsEl.innerHTML = cfg.chips.map(function(c) {
+      return '<div class="chip" onclick="selChipObjTipo(this,\'' + c.replace(/'/g,"\\'") + '\')">' + c + '</div>';
+    }).join('');
+    document.getElementById('obj-chips-field').style.display = 'block';
+  } else {
+    // Testo libero — nascondi chips area
+    document.getElementById('obj-title').textContent = 'Il tuo obiettivo';
+    document.getElementById('obj-sub').textContent = 'Dimmi cosa vuoi ottenere esattamente.';
+    document.getElementById('obj-come-label').textContent = 'Come pensi di arrivarci';
+    document.getElementById('obj-risultato-label').textContent = 'Risultato concreto che definisce il successo';
+    document.getElementById('obj-risultato').placeholder = 'Es: 10.000€ netti al mese, -10kg, correre 5km';
+    document.getElementById('obj-come').placeholder = 'Descrivi il tuo obiettivo...';
+    document.getElementById('obj-chips-field').style.display = 'none';
+  }
+  // Reset chips tentativo e scadenza
+  document.querySelectorAll('#chips-tentativo .chip, #chips-scadenza .chip').forEach(function(c){ c.classList.remove('sel'); });
+  ss('obiettivo');
+}
+
+function selChipObjTipo(el, val) {
+  document.querySelectorAll('#chips-obj-tipo .chip').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  CHIPS['obj-tipo'] = val;
+  // Pre-popola la textarea con la selezione
+  var ta = document.getElementById('obj-come');
+  if (!ta.value) ta.placeholder = 'Es: voglio ' + val.toLowerCase() + '...';
+}
+
+async function startOnboarding() {
+  var come = document.getElementById('obj-come').value.trim();
+  var risultato = document.getElementById('obj-risultato').value.trim();
+  var tipoScelto = CHIPS['obj-tipo'] || '';
+  if (!come && !tipoScelto) {
+    document.getElementById('err-obiettivo').innerHTML = '<div class="err">Dimmi cosa vuoi ottenere.</div>';
+    return;
+  }
+  // Costruisce il contesto obiettivo con il tipo specifico
+  var ctxCompleto = tipoScelto ? tipoScelto + (come ? ': ' + come : '') : come;
+  S.ctx = ctxCompleto;
+  S.objData = {
+    come: come || tipoScelto,
+    tentativo: CHIPS.tentativo || 'mai',
+    bloccato: document.getElementById('obj-bloccato').value.trim(),
+    risultato: risultato,
+    scadenza: CHIPS.scadenza || 'non specificata',
+    area: S.arch || 'generico',
+    tipoObiettivo: tipoScelto
+  };
+  ss('loading');
+  document.getElementById('err-welcome').innerHTML = '';
+  try {
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nTentativo precedente: ' + S.objData.tentativo + (S.objData.bloccato ? ' — cosa l\'ha bloccato: "' + S.objData.bloccato + '"' : '') + '\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
+    var areaCtx = S.objData.area && S.objData.area !== 'generico' ? '\nArea di lavoro: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo: ' + S.objData.tipoObiettivo : '') : '';
+    var sys = 'Sei un coach diretto e chirurgico. Genera ESATTAMENTE 4 domande brevi e specifiche per capire il punto di partenza REALE di questa persona rispetto al suo obiettivo.\n\nREGOLE:\n- Domande contestualizzate all\'area specifica (' + (S.objData.area||'generale') + ')\n- NON chiedere cose già note dal profilo demografico\n- NON chiedere come vuole raggiungere l\'obiettivo (già risposto)\n- Domande concrete sulla situazione attuale\n- Brevi, dirette, una cosa sola per domanda\n\nRispondi SOLO con JSON: {"questions":["q1","q2","q3","q4"]}\n\nPROFILO PERSONA:\n' + profCtx + areaCtx;
+    var raw = await callAI(sys, objCtx);
+    var p = safeJSON(raw);
+    S.questions = p.questions.slice(0, 4);
+    S.answers = [];
+    S.currentQ = 0;
+    showQ();
+  } catch(e) {
+    ss('welcome');
+    document.getElementById('err-welcome').innerHTML = '<div class="err">Connessione fallita. Riprova.</div>';
+  }
+}
+
+function showQ() {
+  ss('onboarding');
+  document.getElementById('qnum').textContent = 'Domanda ' + (S.currentQ+1) + ' di ' + S.questions.length;
+  document.getElementById('qtext').textContent = S.questions[S.currentQ];
+  document.getElementById('qans').value = '';
+  document.getElementById('err-onb').innerHTML = '';
+  document.getElementById('progbar').style.width = Math.round((S.currentQ / S.questions.length) * 100) + '%';
+}
+
+async function nextQ() {
+  var a = document.getElementById('qans').value.trim();
+  if (!a) {
+    document.getElementById('err-onb').innerHTML = '<div class="err">Scrivi una risposta per continuare.</div>';
+    return;
+  }
+  document.getElementById('err-onb').innerHTML = '';
+  S.answers.push({q: S.questions[S.currentQ], a: a});
+  S.currentQ++;
+  if (S.currentQ < S.questions.length) { showQ(); return; }
+  await genProfile();
+}
+
+async function genProfile() {
+  ss('analyzing');
+  startQuotes();
+  // Reset barra
+  document.getElementById('an-bar').style.width = '0%';
+  document.getElementById('an-perc').textContent = '0%';
+  document.getElementById('an-profile').style.display = 'none';
+
+  var qa = S.answers.map(function(x){ return 'D: ' + x.q + '\nR: ' + x.a; }).join('\n\n');
+  try {
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
+    var areaExtra = S.objData.area && S.objData.area !== 'generico' ? '\nArea specifica: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo scelto: ' + S.objData.tipoObiettivo : '') : '';
+    var baseCtx = profCtx + '\n\n' + objCtx + areaExtra + '\n\nRisposte onboarding:\n' + qa;
+    var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare a domani o giorni futuri.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO DICHIARATO.\n4. Personalizzati su questa persona specifica.\n\nDUE TIPI DI TASK:\n- type:\"action\" = azione singola, si fa UNA VOLTA SOLA oggi\n- type:\"habit\" = abitudine da ripetere ogni giorno per N giorni (es. movimento, alimentazione, routine). Usa habit_id univoco snake_case (es. \"food_log\", \"morning_walk\") e habit_days (numero giorni).\nMAX 3 abitudini sui 10 task.\n\nJSON senza altro testo: {\"baseline_score\":42,\"area\":\"Nome area\",\"summary\":\"2 frasi su questa persona.\",\"approach\":\"Una frase pratica.\",\"tasks\":[{\"day\":1,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"},{\"day\":2,\"type\":\"habit\",\"habit_id\":\"food_log\",\"habit_days\":7,\"title\":\"Fotografa ogni pasto oggi\",\"description\":\"Fai foto prima di ogni pasto.\",\"why\":\"Crea consapevolezza.\"}]}\nbaseline_score 15-65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
+    var sys2 = 'Sei un coach pratico. Genera i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (con habit_id snake_case e habit_days).\nNON ricrear.emrow{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #2F3B52;background:#1B2435;cursor:pointer;transition:all 0.15s}
+.embtn:hover,.embtn.sel{border-color:#EA580C;background:#2A1408;transform:scale(1.1)}
+.err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
+.scroll{flex:1;overflow-y:auto;padding:16px 24px}
+.prof-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1B2435}
+.prof-row:last-child{border-bottom:none}
+.prof-key{font-size:12px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px}
+.prof-val{font-size:13px;color:#fff;font-weight:500;text-align:right;max-width:60%}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.icon-btn{background:none;border:none;color:#8FA0B8;cursor:pointer;font-size:18px;padding:4px}
+.icon-btn:hover{color:#EA580C}
+.step-indicator{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+
+/* HOME REDESIGN */
+.home-head{padding-bottom:0}
+.home-day-pill{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1px;background:#2A1408;border:1px solid #EA580C33;border-radius:999px;padding:6px 10px;font-weight:700}
+.home-kicker{font-size:12px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:24px}
+.home-title{font-size:28px;font-weight:800;line-height:1.1;color:#fff;margin:8px 0 8px;letter-spacing:-0.8px}
+.home-sub{font-size:13px;color:#C7D2E0;line-height:1.55;margin-bottom:8px}
+.home-scroll{padding-top:16px}
+.goal-card{background:linear-gradient(180deg,#1B2435 0%,#101a2c 100%);border:1px solid #EA580C33;border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+.goal-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+.goal-label{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+.goal-title{font-size:19px;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-.3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.goal-badge{font-size:12px;color:#EA580C;background:#2A1408;border:1px solid #EA580C55;border-radius:999px;padding:7px 10px;font-weight:800;white-space:nowrap}
+.goal-progress-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#C7D2E0;margin-bottom:8px}
+.goal-progress-row strong{color:#fff;font-size:14px}
+.goal-bar{height:8px;background:#0B1020;border-radius:999px;overflow:hidden;border:1px solid #2F3B52}
+.goal-bar div{height:100%;background:#EA580C;border-radius:999px;transition:width .4s ease}
+.goal-meta{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:11px;color:#C7D2E0;line-height:1.4;flex-wrap:wrap}
+.goal-meta i{color:#EA580C;margin-right:4px}.goal-meta b{color:#fff;font-weight:700}
+.home-mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.mini-stat{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:12px 8px;display:flex;align-items:center;gap:8px;min-width:0}
+.mini-icon{font-size:16px;line-height:1}.mini-stat strong{display:block;color:#fff;font-size:16px;font-weight:800}.mini-stat span{display:block;color:#8FA0B8;font-size:9px;text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.today-card{background:#1B2435;border:1px solid #2F3B52;border-radius:20px;padding:18px;margin-bottom:12px}
+.today-label{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:8px}
+.today-title{font-size:21px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:10px;letter-spacing:-.4px}
+.today-desc{font-size:13px;color:#c9d3e6;line-height:1.65;white-space:pre-line;margin-bottom:14px}
+.today-why{background:#2A1408;border:1px solid #EA580C22;border-radius:14px;padding:12px;margin:12px 0 14px}
+.today-why .tdesc{font-size:12px;line-height:1.55;color:#C7D2E0}.home-complete{margin-top:2px}
+.home-complete.done{background:transparent;color:#EA580C;border:1px solid #EA580C}
+
+/* BOTTOM NAV */
+.bnav{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#1B2435;
+  border-top:1px solid #2F3B52;
   padding:10px 6px calc(34px + env(safe-area-inset-bottom));
   min-height:112px;
   z-index:200;
