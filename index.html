@@ -1416,9 +1416,8 @@ async function afterLogin() {
 
     // Giorno attuale = primo giorno non ancora completato
     var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
-    S.giornoAttuale = maxCompletato + 1;
+    S.giornoAttuale = maxCompletato > 0 ? maxCompletato : 1;
     S.giornoAttuale = Math.min(S.giornoAttuale, 30);
-    if (S.giornoAttuale < 1) S.giornoAttuale = 1;
 
     // Segna se il giorno attuale è già completato
     S.taskCompletato = S.giorniCompletati.indexOf(S.giornoAttuale) !== -1;
