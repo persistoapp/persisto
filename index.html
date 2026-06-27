@@ -687,64 +687,39 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="h1">Su cosa vuoi lavorare?</div>
-    <div class="sub">Scegli un'area di crescita.</div>
-    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
-      <div class="acard" onclick="selArea('Mente')">
+    <div class="sub">Scegli un'area o scrivi cosa vuoi cambiare.</div>
+    <div class="grid">
+      <div class="acard" id="arch-corpo" onclick="selArch('corpo')">
+        <i class="ti ti-barbell"></i>
+        <div class="acard-label">Corpo</div>
+        <div class="acard-sub">Forma, energia, salute</div>
+      </div>
+      <div class="acard" id="arch-mente" onclick="selArch('mente')">
         <i class="ti ti-brain"></i>
         <div class="acard-label">Mente</div>
-        <div class="acard-sub">Focus, chiarezza, abitudini</div>
+        <div class="acard-sub">Focus, stress, abitudini</div>
       </div>
-      <div class="acard" onclick="selArea('Lavoro')">
-        <i class="ti ti-rocket"></i>
-        <div class="acard-label">Lavoro</div>
-        <div class="acard-sub">Carriera, tempo, crescita</div>
-      </div>
-      <div class="acard" onclick="selArea('Relazioni')">
+      <div class="acard" id="arch-relazioni" onclick="selArch('relazioni')">
         <i class="ti ti-heart"></i>
         <div class="acard-label">Relazioni</div>
         <div class="acard-sub">Coppia, famiglia, amici</div>
       </div>
-      <div class="acard" onclick="selArea('Scopo')">
-        <i class="ti ti-compass"></i>
-        <div class="acard-label">Scopo</div>
-        <div class="acard-sub">Valori, visione, direzione</div>
-      </div>
-      <div class="acard" onclick="selArea('Benessere')">
-        <i class="ti ti-leaf"></i>
-        <div class="acard-label">Benessere</div>
-        <div class="acard-sub">Energia, corpo, routine</div>
-      </div>
-      <div class="acard" onclick="selArea('Emozioni')">
-        <i class="ti ti-mood-smile"></i>
-        <div class="acard-label">Emozioni</div>
-        <div class="acard-sub">Gestire, capire, regolare</div>
-      </div>
-      <div class="acard" onclick="selArea('Autostima')">
-        <i class="ti ti-star"></i>
-        <div class="acard-label">Autostima</div>
-        <div class="acard-sub">Fiducia, confini, dialogo</div>
-      </div>
-      <div class="acard" onclick="selArea('Ripartenza')">
-        <i class="ti ti-refresh"></i>
-        <div class="acard-label">Ripartenza</div>
-        <div class="acard-sub">Resilienza, cambiamento</div>
+      <div class="acard" id="arch-lavoro" onclick="selArch('lavoro')">
+        <i class="ti ti-rocket"></i>
+        <div class="acard-label">Lavoro</div>
+        <div class="acard-sub">Carriera, soldi, crescita</div>
       </div>
     </div>
+    <div class="div">
+      <div class="div-line"></div>
+      <div class="div-text">oppure scrivi tu</div>
+      <div class="div-line"></div>
+    </div>
+    <textarea id="free-text" rows="3" placeholder="Es: voglio guadagnare 10.000 euro al mese..."></textarea>
+    <div id="err-welcome"></div>
   </div>
-</div>
-
-<!-- SELEZIONE PERCORSO -->
-<div class="screen" id="sc-percorsi">
-  <div class="s-pad">
-    <div class="topbar">
-      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-arrow-left"></i></button>
-      <div class="logo">Per<span>sisto</span></div>
-      <div style="width:36px"></div>
-    </div>
-    <div class="h1" id="percorsi-area-title">Mente</div>
-    <div class="sub">Scegli il percorso da 30 giorni.</div>
-    <div id="percorsi-list" style="margin-top:16px;display:flex;flex-direction:column;gap:12px"></div>
-    <div id="err-percorsi"></div>
+  <div class="bot">
+    <button class="btn" id="btn-start" onclick="startFlow()" disabled>Inizia</button>
   </div>
 </div>
 
@@ -991,7 +966,6 @@ select option{background:#111827;color:#fff}
     <button class="btn-ghost" onclick="mostraStoricoInProfilo()" style="margin-top:8px"><i class="ti ti-history"></i> Storico task</button>
     <button class="btn-ghost" onclick="chiudiProfilo()" style="margin-top:8px">Chiudi</button>
     <button class="btn-ghost" onclick="resetFlow()" style="margin-top:8px;color:#ff6b9d;border-color:#2d1a2d">Cambia obiettivo</button>
-    <button class="btn-ghost" onclick="resetTotale()" style="margin-top:8px;color:#ff4444;border-color:#3d1a1a;font-size:13px">&#9888; Azzera tutto (storico incluso)</button>
   </div>
 </div>
 
@@ -1017,30 +991,6 @@ select option{background:#111827;color:#fff}
     <div class="sub" id="tasks-obiettivo" style="margin-bottom:12px"></div>
   </div>
   <div class="scroll" id="tasks-list"></div>
-  <div class="bot" id="storico-bot" style="display:none">
-    <!-- PANNELLO CORREZIONE -->
-    <div class="corr-panel" id="corr-panel">
-      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
-      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
-        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
-      </div>
-      <div id="err-corr"></div>
-    </div>
-    <!-- PANNELLO AVANZAMENTO -->
-    <div id="avanz-panel">
-      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
-        <i class="ti ti-check"></i> Ce l'ho fatta
-      </button>
-      <button class="btn-ghost" onclick="avanzamento('domani')" style="margin-bottom:8px;color:#C7D2E0;border-color:#2F3B52">
-        <i class="ti ti-clock"></i> Dammi un giorno in più
-      </button>
-      <button class="btn-ghost" id="btn-cambialo" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52;display:none">
-        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
-      </button>
-    </div>
-  </div>
 </div>
 
 
@@ -1092,6 +1042,28 @@ select option{background:#111827;color:#fff}
     <div class="sub" id="abitudini-sub" style="margin-bottom:0"></div>
   </div>
   <div class="scroll" id="abitudini-list"></div>
+  <div class="bot" id="storico-bot" style="display:none" style="display:none">
+    <!-- PANNELLO CORREZIONE -->
+    <div class="corr-panel" id="corr-panel">
+      <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
+      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
+        <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
+      </div>
+      <div id="err-corr"></div>
+    </div>
+    <!-- PANNELLO AVANZAMENTO -->
+    <div id="avanz-panel">
+      <button class="btn" onclick="avanzamento('fatto')" style="margin-bottom:8px">
+        <i class="ti ti-check"></i> Ce l'ho fatta
+      </button>
+
+      <button class="btn-ghost" onclick="toggleCorr()" style="color:#8FA0B8;border-color:#2F3B52">
+        <i class="ti ti-refresh"></i> Troppo difficile — cambialo
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- PERCORSO COMPLETATO -->
@@ -1160,7 +1132,6 @@ var S = {
   giorniCompletati: [],
   taskExtraOggi: 0,
   dataUltimoExtra: '',
-  dataUltimoTask: '',
   abitudiniStato: {},
   giorniTotali: 0
 };
@@ -1231,7 +1202,7 @@ function navTo(dest) {
     S_activeNav = 'task';
     document.getElementById('nav-task').classList.add('active');
     loadTaskTab();
-    ss('tasks');
+    ss('abitudini');
   } else if (dest === 'progressi') {
     S_activeNav = 'progressi';
     document.getElementById('nav-progressi').classList.add('active');
@@ -1397,7 +1368,6 @@ async function afterLogin() {
     .single();
 
   if (obj && obj.tasks_json && obj.tasks_json.length > 0) {
-    S.objId = obj.id;
     S.ctx = obj.obiettivo_testo || '';
     S.objData = {
       come: obj.come || '',
@@ -1413,14 +1383,13 @@ async function afterLogin() {
     S.abitudiniStato = obj.abitudini_stato || {};
     S.taskExtraOggi = obj.task_extra_oggi || 0;
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
-    S.dataUltimoTask = obj.data_ultimo_task || '';
     S.objDataInizio = obj.created_at || '';
 
-    // Giorno attuale = primo giorno non ancora completato
+    // Giorno attuale = ultimo completato (non avanza automaticamente)
+    // L'utente decide quando sbloccare il task successivo
     var maxCompletato = S.giorniCompletati.length > 0 ? Math.max.apply(null, S.giorniCompletati) : 0;
-    S.giornoAttuale = maxCompletato + 1;
+    S.giornoAttuale = maxCompletato > 0 ? maxCompletato : 1;
     S.giornoAttuale = Math.min(S.giornoAttuale, 30);
-    if (S.giornoAttuale < 1) S.giornoAttuale = 1;
 
     // Segna se il giorno attuale è già completato
     S.taskCompletato = S.giorniCompletati.indexOf(S.giornoAttuale) !== -1;
@@ -1678,140 +1647,26 @@ function selArch(a) {
     S.arch = null;
   } else {
     S.arch = a;
-    var el = document.getElementById('arch-' + a);
-    if (el) el.classList.add('sel');
-    var ft = document.getElementById('free-text');
-    if (ft) ft.value = '';
+    document.getElementById('arch-' + a).classList.add('sel');
+    document.getElementById('free-text').value = '';
     S.freeText = '';
   }
-  var btn = document.getElementById('btn-start');
-  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
-  if (btn) btn.disabled = !(S.arch || val);
-}
-
-async function selArea(area) {
-  S.areaScelta = area;
-  document.getElementById('percorsi-area-title').textContent = area;
-  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento...</div>';
-  ss('percorsi');
-
-  var FREE_IDS = [1, 7, 13, 31]; // percorsi free per numero
-
-  var {data: percorsi, error} = await sb.from('percorsi')
-    .select('*')
-    .eq('area', area)
-    .order('numero', {ascending: true});
-
-  if (error || !percorsi || percorsi.length === 0) {
-    document.getElementById('percorsi-list').innerHTML = '<div class="err">Errore nel caricamento. Riprova.</div>';
-    return;
-  }
-
-
-  var html = '';
-  percorsi.forEach(function(p) {
-    var isFree = FREE_IDS.indexOf(p.numero) !== -1 || !p.is_premium;
-    var lockIcon = isFree ? '' : '<i class="ti ti-lock" style="color:#8FA0B8;font-size:18px;flex-shrink:0"></i>';
-    var clickable = isFree ? 'onclick="avviaPercorso(' + p.id + ')"' : 'onclick="mostraLock()"';
-    var opacity = isFree ? '1' : '0.5';
-    html += '<div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;opacity:' + opacity + '" ' + clickable + '>' +
-      '<div style="flex:1">' +
-        '<div style="font-weight:600;font-size:15px;color:#fff">' + p.titolo + '</div>' +
-        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px">' + (p.descrizione ? p.descrizione.substring(0, 70) + '...' : '30 giorni') + '</div>' +
-      '</div>' +
-      lockIcon +
-      '</div>';
-  });
-  document.getElementById('percorsi-list').innerHTML = html;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-async function avviaPercorso(percorsoId) {
-  document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
-
-  var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
-  var {data: taskRows} = await sb.from('tasks').select('*').eq('percorso_id', percorsoId).order('giorno', {ascending: true});
-
-  if (!percorso || !taskRows || taskRows.length === 0) {
-    document.getElementById('err-percorsi').innerHTML = '<div class="err">Errore nel caricamento del percorso.</div>';
-    return;
-  }
-
-  // Converte i task nel formato che l'app già usa
-  var tasks = taskRows.map(function(t) {
-    return {
-      day: t.giorno,
-      type: 'action',
-      title: t.titolo,
-      description: t.cosa_fare + '\n\n' + t.come_farlo,
-      why: t.perche_funziona,
-      esempio: t.esempio
-    };
-  });
-
-  S.tasks = tasks;
-  S.ctx = percorso.titolo;
-  S.percorsoId = percorsoId;
-  S.giornoAttuale = 1;
-  S.giorniCompletati = [];
-  S.taskCompletato = false;
-  S.taskExtraOggi = 0;
-  S.abitudiniStato = {};
-  S.dataUltimoTask = '';
-  S.dataUltimoExtra = '';
-
-  // Salva su Supabase
-  if (S.user) {
-    await sb.from('obiettivi').delete().eq('user_id', S.user.id);
-    var ins = await sb.from('obiettivi').insert({
-      user_id: S.user.id,
-      obiettivo_testo: percorso.titolo,
-      area: percorso.area,
-      tasks_json: tasks,
-      baseline_score: 0,
-      giorni_completati: [],
-      percorso_id: percorsoId
-    }).select().single();
-    if (ins.data) S.objId = ins.data.id;
-  }
-
-  document.getElementById('home-score').textContent = 0;
-  var t = tasks[0];
-  if (t) {
-    document.getElementById('task-title').textContent = t.title || '';
-    document.getElementById('task-desc').textContent = t.description || '';
-    document.getElementById('task-why').textContent = t.why || '';
-  }
-  aggiornaHome();
-  ss('home');
-}
-
-function mostraLock() {
-  alert('Questo percorso è disponibile con Persisto Premium. Prossimamente!');
+  updateBtn();
 }
 
 function onFreeText() {
-  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
+  var val = document.getElementById('free-text').value.trim();
   S.freeText = val;
+  if (val) {
+    document.querySelectorAll('.acard').forEach(function(c){ c.classList.remove('sel'); });
+    S.arch = null;
+  }
+  updateBtn();
 }
 
 function updateBtn() {
-  var val = document.getElementById('free-text') ? document.getElementById('free-text').value.trim() : '';
-  var btn = document.getElementById('btn-start');
-  if (btn) btn.disabled = !(S.arch || val);
+  var val = document.getElementById('free-text').value.trim();
+  document.getElementById('btn-start').disabled = !(S.arch || val);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1842,18 +1697,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ─── CORREZIONE TASK ─────────────────────────────────────────────────────────
-async function avanzamento(tipo) {
+function avanzamento(tipo) {
   if (tipo === 'fatto') {
-    if (confirm('Confermi di aver completato il task visualizzato?')) {
-      // Usa il giorno visualizzato: task ufficiale oppure task extra sbloccato.
+    if (confirm('Confermi di aver completato il task di oggi?')) {
+      // Usa il giorno visualizzato (extra o principale)
       var giornoCompletato = S.taskVisualizzato || S.giornoAttuale || 1;
-      await markDone(giornoCompletato);
-
-      // Dopo il completamento, quel task diventa il riferimento corrente.
+      markDone(giornoCompletato);
+      // Aggiorna giornoAttuale al giorno appena completato, resetta taskVisualizzato
       S.giornoAttuale = giornoCompletato;
       S.taskVisualizzato = null;
-
-      // Popola la schermata reflection col task appena completato.
+      // Popola il task nella schermata reflection
       var giorno = giornoCompletato;
       var t = S.tasks[giorno - 1] || S.tasks[0] || {};
       var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
@@ -1864,1177 +1717,4 @@ async function avanzamento(tipo) {
       document.getElementById('refl-text').style.borderColor = '';
       ss('reflection');
     }
-  } else if (tipo === 'domani') {
-    // Shifta il percorso di 1 giorno — il task di oggi diventa anche domani
-    var giorno = S.giornoAttuale || 1;
-    var taskOggi = S.tasks[giorno - 1];
-    if (taskOggi) {
-      // Inserisce una copia del task di oggi come nuovo giorno
-      S.tasks.splice(giorno, 0, Object.assign({}, taskOggi, {day: giorno + 1}));
-      // Riallinea i day dei task successivi
-      for (var i = giorno + 1; i < S.tasks.length; i++) {
-        S.tasks[i].day = i + 1;
-      }
-      // Salva su Supabase
-      if (S.user) {
-        sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
-      }
-    }
-    if (confirm('Ok! Il task rimane per domani. Vuoi andare avanti lo stesso oggi?')) {
-      // non fa nulla, rimane sul task tab
-    }
-    loadTaskTab();
-  }
-}
 
-function toggleCorr() {
-  var p = document.getElementById('corr-panel');
-  var a = document.getElementById('avanz-panel');
-  p.classList.toggle('open');
-  if (p.classList.contains('open')) {
-    if (a) a.style.display = 'none';
-    document.getElementById('corr-text').focus();
-  } else {
-    if (a) a.style.display = 'block';
-  }
-}
-
-function chiudiCorr() {
-  document.getElementById('corr-panel').classList.remove('open');
-  document.getElementById('corr-text').value = '';
-  document.getElementById('err-corr').innerHTML = '';
-  var a = document.getElementById('avanz-panel');
-  if (a) a.style.display = 'block';
-}
-
-async function correggiTask() {
-  var correzione = document.getElementById('corr-text').value.trim();
-  if (!correzione) {
-    document.getElementById('err-corr').innerHTML = '<div class="err">Dimmi cosa non va.</div>';
-    return;
-  }
-  document.getElementById('err-corr').innerHTML = '';
-  var btnCorr = document.querySelector('#corr-panel .btn');
-  btnCorr.disabled = true;
-  btnCorr.textContent = 'Persisto sta ricalcolando...';
-  try {
-    var profCtx = buildProfileContext();
-    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + (S.objData.come||'') + '"\nRisultato: "' + (S.objData.risultato||'') + '"\nScadenza: ' + (S.objData.scadenza||'non specificata');
-    var giorno = S.giornoAttuale || 1;
-    var taskAttuale = S.tasks[giorno - 1];
-    // Se è un'abitudine, chiedi se rimuovere dai giorni successivi
-    if (taskAttuale && taskAttuale.type === 'habit') {
-      var rimuovi = confirm('Questo task fa parte di un\'abitudine attiva (' + taskAttuale.habit_days + ' giorni).\n\nVuoi rimuovere l\'abitudine anche dai giorni successivi?');
-      if (rimuovi) {
-        // Rimuove il flag habit dai giorni successivi
-        var hid = taskAttuale.habit_id;
-        S.tasks.forEach(function(t) {
-          if (t.habit_id === hid && (t.day||0) > giorno) {
-            t.type = 'action';
-            delete t.habit_id;
-            delete t.habit_days;
-          }
-        });
-      }
-    }
-    var taskSuccessivi = S.tasks.slice(giorno, giorno + 5).map(function(t){ return 'Giorno ' + (t.day||0) + ': ' + t.title; }).join('\n');
-    var sys = 'Sei un coach diretto. Il task di oggi non è adatto. Genera UN SOLO task sostitutivo: micro-azione concreta fattibile in 30-60 minuti, coerente con il percorso. Il nuovo task deve essere diverso dai task successivi già pianificati e prepararli logicamente.\n\nJSON senza altro testo: {"day":' + giorno + ',"title":"Titolo azione breve (max 8 parole)","description":"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).","why":"Perche questo task oggi."}\n\nPROFILO:\n' + profCtx;
-    var msg = objCtx + '\n\nTask da sostituire: ' + (taskAttuale ? JSON.stringify(taskAttuale) : '') + '\nMotivo: "' + correzione + '"\n\nTask giorni successivi già pianificati (non ripetere, preparali):\n' + taskSuccessivi;
-    var raw = await callAI(sys, msg);
-    var task = safeJSON(raw);
-    console.log('TASK RIGENERATO', task);
-    task.day = giorno;
-    S.tasks[giorno - 1] = task;
-    // Salva su Supabase
-    if (S.user) {
-      await sb.from('obiettivi').update({ tasks_json: S.tasks }).eq('id', S.objId);
-    }
-    chiudiCorr();
-    loadTaskTab(); // ricarica la vista
-  } catch(e) {
-    document.getElementById('err-corr').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
-  }
-  btnCorr.disabled = false;
-  btnCorr.textContent = 'Rigenera task';
-}
-
-var AREA_CONFIG = {
-  corpo: {
-    title: 'Obiettivo corpo',
-    sub: 'Cosa vuoi cambiare nel tuo corpo?',
-    chips: ['Perdere peso','Tonificare e definire','Recuperare dopo infortunio/malattia','Avere più energia','Ricominciare a muovermi','Migliorare alimentazione','Dormire meglio'],
-    comeLabel: 'Come pensi di arrivarci?',
-    risultatoLabel: 'Risultato concreto (es: -10kg, correre 5km, dormire 7h)',
-    risultatoPlaceholder: 'Es: perdere 10kg, correre 5km senza fermarmi, dormire 7 ore ogni notte'
-  },
-  mente: {
-    title: 'Obiettivo mente',
-    sub: 'Su cosa vuoi lavorare mentalmente?',
-    chips: ['Ridurre stress e ansia','Migliorare il focus','Cambiare mindset e credenze','Migliorare la memoria','Smettere di procrastinare','Gestire le emozioni','Aumentare la fiducia in me'],
-    comeLabel: 'Come si manifesta il problema oggi?',
-    risultatoLabel: 'Come ti sentiresti se fosse risolto?',
-    risultatoPlaceholder: 'Es: riuscire a concentrarmi 2 ore senza distrarmi, non avere attacchi d\'ansia'
-  },
-  lavoro: {
-    title: 'Obiettivo lavoro',
-    sub: 'Cosa vuoi cambiare nel tuo lavoro?',
-    chips: ['Aumentare il fatturato','Avviare un nuovo business','Cambiare lavoro o carriera','Scalare un business esistente','Trovare nuovi clienti','Lavorare meno ore','Diventare indipendente'],
-    comeLabel: 'Descrivilo in dettaglio — settore, metodo, situazione attuale',
-    risultatoLabel: 'Risultato concreto (es: 10.000€/mese, 5 nuovi clienti)',
-    risultatoPlaceholder: 'Es: 10.000€ netti al mese, 5 clienti ricorrenti, lasciare il lavoro dipendente'
-  },
-  relazioni: {
-    title: 'Obiettivo relazioni',
-    sub: 'Su quale relazione vuoi lavorare?',
-    chips: ['Migliorare il rapporto di coppia','Gestire meglio il rapporto con i figli','Ricostruire un rapporto familiare','Uscire da una relazione tossica','Fare nuove amicizie','Migliorare le relazioni al lavoro','Trovare un partner'],
-    comeLabel: 'Descrivi la situazione attuale',
-    risultatoLabel: 'Come sarebbe la situazione ideale?',
-    risultatoPlaceholder: 'Es: comunicare senza litigare, passare tempo di qualità con i figli ogni giorno'
-  }
-};
-
-function startFlow() {
-  var ctx = S.freeText || (S.arch ? 'migliorare ' + ARCH[S.arch] : '');
-  S.ctx = ctx;
-  CHIPS.tentativo = null;
-  CHIPS['obj-tipo'] = null;
-  document.getElementById('obj-come').value = '';
-  document.getElementById('obj-risultato').value = '';
-  document.getElementById('field-cosa-bloccato').style.display = 'none';
-  document.getElementById('err-obiettivo').innerHTML = '';
-
-  // Personalizza la schermata obiettivo per area
-  var cfg = S.arch ? AREA_CONFIG[S.arch] : null;
-  if (cfg) {
-    document.getElementById('obj-title').textContent = cfg.title;
-    document.getElementById('obj-sub').textContent = cfg.sub;
-    document.getElementById('obj-come-label').textContent = cfg.comeLabel;
-    document.getElementById('obj-risultato-label').textContent = cfg.risultatoLabel;
-    document.getElementById('obj-risultato').placeholder = cfg.risultatoPlaceholder;
-    document.getElementById('obj-come').placeholder = '';
-    // Popola chips specifiche
-    var chipsEl = document.getElementById('chips-obj-tipo');
-    chipsEl.innerHTML = cfg.chips.map(function(c) {
-      return '<div class="chip" onclick="selChipObjTipo(this,\'' + c.replace(/'/g,"\\'") + '\')">' + c + '</div>';
-    }).join('');
-    document.getElementById('obj-chips-field').style.display = 'block';
-  } else {
-    // Testo libero — nascondi chips area
-    document.getElementById('obj-title').textContent = 'Il tuo obiettivo';
-    document.getElementById('obj-sub').textContent = 'Dimmi cosa vuoi ottenere esattamente.';
-    document.getElementById('obj-come-label').textContent = 'Come pensi di arrivarci';
-    document.getElementById('obj-risultato-label').textContent = 'Risultato concreto che definisce il successo';
-    document.getElementById('obj-risultato').placeholder = 'Es: 10.000€ netti al mese, -10kg, correre 5km';
-    document.getElementById('obj-come').placeholder = 'Descrivi il tuo obiettivo...';
-    document.getElementById('obj-chips-field').style.display = 'none';
-  }
-  // Reset chips tentativo e scadenza
-  document.querySelectorAll('#chips-tentativo .chip, #chips-scadenza .chip').forEach(function(c){ c.classList.remove('sel'); });
-  ss('obiettivo');
-}
-
-function selChipObjTipo(el, val) {
-  document.querySelectorAll('#chips-obj-tipo .chip').forEach(function(c){ c.classList.remove('sel'); });
-  el.classList.add('sel');
-  CHIPS['obj-tipo'] = val;
-  // Pre-popola la textarea con la selezione
-  var ta = document.getElementById('obj-come');
-  if (!ta.value) ta.placeholder = 'Es: voglio ' + val.toLowerCase() + '...';
-}
-
-async function startOnboarding() {
-  var come = document.getElementById('obj-come').value.trim();
-  var risultato = document.getElementById('obj-risultato').value.trim();
-  var tipoScelto = CHIPS['obj-tipo'] || '';
-  if (!come && !tipoScelto) {
-    document.getElementById('err-obiettivo').innerHTML = '<div class="err">Dimmi cosa vuoi ottenere.</div>';
-    return;
-  }
-  // Costruisce il contesto obiettivo con il tipo specifico
-  var ctxCompleto = tipoScelto ? tipoScelto + (come ? ': ' + come : '') : come;
-  S.ctx = ctxCompleto;
-  S.objData = {
-    come: come || tipoScelto,
-    tentativo: CHIPS.tentativo || 'mai',
-    bloccato: document.getElementById('obj-bloccato').value.trim(),
-    risultato: risultato,
-    scadenza: CHIPS.scadenza || 'non specificata',
-    area: S.arch || 'generico',
-    tipoObiettivo: tipoScelto
-  };
-  ss('loading');
-  document.getElementById('err-welcome').innerHTML = '';
-  try {
-    var profCtx = buildProfileContext();
-    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nTentativo precedente: ' + S.objData.tentativo + (S.objData.bloccato ? ' — cosa l\'ha bloccato: "' + S.objData.bloccato + '"' : '') + '\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
-    var areaCtx = S.objData.area && S.objData.area !== 'generico' ? '\nArea di lavoro: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo: ' + S.objData.tipoObiettivo : '') : '';
-    var sys = 'Sei un coach diretto e chirurgico. Genera ESATTAMENTE 4 domande brevi e specifiche per capire il punto di partenza REALE di questa persona rispetto al suo obiettivo.\n\nREGOLE:\n- Domande contestualizzate all\'area specifica (' + (S.objData.area||'generale') + ')\n- NON chiedere cose già note dal profilo demografico\n- NON chiedere come vuole raggiungere l\'obiettivo (già risposto)\n- Domande concrete sulla situazione attuale\n- Brevi, dirette, una cosa sola per domanda\n\nRispondi SOLO con JSON: {"questions":["q1","q2","q3","q4"]}\n\nPROFILO PERSONA:\n' + profCtx + areaCtx;
-    var raw = await callAI(sys, objCtx);
-    var p = safeJSON(raw);
-    S.questions = p.questions.slice(0, 4);
-    S.answers = [];
-    S.currentQ = 0;
-    showQ();
-  } catch(e) {
-    ss('welcome');
-    document.getElementById('err-welcome').innerHTML = '<div class="err">Connessione fallita. Riprova.</div>';
-  }
-}
-
-function showQ() {
-  ss('onboarding');
-  document.getElementById('qnum').textContent = 'Domanda ' + (S.currentQ+1) + ' di ' + S.questions.length;
-  document.getElementById('qtext').textContent = S.questions[S.currentQ];
-  document.getElementById('qans').value = '';
-  document.getElementById('err-onb').innerHTML = '';
-  document.getElementById('progbar').style.width = Math.round((S.currentQ / S.questions.length) * 100) + '%';
-}
-
-async function nextQ() {
-  var a = document.getElementById('qans').value.trim();
-  if (!a) {
-    document.getElementById('err-onb').innerHTML = '<div class="err">Scrivi una risposta per continuare.</div>';
-    return;
-  }
-  document.getElementById('err-onb').innerHTML = '';
-  S.answers.push({q: S.questions[S.currentQ], a: a});
-  S.currentQ++;
-  if (S.currentQ < S.questions.length) { showQ(); return; }
-  await genProfile();
-}
-
-async function genProfile() {
-  ss('analyzing');
-  startQuotes();
-  // Reset barra
-  document.getElementById('an-bar').style.width = '0%';
-  document.getElementById('an-perc').textContent = '0%';
-  document.getElementById('an-profile').style.display = 'none';
-
-  var qa = S.answers.map(function(x){ return 'D: ' + x.q + '\nR: ' + x.a; }).join('\n\n');
-  try {
-    var profCtx = buildProfileContext();
-    var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
-    var areaExtra = S.objData.area && S.objData.area !== 'generico' ? '\nArea specifica: ' + S.objData.area + (S.objData.tipoObiettivo ? '\nTipo obiettivo scelto: ' + S.objData.tipoObiettivo : '') : '';
-    var baseCtx = profCtx + '\n\n' + objCtx + areaExtra + '\n\nRisposte onboarding:\n' + qa;
-    var sys1 = 'Sei un coach pratico. Genera i task dal giorno 1 al giorno 10 per raggiungere questo obiettivo specifico.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione concreta, fattibile e COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare a domani o giorni futuri.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO DICHIARATO.\n4. Personalizzati su questa persona specifica.\n\nDUE TIPI DI TASK:\n- type:\"action\" = azione singola, si fa UNA VOLTA SOLA oggi\n- type:\"habit\" = abitudine da ripetere ogni giorno per N giorni (es. movimento, alimentazione, routine). Usa habit_id univoco snake_case (es. \"food_log\", \"morning_walk\") e habit_days (numero giorni).\nMAX 3 abitudini sui 10 task.\n\nJSON senza altro testo: {\"baseline_score\":42,\"area\":\"Nome area\",\"summary\":\"2 frasi su questa persona.\",\"approach\":\"Una frase pratica.\",\"tasks\":[{\"day\":1,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"},{\"day\":2,\"type\":\"habit\",\"habit_id\":\"food_log\",\"habit_days\":7,\"title\":\"Fotografa ogni pasto oggi\",\"description\":\"Fai foto prima di ogni pasto.\",\"why\":\"Crea consapevolezza.\"}]}\nbaseline_score 15-65. ESATTAMENTE 10 task (day 1-10).\n\nPROFILO:\n' + profCtx;
-    var sys2 = 'Sei un coach pratico. Genera i task dal giorno 11 al giorno 20.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. SEQUENZIALI e collegati ALL\'OBIETTIVO.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (con habit_id snake_case e habit_days).\nNON ricreare abitudini già attive nei giorni 1-10 (già mostrate automaticamente).\nMAX 2 nuove abitudini.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":11,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 11-20).\n\nPROFILO:\n' + profCtx;
-    var sys3 = 'Sei un coach pratico. Genera i task dal giorno 21 al giorno 30.\n\nREGOLE ASSOLUTE:\n1. Ogni task = UNA SOLA micro-azione COMPLETABILE oggi in 30-60 minuti.\n2. CHIUSO oggi — VIETATO rimandare.\n3. Portano al risultato finale.\n\nDUE TIPI: type:\"action\" o type:\"habit\" (habit_days MAX 21). NON ricreare abitudini già attive. MAX 1 nuova abitudine.\n\nJSON senza altro testo: {\"tasks\":[{\"day\":21,\"type\":\"action\",\"title\":\"Titolo (max 8 parole)\",\"description\":\"Cosa fare OGGI: passo 1 (10-15 min). Passo 2 (10-15 min). Passo 3 (10 min).\",\"why\":\"Perche oggi.\"}]}\nESATTAMENTE 10 task (day 21-30).\n\nPROFILO:\n' + profCtx;
-
-    // CHIAMATA 1 — task 1-10
-    document.getElementById('an-phase').textContent = 'Costruendo i giorni 1-10...';
-    animateBar(0, 33, 8000, null);
-    var raw1 = await callAI(sys1, baseCtx);
-    var p1 = safeJSON(raw1);
-    S.profile = p1;
-    var allTasks = p1.tasks || [];
-
-    // Mostra profilo personalizzato
-    document.getElementById('an-area').textContent = clean(p1.area) || 'Il tuo percorso';
-    document.getElementById('an-score').textContent = p1.baseline_score || 0;
-    document.getElementById('an-summary').textContent = clean(p1.summary) || '';
-    document.getElementById('an-profile').style.display = 'block';
-    animateBar(33, 33, 100, null); // Blocca a 33%
-
-    // CHIAMATA 2 — task 11-20
-    document.getElementById('an-phase').textContent = 'Costruendo i giorni 11-20...';
-    animateBar(33, 66, 8000, null);
-    var tasksCtx1 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
-    var raw2 = await callAI(sys2 + '\n\nTask giorni 1-10 già generati:\n' + tasksCtx1, objCtx);
-    var p2 = safeJSON(raw2);
-    allTasks = allTasks.concat(p2.tasks || []);
-    animateBar(66, 66, 100, null);
-
-    // CHIAMATA 3 — task 21-30
-    document.getElementById('an-phase').textContent = 'Costruendo i giorni 21-30...';
-    animateBar(66, 100, 8000, null);
-    var tasksCtx2 = allTasks.map(function(t){ return 'Giorno ' + t.day + ': ' + t.title; }).join('\n');
-    var raw3 = await callAI(sys3 + '\n\nTask giorni 1-20 già generati:\n' + tasksCtx2, objCtx);
-    var p3 = safeJSON(raw3);
-    allTasks = allTasks.concat(p3.tasks || []);
-
-    stopQuotes();
-    S.tasks = allTasks;
-
-    // salva obiettivo su Supabase — uno solo alla volta
-    if (S.user) {
-      await sb.from('obiettivi').delete().eq('user_id', S.user.id);
-      await sb.from('obiettivi').insert({
-        user_id: S.user.id,
-        obiettivo_testo: S.ctx,
-        area: p1.area,
-        tentativo_precedente: S.objData.tentativo,
-        cosa_ha_bloccato: S.objData.bloccato,
-        risultato_concreto: S.objData.risultato,
-        scadenza: S.objData.scadenza,
-        profile_json: S.profile,
-        tasks_json: S.tasks,
-        baseline_score: p1.baseline_score
-      });
-    }
-
-    document.getElementById('prof-area').textContent = clean(p1.area) || 'Il tuo profilo';
-    document.getElementById('prof-score').textContent = p1.baseline_score || 0;
-    document.getElementById('prof-sum').textContent = clean(p1.summary) || '';
-    document.getElementById('prof-app').textContent = clean(p1.approach) || '';
-    document.getElementById('home-score').textContent = p1.baseline_score || 0;
-    var doneScoreEl = document.getElementById('done-score'); if (doneScoreEl) doneScoreEl.textContent = (p1.baseline_score || 0) + 1;
-
-    if (S.tasks[0]) {
-      var t = S.tasks[0];
-      document.getElementById('task-title').textContent = clean(t.title) || '';
-      document.getElementById('task-desc').textContent = clean(t.description) || '';
-      document.getElementById('task-why').textContent = clean(t.why) || '';
-    }
-    aggiornaHome();
-    ss('home');
-  } catch(e) {
-    ss('onboarding');
-    document.getElementById('err-onb').innerHTML = '<div class="err">Errore: ' + e.message + '</div>';
-  }
-}
-
-function showHome() { ss('home'); }
-
-function selEmoji(btn, e) {
-  document.querySelectorAll('.embtn').forEach(function(b){ b.classList.remove('sel'); });
-  btn.classList.add('sel');
-  S.emoji = e;
-  document.getElementById('btn-refl').disabled = false;
-}
-
-async function markDone(giorno) {
-  giorno = giorno || S.giornoAttuale || 1;
-  if (S.giorniCompletati.indexOf(giorno) === -1) {
-    S.giorniCompletati.push(giorno);
-  }
-  if (S.user) {
-    var {error} = await sb.from('obiettivi').update({
-      giorni_completati: S.giorniCompletati
-    }).eq('id', S.objId);
-    if (error) console.error('Errore salvataggio giorno:', error);
-    else console.log('Giorno salvato:', S.giorniCompletati);
-  }
-}
-
-async function saveRefl() {
-  var reflText = document.getElementById('refl-text').value.trim();
-  var giorno = S.giornoAttuale || 1;
-  var oggiStr = new Date().toISOString().slice(0, 10);
-
-  if (!S.reflections) S.reflections = {};
-  if (reflText) S.reflections[giorno] = reflText;
-
-  // Salva la data di oggi come ultimo task completato
-  S.dataUltimoTask = oggiStr;
-
-  // NON avanzare giornoAttuale qui — resta sul giorno completato
-  // Il giorno successivo si sblocca domani quando afterLogin calcola maxCompletato+1
-  S.taskCompletato = false;
-
-  // Salva su Supabase
-  if (S.user) {
-    var payload = {
-      giorni_completati: S.giorniCompletati,
-      data_ultimo_task: S.dataUltimoTask
-    };
-    if (reflText) payload.reflections = S.reflections;
-
-    var { error } = await sb.from('obiettivi')
-      .update(payload)
-      .eq('id', S.objId);
-
-    if (error) {
-      alert('Errore salvataggio: ' + error.message);
-      return;
-    }
-  }
-
-  aggiornaHome();
-  loadProgressi();
-  S_activeNav = 'home';
-  ss('home');
-}
-
-async function sbloccaProssimoTask() {
-  var oggiStr = new Date().toISOString().slice(0, 10);
-
-  // Reset del limite giornaliero se cambia il giorno di calendario.
-  if (S.dataUltimoExtra !== oggiStr) {
-    S.taskExtraOggi = 0;
-    S.dataUltimoExtra = oggiStr;
-  }
-
-  if (S.taskExtraOggi >= 2) {
-    alert('Hai già sbloccato 2 task extra oggi. Torna domani.');
-    return;
-  }
-
-  // Evita doppi click: se esiste già un extra sbloccato e non completato, mostralo senza consumare un altro sblocco.
-  if (S.taskVisualizzato && (S.giorniCompletati || []).indexOf(S.taskVisualizzato) === -1) {
-    S_activeNav = 'task';
-    loadTaskTab();
-    return;
-  }
-
-  // Sblocca il task immediatamente successivo al task corrente ufficiale.
-  var prossimoGiorno = (S.giornoAttuale || 1) + 1;
-  if (!S.tasks || !S.tasks[prossimoGiorno - 1]) {
-    alert('Non ci sono altri task da sbloccare.');
-    return;
-  }
-
-  // NON incrementare S.giornoAttuale: il giorno ufficiale resta fermo.
-  // Il task extra viene mostrato tramite S.taskVisualizzato.
-  S.taskVisualizzato = prossimoGiorno;
-  S.taskCompletato = false;
-  S.taskExtraOggi++;
-  S.dataUltimoExtra = oggiStr;
-
-  if (S.user) {
-    await sb.from('obiettivi').update({
-      giorni_completati: S.giorniCompletati,
-      task_extra_oggi: S.taskExtraOggi,
-      data_ultimo_extra: S.dataUltimoExtra
-    }).eq('id', S.objId);
-  }
-
-  // Ricarica la scheda Task: ora loadTaskTab leggerà S.taskVisualizzato e mostrerà davvero il task sbloccato.
-  aggiornaHome();
-  S_activeNav = 'task';
-  loadTaskTab();
-}
-
-
-
-async function salvaCrescitaStorica() {
-  // Somma i giorni del percorso appena completato ai totali storici
-  var giorniPercorso = (S.giorniCompletati || []).length;
-  var nuovoTotale = (S.giorniTotali || 0) + giorniPercorso;
-  if (nuovoTotale <= S.giorniTotali) return; // già salvato
-  S.giorniTotali = nuovoTotale;
-  if (S.user) {
-    await sb.from('profiles').update({ giorni_totali: nuovoTotale }).eq('id', S.user.id);
-  }
-  // Aggiorna display schermata completato
-  var el = document.getElementById('comp-giorni');
-  if (el) el.textContent = (S.giorniCompletati || []).length;
-  el = document.getElementById('comp-crescita');
-  if (el) el.textContent = '+' + calcolaCrescita() + '%';
-  el = document.getElementById('comp-obiettivo');
-  if (el) el.textContent = S.ctx || '';
-}
-
-function percorsoCompletato() {
-  // Task: tutti e 30 completati
-  if ((S.giorniCompletati || []).length < 30) return false;
-  if ((S.giornoAttuale || 1) < 30) return false;
-  // Abitudini: tutte al loro numero di giorni
-  var habits = getAbitudiniDalPercorso();
-  if (!habits.length) return true; // nessuna abitudine = solo task
-  return habits.every(function(h) {
-    var stato = getStatoAbitudine(h.habit_id, h.habit_days);
-    return stato.completata;
-  });
-}
-
-function abitudiniMancanti() {
-  var habits = getAbitudiniDalPercorso();
-  return habits.filter(function(h) {
-    return !getStatoAbitudine(h.habit_id, h.habit_days).completata;
-  });
-}
-
-function tornaHome() {
-  // Controlla se tutto è completato (task + abitudini)
-  if (percorsoCompletato()) {
-    salvaCrescitaStorica();
-    ss('completato');
-    return;
-  }
-  // Reset taskVisualizzato — torniamo al task ufficiale del giorno
-  S.taskVisualizzato = null;
-  // NON avanza il giorno — rimane sul task attuale
-  // Il giorno avanza solo con saveRefl dopo avanzamento('fatto')
-  aggiornaHome();
-  ss('home');
-}
-
-
-function calcolaCrescita() {
-  // Crescita lineare: 1% per ogni giorno completato in tutta la storia
-  var giorniPercorsoAttuale = (S.giorniCompletati || []).length;
-  var totale = (S.giorniTotali || 0) + giorniPercorsoAttuale;
-  return totale; // = percentuale diretta
-}
-
-function generaCertificato() {
-  var nome = (S.userProfile && S.userProfile.email) ? S.userProfile.email.split('@')[0] : 'Utente';
-  var obiettivo = S.ctx || '';
-  var completati = S.giorniCompletati.length;
-  var crescita = calcolaCrescita();
-  var dataInizio = S.objDataInizio ? new Date(S.objDataInizio).toLocaleDateString('it-IT') : '';
-  var dataOggi = new Date().toLocaleDateString('it-IT');
-
-  var html = '<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">';
-  html += '<title>Certificato Persisto</title>';
-  html += '<style>';
-  html += 'body{margin:0;padding:40px;background:#fff;font-family:Georgia,serif;color:#111827}';
-  html += '.cert{max-width:700px;margin:0 auto;border:3px solid #EA580C;border-radius:16px;padding:60px;text-align:center}';
-  html += '.logo{font-size:32px;font-weight:700;letter-spacing:-1px;color:#111827;margin-bottom:8px}';
-  html += '.logo span{color:#EA580C}';
-  html += '.subtitle{font-size:13px;color:#C7D2E0;text-transform:uppercase;letter-spacing:3px;margin-bottom:40px}';
-  html += '.titolo{font-size:14px;color:#C7D2E0;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}';
-  html += '.nome{font-size:36px;font-weight:700;color:#111827;margin-bottom:40px;border-bottom:2px solid #EA580C;padding-bottom:20px}';
-  html += '.obiettivo{font-size:18px;color:#111827;font-style:italic;margin-bottom:40px;line-height:1.6}';
-  html += '.stats{display:flex;justify-content:center;gap:40px;margin:40px 0}';
-  html += '.stat{text-align:center}';
-  html += '.stat-n{font-size:36px;font-weight:700;color:#EA580C}';
-  html += '.stat-l{font-size:12px;color:#C7D2E0;text-transform:uppercase;letter-spacing:1px;margin-top:4px}';
-  html += '.data{font-size:13px;color:#C7D2E0;margin-top:40px}';
-  html += '.firma{margin-top:40px;font-size:20px;font-weight:700;color:#EA580C}';
-  html += '@media print{body{padding:0}.btn-print{display:none}}';
-  html += '.btn-print{margin-top:30px;padding:12px 32px;background:#EA580C;color:#0B1020;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}';
-  html += '</style></head><body>';
-  html += '<div class="cert">';
-  html += '<div class="logo">Per<span>sisto</span></div>';
-  html += '<div class="subtitle">Certificato di completamento</div>';
-  html += '<div class="titolo">Questo certifica che</div>';
-  html += '<div class="nome">' + nome + '</div>';
-  html += '<div class="titolo">ha completato il percorso</div>';
-  html += '<div class="obiettivo">"' + obiettivo + '"</div>';
-  html += '<div class="stats">';
-  html += '<div class="stat"><div class="stat-n">' + completati + '</div><div class="stat-l">Giorni completati</div></div>';
-  html += '<div class="stat"><div class="stat-n">+' + crescita + '%</div><div class="stat-l">Crescita totale</div></div>';
-  html += '<div class="stat"><div class="stat-n">30</div><div class="stat-l">Giorni di percorso</div></div>';
-  html += '</div>';
-  html += '<div class="data">Dal ' + dataInizio + ' al ' + dataOggi + '</div>';
-  html += '<div class="firma">+1% ogni giorno</div>';
-  html += '</div>';
-  html += '<div style="text-align:center"><button class="btn-print" onclick="window.print()">Stampa / Salva PDF</button></div>';
-  html += '</body></html>';
-
-  var win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-}
-
-function showTaskList() {
-  var tasks = S.tasks || [];
-  var obiettivo = S.ctx || '';
-  document.getElementById('tasks-obiettivo').textContent = obiettivo ? 'Obiettivo: ' + obiettivo : '';
-  var list = document.getElementById('tasks-list');
-  if (!tasks.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.<br>Inizia un nuovo obiettivo.</div>';
-    return;
-  }
-  var html = '';
-  tasks.forEach(function(t, i) {
-    var desc = (t.description || '').split('.')[0]; // prima frase sola
-    if (desc.length > 80) desc = desc.slice(0, 80) + '…';
-    html += '<div class="tblock" style="cursor:pointer" onclick="showTaskDetail(' + i + ')">';
-    html += '<div class="tlabel">Task ' + (i+1) + (i===0 ? ' — oggi' : '') + '</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:4px">' + clean(t.title||'') + '</div>';
-    html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
-    html += '</div>';
-  });
-  list.innerHTML = html;
-}
-
-function showTaskDetail(idx) {
-  var t = S.tasks[idx] || {};
-  document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
-  document.getElementById('task-desc').textContent = df;
-  document.getElementById('task-why').textContent = clean(t.why || '');
-  ss('home');
-  document.getElementById('nav-home').classList.add('active');
-}
-
-function getActiveHabits() {
-  // Restituisce le abitudini attive per il giorno corrente
-  var giorno = S.giornoAttuale || 1;
-  var attive = [];
-  (S.tasks || []).forEach(function(t, idx) {
-    if (t.type === 'habit' && t.habit_days) {
-      var startDay = t.day || (idx + 1);
-      var endDay = startDay + t.habit_days - 1;
-      // Attiva se siamo nel range ma NON è il giorno di inizio (quello è già il task principale)
-      if (giorno > startDay && giorno <= endDay) {
-        attive.push({task: t, giornoCorrente: giorno - startDay + 1, totale: t.habit_days});
-      }
-    }
-  });
-  return attive;
-}
-
-function aggiornaHomeHabits() {
-  var habitsEl = document.getElementById('home-habits');
-  if (!habitsEl) return;
-  var attive = getActiveHabits();
-  if (!attive.length) { habitsEl.style.display = 'none'; return; }
-  habitsEl.style.display = 'block';
-  var html = '<div class="tlabel" style="margin-bottom:8px">Da continuare oggi</div>';
-  attive.forEach(function(h) {
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1B2435">';
-    html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
-    html += '<div style="font-size:11px;color:#EA580C;white-space:nowrap;margin-left:12px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
-    html += '</div>';
-  });
-  habitsEl.innerHTML = html;
-}
-
-function aggiornaHome() {
-  var completati = S.giorniCompletati.length;
-  var totale = 30;
-  var perc = Math.min(Math.round((completati / totale) * 100), 100);
-  var crescita = calcolaCrescita();
-  var streak = S.giorniCompletati.length;
-  var giorno = S.giornoAttuale || 1;
-  var rimanenti = Math.max(totale - completati, 0);
-  var fine = new Date();
-  fine.setDate(fine.getDate() + rimanenti);
-  var fineStr = fine.toLocaleDateString('it-IT', { day:'numeric', month:'short' });
-
-  var goalTitle = (S.objData && (S.objData.risultato || S.objData.come)) || S.ctx || 'Il tuo percorso';
-  if (goalTitle.length > 72) goalTitle = goalTitle.slice(0, 72) + '…';
-
-  var el;
-  el = document.getElementById('home-giorno'); if (el) el.textContent = 'Task ' + giorno + '/30';
-  el = document.getElementById('home-task-num'); if (el) el.textContent = 'Task ' + giorno + ' di 30';
-  el = document.getElementById('home-goal-title'); if (el) el.textContent = goalTitle;
-  el = document.getElementById('home-streak'); if (el) el.textContent = streak;
-  el = document.getElementById('home-streak-copy'); if (el) el.textContent = streak;
-  el = document.getElementById('home-perc'); if (el) el.textContent = perc + '%';
-  el = document.getElementById('home-perc-copy'); if (el) el.textContent = perc + '%';
-  el = document.getElementById('home-crescita'); if (el) el.textContent = '+' + crescita + '%';
-  el = document.getElementById('home-giorni-label'); if (el) el.textContent = completati + '/30';
-  el = document.getElementById('home-end-date'); if (el) el.textContent = rimanenti === 0 ? 'completato' : fineStr;
-  el = document.getElementById('home-progbar'); if (el) el.style.width = perc + '%';
-
-  el = document.getElementById('home-day-copy'); if (el) el.textContent = giorno;
-
-  var btn = document.getElementById('home-complete-btn');
-  if (btn) {
-    var task30ok = (S.giorniCompletati || []).length >= 30;
-    if (task30ok) {
-      var mancanti = abitudiniMancanti ? abitudiniMancanti() : [];
-      if (mancanti.length > 0) {
-        btn.textContent = 'Completa le abitudini per finire →';
-        btn.onclick = function(){ navTo('abitudini'); };
-        btn.classList.add('done');
-      } else {
-        btn.textContent = '🏆 Percorso completato — nuovo obiettivo';
-        btn.onclick = function(){ salvaCrescitaStorica().then(function(){ ss('completato'); }); };
-        btn.classList.remove('done');
-        btn.style.background = '#EA580C';
-      }
-    } else {
-      var taskFattoOggi = S.dataUltimoTask === new Date().toISOString().slice(0, 10);
-      btn.textContent = taskFattoOggi ? 'Vedi i prossimi task' : 'Vai al task';
-      btn.onclick = function(){ goTaskFromHome(); };
-      btn.classList.toggle('done', taskFattoOggi);
-    }
-  }
-  aggiornaHomeHabits();
-}
-function loadProgressi() {
-  var completati = (S.giorniCompletati || []).length;
-  var totale = 30;
-  var perc = Math.min(Math.round((completati / totale) * 100), 100);
-  var crescita = calcolaCrescita();
-  var rimanenti = Math.max(totale - completati, 0);
-  var streak = completati;
-  var goalTitle = (S.objData && (S.objData.risultato || S.objData.come)) || S.ctx || 'Il tuo percorso';
-  if (goalTitle.length > 86) goalTitle = goalTitle.slice(0, 86) + '…';
-
-  var el;
-  el = document.getElementById('prog-obiettivo'); if (el) el.textContent = goalTitle;
-  el = document.getElementById('prog-perc'); if (el) el.textContent = perc + '%';
-  el = document.getElementById('prog-bar'); if (el) el.style.width = perc + '%';
-  el = document.getElementById('prog-completati'); if (el) el.textContent = completati;
-  el = document.getElementById('prog-streak'); if (el) el.textContent = streak;
-  el = document.getElementById('prog-crescita'); if (el) el.textContent = '+' + crescita + '%';
-  el = document.getElementById('prog-rimanenti'); if (el) el.textContent = rimanenti;
-
-  var milestones = [
-    {n:1, label:'Hai iniziato'},
-    {n:3, label:'Primi 3 giorni'},
-    {n:7, label:'Una settimana'},
-    {n:14, label:'Metà percorso'},
-    {n:21, label:'Costanza consolidata'},
-    {n:30, label:'Percorso completato'}
-  ];
-  var mh = '';
-  milestones.forEach(function(m) {
-    var done = completati >= m.n;
-    mh += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1B2435">';
-    mh += '<div style="display:flex;align-items:center;gap:10px">';
-    mh += '<span style="width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid ' + (done ? '#EA580C' : '#2F3B52') + ';color:' + (done ? '#EA580C' : '#8FA0B8') + ';font-size:12px">' + (done ? '✓' : m.n) + '</span>';
-    mh += '<span style="font-size:13px;color:#fff">' + m.label + '</span>';
-    mh += '</div>';
-    mh += '<span style="font-size:11px;color:' + (done ? '#EA580C' : '#8FA0B8') + '">' + (done ? 'raggiunta' : 'a ' + m.n + ' giorni') + '</span>';
-    mh += '</div>';
-  });
-  el = document.getElementById('prog-milestones'); if (el) el.innerHTML = mh;
-}
-
-
-// ─── ABITUDINI ──────────────────────────────────────────────────────────────
-
-function getAbitudiniDalPercorso() {
-  // Estrae le abitudini già sbloccate (startDay <= giornoAttuale)
-  var habits = [];
-  var giornoCorrente = S.giornoAttuale || 1;
-  (S.tasks || []).forEach(function(t) {
-    if (t.type === 'habit' && t.habit_id) {
-      var startDay = t.day || 1;
-      // Mostra solo se l'utente ha raggiunto o superato il giorno di questa abitudine
-      if (startDay > giornoCorrente) return;
-      var exists = habits.some(function(h){ return h.habit_id === t.habit_id; });
-      if (!exists) {
-        habits.push({
-          habit_id: t.habit_id,
-          title: t.title,
-          habit_days: t.habit_days || 7,
-          startDay: startDay
-        });
-      }
-    }
-  });
-  return habits;
-}
-
-function getStatoAbitudine(habit_id, habit_days) {
-  // Legge lo stato dal dizionario S.abitudiniStato
-  // Struttura: { [habit_id]: { spunte: ['2026-06-19', ...], completata: false } }
-  var stato = S.abitudiniStato[habit_id];
-  if (!stato) stato = { spunte: [], completata: false };
-  var fatte = stato.spunte ? stato.spunte.length : 0;
-  var totale = habit_days || 7;
-  var completata = fatte >= totale;
-  return { spunte: stato.spunte || [], fatte: fatte, totale: totale, completata: completata };
-}
-
-function oggiStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-async function salvaAbitudiniStato() {
-  if (!S.user || !S.objId) return;
-  await sb.from('obiettivi').update({
-    abitudini_stato: S.abitudiniStato
-  }).eq('id', S.objId);
-}
-
-async function spuntaAbitudine(habit_id, habit_days) {
-  var oggi = oggiStr();
-  if (!S.abitudiniStato[habit_id]) S.abitudiniStato[habit_id] = { spunte: [], completata: false };
-  var stato = S.abitudiniStato[habit_id];
-  // Evita doppia spunta nello stesso giorno
-  if (stato.spunte.indexOf(oggi) !== -1) return;
-  stato.spunte.push(oggi);
-  if (stato.spunte.length >= habit_days) stato.completata = true;
-  await salvaAbitudiniStato();
-  loadAbitudini();
-}
-
-async function rimuoviSpuntaAbitudine(habit_id) {
-  var oggi = oggiStr();
-  if (!S.abitudiniStato[habit_id]) return;
-  var stato = S.abitudiniStato[habit_id];
-  stato.spunte = stato.spunte.filter(function(d){ return d !== oggi; });
-  stato.completata = false;
-  await salvaAbitudiniStato();
-  loadAbitudini();
-}
-
-async function ricominciaAbitudine(habit_id) {
-  if (!confirm('Ricomincia questa abitudine da zero?')) return;
-  S.abitudiniStato[habit_id] = { spunte: [], completata: false };
-  await salvaAbitudiniStato();
-  loadAbitudini();
-}
-
-async function continuaAbitudine(habit_id) {
-  // Continua da dove si era — non azzera, aggiunge solo oggi
-  var oggi = oggiStr();
-  if (!S.abitudiniStato[habit_id]) S.abitudiniStato[habit_id] = { spunte: [], completata: false };
-  var stato = S.abitudiniStato[habit_id];
-  if (stato.spunte.indexOf(oggi) === -1) stato.spunte.push(oggi);
-  await salvaAbitudiniStato();
-  loadAbitudini();
-}
-
-function loadAbitudini() {
-  var list = document.getElementById('abitudini-list');
-  if (!list) return;
-  var habits = getAbitudiniDalPercorso();
-  var oggi = oggiStr();
-
-  if (!habits.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-repeat" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessuna abitudine attiva nel tuo percorso.</div>';
-    return;
-  }
-
-  var html = '';
-  habits.forEach(function(h) {
-    var stato = getStatoAbitudine(h.habit_id, h.habit_days);
-    var spuntataOggi = stato.spunte.indexOf(oggi) !== -1;
-    // Controlla se ha saltato ieri
-    var ieri = new Date(); ieri.setDate(ieri.getDate() - 1);
-    var ieriStr = ieri.toISOString().slice(0, 10);
-    var haSaltatoIeri = stato.spunte.length > 0 && stato.spunte.indexOf(ieriStr) === -1 && !stato.completata;
-    // Colore bordo
-    var borderColor = stato.completata ? '#22c55e' : (spuntataOggi ? '#EA580C' : '#2F3B52');
-
-    html += '<div class="tblock" style="border-color:' + borderColor + ';margin-bottom:12px">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
-    html += '<div style="font-size:15px;font-weight:600;color:#fff;flex:1;margin-right:8px">' + clean(h.title) + '</div>';
-    if (stato.completata) {
-      html += '<div style="color:#22c55e;font-size:12px;font-weight:700;white-space:nowrap">✓ Completata</div>';
-    }
-    html += '</div>';
-
-    // Barra progresso
-    var perc = Math.round((stato.fatte / stato.totale) * 100);
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
-    html += '<div style="flex:1;background:#1B2435;border-radius:4px;height:6px"><div style="width:' + perc + '%;background:#EA580C;border-radius:4px;height:6px"></div></div>';
-    html += '<div style="font-size:12px;color:#8FA0B8;white-space:nowrap">' + stato.fatte + '/' + stato.totale + ' giorni</div>';
-    html += '</div>';
-
-    if (!stato.completata) {
-      if (!spuntataOggi) {
-        // Pulsante spunta oggi
-        html += '<button onclick="spuntaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:6px">&#10003; Fatto oggi</button>';
-        // Se ha saltato ieri, mostra opzioni
-        if (haSaltatoIeri && stato.spunte.length > 0) {
-          html += '<div style="display:flex;gap:8px">';
-          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
-          html += '</div>';
-        }
-      } else {
-        // Già spuntata oggi
-        html += '<div style="text-align:center;padding:8px 0;color:#EA580C;font-size:13px;font-weight:600">✓ Fatto oggi</div>';
-        html += '<button onclick="rimuoviSpuntaAbitudine(\'' + h.habit_id + '\')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta</button>';
-      }
-    }
-
-    html += '</div>';
-  });
-
-  // Riepilogo in fondo
-  var completate = habits.filter(function(h){ return getStatoAbitudine(h.habit_id, h.habit_days).completata; }).length;
-  html += '<div style="text-align:center;padding:16px 0;color:#8FA0B8;font-size:13px">' + completate + '/' + habits.length + ' abitudini completate</div>';
-
-  list.innerHTML = html;
-}
-
-
-function toggleStoricoDetail(el) {
-  var detail = el.querySelector('.storico-detail');
-  var icon = el.querySelector('.ti-chevron-down, .ti-chevron-up');
-  if (!detail) return;
-  var isOpen = detail.style.display !== 'none';
-  detail.style.display = isOpen ? 'none' : 'block';
-  if (icon) {
-    icon.className = icon.className.replace('ti-chevron-down', 'TEMP').replace('ti-chevron-up', 'TEMP');
-    icon.className = icon.className.replace('TEMP', isOpen ? 'ti-chevron-down' : 'ti-chevron-up');
-  }
-}
-
-function mostraStoricoInProfilo() {
-  var list = document.getElementById('storico-profilo-list');
-  var tasks = S.tasks || [];
-  var completati = S.giorniCompletati || [];
-  var taskCompletati = tasks.filter(function(t) {
-    return completati.indexOf(t.day || 0) !== -1;
-  });
-  var html = '';
-  if (!taskCompletati.length) {
-    html = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
-  } else {
-    taskCompletati.forEach(function(t) {
-      var idx = tasks.indexOf(t);
-      var day = t.day || (idx + 1);
-      var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
-      var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, 'Passo $1:');
-      html += '<div class="tblock" style="cursor:pointer" onclick="toggleStoricoDetail(this)">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
-      html += '<div><div class="tlabel">Task ' + day + ' — ✓ completato</div>';
-      html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div></div>';
-      html += '<i class="ti ti-chevron-down" style="color:#8FA0B8;font-size:16px;flex-shrink:0"></i>';
-      html += '</div>';
-      html += '<div class="storico-detail" style="display:none;margin-top:12px">';
-      html += '<div class="tdesc" style="font-size:12px;white-space:pre-line;color:#C7D2E0;margin-bottom:8px">' + descFormatted + '</div>';
-      if (t.why) html += '<div class="tdesc" style="font-size:11px;color:#8FA0B8;font-style:italic;margin-bottom:8px">' + clean(t.why) + '</div>';
-      if (refl) {
-        html += '<div style="background:#1B2435;border-radius:8px;padding:10px;margin-top:8px">';
-        html += '<div class="tlabel" style="margin-bottom:4px">Le tue note</div>';
-        html += '<div class="tdesc" style="font-size:13px;color:#fff">' + refl + '</div>';
-        html += '</div>';
-      }
-      html += '</div>';
-      html += '</div>';
-    });
-  }
-  if (list) list.innerHTML = html;
-  ss('storico-profilo');
-}
-
-async function loadStorico() {
-  var list = document.getElementById('abitudini-list');
-  var bot = document.getElementById('storico-bot');
-  var tasks = S.tasks || [];
-  var completati = S.giorniCompletati || [];
-
-  // Filtra solo i completati
-  var taskCompletati = tasks.filter(function(t) {
-    return completati.indexOf(t.day || 0) !== -1;
-  });
-
-  if (document.getElementById('tasks-obiettivo-nav'))
-    document.getElementById('tasks-obiettivo-nav').textContent = S.ctx || '';
-
-  if (!taskCompletati.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-history" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessun task completato ancora.</div>';
-    bot.style.display = 'none';
-    return;
-  }
-
-  var html = '';
-  taskCompletati.forEach(function(t) {
-    var idx = tasks.indexOf(t);
-    html += '<div class="tblock" onclick="apriTaskSolaLettura(' + idx + ')" style="cursor:pointer">';
-    html += '<div class="tlabel">Task ' + (idx+1) + ' — ✓ completato</div>';
-    html += '<div class="ttitle" style="font-size:15px">' + clean(t.title||'') + '</div>';
-    html += '</div>';
-  });
-  list.innerHTML = html;
-  bot.style.display = 'none'; // storico = sola lettura, niente bottoni
-}
-
-function apriTaskSolaLettura(idx) {
-  var t = S.tasks[idx] || {};
-  var day = t.day || (idx + 1);
-  var refl = S.reflections && S.reflections[day] ? S.reflections[day] : null;
-  var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-  var list = document.getElementById('abitudini-list');
-  var html = '<div style="margin-bottom:12px">';
-  html += '<button onclick="loadTaskTab()" style="background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer"><i class="ti ti-arrow-left"></i> Torna allo storico</button>';
-  html += '</div>';
-  html += '<div class="tblock" style="border-color:#EA580C">';
-  html += '<div class="tlabel" style="color:#EA580C">Giorno ' + day + ' — ✓ completato</div>';
-  html += '<div class="ttitle" style="font-size:16px;margin-bottom:12px">' + clean(t.title||'') + '</div>';
-  html += '<div class="tdesc" style="font-size:13px;white-space:pre-line;margin-bottom:8px">' + descFormatted + '</div>';
-  if (t.why) {
-    html += '<div class="tlabel" style="margin-top:12px">Perché questo task</div>';
-    html += '<div class="tdesc" style="font-size:12px;margin-top:4px">' + clean(t.why) + '</div>';
-  }
-  html += '</div>';
-  if (refl) {
-    html += '<div class="tblock" style="background:transparent;border-color:#2F3B52">';
-    html += '<div class="tlabel">Cosa hai fatto</div>';
-    html += '<div class="tdesc" style="margin-top:6px;font-size:13px;color:#fff">' + refl + '</div>';
-    html += '</div>';
-  }
-  list.innerHTML = html;
-  document.getElementById('storico-bot').style.display = 'none';
-}
-
-async function loadTaskTab() {
-  var list = document.getElementById('tasks-list');
-  var bot = document.getElementById('storico-bot');
-  var tasks = S.tasks || [];
-
-  // giornoUfficiale = task del percorso fermo sul giorno corrente.
-  // giorno = task da mostrare: può essere un extra appena sbloccato.
-  var giornoUfficiale = S.giornoAttuale || 1;
-  var giorno = S.taskVisualizzato || giornoUfficiale;
-  var isExtraSbloccato = !!S.taskVisualizzato && S.taskVisualizzato !== giornoUfficiale;
-
-  if (document.getElementById('tasks-obiettivo'))
-    document.getElementById('tasks-obiettivo').textContent = S.ctx || '';
-
-  if (!tasks.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8">Nessun task disponibile.</div>';
-    bot.style.display = 'none';
-    return;
-  }
-
-  var html = '';
-  // Task visualizzato: task ufficiale oppure extra sbloccato.
-  // Usa indice array, non solo campo day, così evita salti se i dati non sono perfettamente sequenziali.
-  var oggi = tasks[giorno-1] || tasks.find(function(t){ return (t.day||0) === giorno; });
-  if (oggi) {
-    var idx = tasks.indexOf(oggi);
-    var descFormatted = clean(oggi.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    var completatoOggi = (S.giorniCompletati || []).indexOf(giorno) !== -1;
-    var labelGiorno = isExtraSbloccato ? 'Giorno ' + giorno + ' — extra sbloccato' : 'Giorno ' + giorno + ' — oggi';
-
-    html += '<div class="tblock" style="border-color:#EA580C">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    html += '<div class="tlabel" style="color:#EA580C">' + labelGiorno + '</div>';
-    if (completatoOggi) {
-      html += '<span style="font-size:11px;color:#EA580C;font-weight:600"><i class="ti ti-check"></i> completato</span>';
-    }
-    html += '</div>';
-    html += '<div class="ttitle" style="font-size:15px;margin-bottom:8px">' + clean(oggi.title||'') + '</div>';
-    html += '<div class="tdesc" style="font-size:12px;white-space:pre-line">' + descFormatted + '</div>';
-    if (oggi.why) {
-      html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #2F3B52">';
-      html += '<div class="tlabel">Perché questo task</div>';
-      html += '<div class="tdesc" style="font-size:12px">' + clean(oggi.why||'') + '</div>';
-      html += '</div>';
-    }
-    html += '</div>';
-
-    var habits = getActiveHabits();
-    if (habits.length) {
-      html += '<div class="tblock" style="border-color:#EA580C22">';
-      html += '<div class="tlabel">Abitudini da continuare oggi</div>';
-      habits.forEach(function(h) {
-        html += '<div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #1B2435">';
-        html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
-        html += '<div style="font-size:11px;color:#EA580C;white-space:nowrap">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
-        html += '</div>';
-      });
-      html += '</div>';
-    }
-  }
-
-  // Prossimi 5: se sei sul task ufficiale già completato, il prossimo può essere sbloccato.
-  // Se stai già vedendo un extra, non mostra un secondo pulsante finché non lo completi.
-  var oggiStr = new Date().toISOString().slice(0, 10);
-  if (S.dataUltimoExtra !== oggiStr) S.taskExtraOggi = 0;
-  var extraRimanenti = Math.max(2 - (S.taskExtraOggi || 0), 0);
-  var taskUfficialeFattoOggi = S.dataUltimoTask === oggiStr;
-  var giornoVisualizzatoCompletato = (S.giorniCompletati || []).indexOf(giorno) !== -1;
-
-  for (var i = giorno; i < Math.min(giorno+5, tasks.length); i++) {
-    var t = tasks[i];
-    if (!t) continue;
-    var posizione = i - giorno; // 0 = prossimo, 1 = dopo, ecc.
-    var dayNum = t.day || (i+1);
-    var puoSbloccare = !isExtraSbloccato && taskUfficialeFattoOggi && giornoVisualizzatoCompletato && posizione === 0 && extraRimanenti > 0;
-
-    if (puoSbloccare) {
-      html += '<div class="tblock" style="border-color:#EA580C44">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-      html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
-      html += '<button onclick="sbloccaProssimoTask()" style="background:#EA580C;color:#0B1020;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">⚡ Sblocca (' + extraRimanenti + ' rimanenti)</button>';
-      html += '</div>';
-      html += '<div class="ttitle" style="font-size:14px;color:#C7D2E0">' + clean(t.title||'') + '</div>';
-      html += '</div>';
-    } else {
-      html += '<div class="tblock" style="opacity:0.35;pointer-events:none">';
-      html += '<div class="tlabel">Giorno ' + dayNum + '</div>';
-      html += '<div class="ttitle" style="font-size:14px;color:#C7D2E0">' + clean(t.title||'') + '</div>';
-      html += '</div>';
-    }
-  }
-
-  list.innerHTML = html;
-
-  var avanzPanel = document.getElementById('avanz-panel');
-  var corrPanel = document.getElementById('corr-panel');
-  var completatoVisualizzato = (S.giorniCompletati || []).indexOf(giorno) !== -1;
-
-  // Se è un extra sbloccato e non ancora completato, i pulsanti devono restare visibili.
-  if (completatoVisualizzato) {
-    bot.style.display = 'none';
-  } else {
-    bot.style.display = 'block';
-    if (avanzPanel) avanzPanel.style.display = 'block';
-    if (corrPanel) corrPanel.classList.remove('open');
-  }
-
-  var btnC = document.getElementById('btn-completa');
-  if (btnC) btnC.style.display = 'none';
-}
-
-function apriTask(idx) {
-  var t = S.tasks[idx] || {};
-  document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-  document.getElementById('task-desc').style.whiteSpace = 'pre-line';
-  document.getElementById('task-desc').textContent = df;
-  document.getElementById('task-why').textContent = clean(t.why || '');
-  ss('home');
-}
-
-
-function goTaskFromHome() {
-  S_activeNav = 'task';
-  loadTaskTab();
-  ss('tasks');
-}
-
-async function completeFromHome() {
-  if (S.taskCompletato) {
-    S_activeNav = 'task';
-    loadTaskTab();
-    ss('tasks');
-    return;
-  }
-  if (confirm('Confermi di aver completato il task di oggi?')) {
-    await markDone();
-    var giorno = S.giornoAttuale || 1;
-    var t = S.tasks[giorno - 1] || S.tasks[0] || {};
-    var descFormatted = clean(t.description||'').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
-    document.getElementById('refl-task-title').textContent = clean(t.title || '');
-    document.getElementById('refl-task-desc').textContent = descFormatted;
-    document.getElementById('refl-task-desc').style.whiteSpace = 'pre-line';
-    document.getElementById('refl-text').value = '';
-    document.getElementById('refl-text').style.borderColor = '';
-    ss('reflection');
-  }
-}
-
-function confirmDone() {
-  if (confirm('Confermi di aver completato il task di oggi?')) {
-    markDone();
-    ss('reflection');
-  }
-}
-
-async function resetTotale() {
-  var conf = confirm("⚠️ ATTENZIONE: questa azione cancella il percorso attuale E azzera tutto lo storico di crescita (giorni totali, progressi storici).\n\nÈ irreversibile. Vuoi davvero continuare?");
-  if (!conf) return;
-  if (S.user) {
-    await sb.from("obiettivi").delete().eq("user_id", S.user.id);
-    await sb.from("profiles").update({ giorni_totali: 0 }).eq("id", S.user.id);
-  }
-  S.giorniTotali = 0;
-  S.arch = null; S.freeText = ""; S.ctx = "";
-  S.questions = []; S.answers = []; S.currentQ = 0;
-  S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
-  S.taskCompletato = false;
-  S.giorniCompletati = [];
-  S.abitudiniStato = {};
-  ss("welcome");
-}
-
-async function resetFlow() {
-  var conf = confirm('⚠️ Stai per cancellare il percorso attuale.\n\nTutti i task e i progressi verranno eliminati definitivamente e non sono recuperabili.\n\nVuoi continuare?');
-  if (!conf) return;
-
-  await salvaCrescitaStorica();
-
-  if (S.user) {
-    await sb.from('obiettivi').delete().eq('user_id', S.user.id);
-  }
-
-  S.arch = null; S.freeText = ''; S.ctx = '';
-  S.questions = []; S.answers = []; S.currentQ = 0;
-  S.profile = {}; S.tasks = []; S.emoji = null; S.objData = {};
-  S.taskCompletato = false;
-  S.giorniCompletati = [];
-  S.abitudiniStato = {};
-
-  ss('welcome');
-}
-</script>
-</body>
-</html>
