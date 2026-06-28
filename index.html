@@ -1211,7 +1211,7 @@ function mostraErroreDispositivi(sessioni) {
     var data = new Date(s.last_seen).toLocaleDateString('it-IT', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2F3B52">';
     html += '<span style="font-size:12px;color:#C7D2E0">Dispositivo ' + (i+1) + ' — ultimo accesso: ' + data + '</span>';
-    html += '<button onclick="disconnettiEAccedi('' + s.device_token + '')" style="background:#EA580C;color:#0B1020;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">Disconnetti</button>';
+    html += '<button onclick="disconnettiEAccedi(\'' + s.device_token + '\')" style="background:#EA580C;color:#0B1020;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">Disconnetti</button>';
     html += '</div>';
   });
   html += '</div>';
