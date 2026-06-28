@@ -10,8 +10,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{background:#0B1020;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.phone{width:100%;height:100vh;height:100dvh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;min-height:0}.screen.active{display:flex}
+.phone{width:100%;height:100vh;background:#111827;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.screen{display:none;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}.screen.active{display:flex}
 .screen.active{display:flex}
 .screen.has-nav{bottom:118px}
 .s-pad{padding:28px 24px 0}
@@ -70,7 +70,7 @@ select option{background:#111827;color:#fff}
 .embtn{font-size:28px;padding:12px 16px;border-radius:12px;border:1px solid #2F3B52;background:#1B2435;cursor:pointer;transition:all 0.15s}
 .embtn:hover,.embtn.sel{border-color:#EA580C;background:#2A1408;transform:scale(1.1)}
 .err{background:#1a0d1a;color:#ff6b9d;border:1px solid #2d1a2d;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:10px;line-height:1.5}
-.scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 24px}
+.scroll{flex:1;overflow-y:auto;padding:16px 24px}
 .prof-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1B2435}
 .prof-row:last-child{border-bottom:none}
 .prof-key{font-size:12px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px}
@@ -79,18 +79,6 @@ select option{background:#111827;color:#fff}
 .icon-btn{background:none;border:none;color:#8FA0B8;cursor:pointer;font-size:18px;padding:4px}
 .icon-btn:hover{color:#EA580C}
 .step-indicator{font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
-
-/* SCHERMATE LUNGHE SENZA BOTTOM NAV */
-#sc-welcome,#sc-obiettivo,#sc-obiettivo-premium{overflow-y:auto;-webkit-overflow-scrolling:touch}
-#sc-welcome .s-pad,#sc-obiettivo .s-pad,#sc-obiettivo-premium .s-pad{padding-bottom:32px}
-#sc-welcome::after,#sc-obiettivo-premium::after{content:'';display:block;min-height:24px;flex-shrink:0}
-.optional-note{font-size:12px;color:#8FA0B8;line-height:1.55;background:#1B2435;border:1px solid #2F3B52;border-radius:12px;padding:12px 14px;margin:10px 0 16px}
-.skip-profile-link{width:100%;background:none;border:none;color:#8FA0B8;font-size:13px;cursor:pointer;padding:10px 0 0;text-decoration:underline}
-.custom-goal-card{background:linear-gradient(135deg,#2A1408 0%,#1B2435 100%);border:1px solid #EA580C66;border-radius:18px;padding:18px;margin:14px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 14px 32px rgba(0,0,0,.16)}
-.custom-goal-card .cg-icon{width:42px;height:42px;border-radius:14px;background:#EA580C22;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.custom-goal-card .cg-title{font-size:16px;font-weight:900;color:#fff;margin-bottom:4px}
-.custom-goal-card .cg-sub{font-size:12px;color:#C7D2E0;line-height:1.45}
-.custom-goal-card .cg-badge{background:#EA580C;color:#0B1020;font-size:10px;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0}
 
 /* HOME REDESIGN */
 .home-head{padding-bottom:0;flex-shrink:0}
@@ -212,8 +200,6 @@ select option{background:#111827;color:#fff}
     min-height:122px;
     padding-bottom:44px;
   }
-  .premium-overlay{align-items:flex-start;padding-top:18px;padding-bottom:18px}
-  .premium-sheet{max-height:calc(100dvh - 36px)}
 }
 
 /* Desktop: mantiene look compatto */
@@ -233,8 +219,8 @@ select option{background:#111827;color:#fff}
 .corr-panel.open{display:block}
 
 /* PREMIUM MODAL */
-.premium-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.premium-sheet{background:#111827;border:1px solid #2F3B52;border-radius:24px;padding:28px 24px 32px;width:100%;max-width:480px;max-height:calc(100dvh - 40px);overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:0 30px 80px rgba(0,0,0,.45);margin:auto}
+.premium-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+.premium-sheet{background:#111827;border-radius:24px;padding:28px 24px 32px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
 .premium-tier{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
 .premium-tier:hover{border-color:#EA580C}
 .premium-tier.featured{border-color:#EA580C;background:#2A1408}
@@ -319,8 +305,7 @@ select option{background:#111827;color:#fff}
     <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 1 di 5</div>
     <div class="prog"><div class="progbar" style="width:20%"></div></div>
     <div class="h1" style="font-size:22px">Chi sei</div>
-    <div class="sub">Puoi rispondere solo a ciò che vuoi. Più dati inserisci, migliori saranno i suggerimenti.</div>
-    <div class="optional-note">Profilo facoltativo: puoi saltarlo ora e completarlo più avanti dal menu Profilo.</div>
+    <div class="sub">Queste info non le richiediamo mai più.</div>
   </div>
   <div class="scroll">
     <div class="field">
@@ -394,7 +379,6 @@ select option{background:#111827;color:#fff}
   </div>
   <div class="bot">
     <button class="btn" onclick="nextDemo(1)">Avanti</button>
-    <button class="skip-profile-link" onclick="skipProfile()">Salta il profilo per ora</button>
   </div>
 </div>
 
@@ -408,7 +392,6 @@ select option{background:#111827;color:#fff}
     <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 2 di 5</div>
     <div class="prog"><div class="progbar" style="width:40%"></div></div>
     <div class="h1" style="font-size:22px">Lavoro e soldi</div>
-    <div class="optional-note">Questa sezione è completamente facoltativa. Serve solo per evitare percorsi non realistici rispetto al tuo tempo, lavoro e situazione economica.</div>
   </div>
   <div class="scroll">
     <div class="field">
@@ -504,7 +487,6 @@ select option{background:#111827;color:#fff}
   <div class="bot">
     <button class="btn" onclick="nextDemo(2)">Avanti</button>
     <button class="btn-ghost" onclick="ss('demo1')">Indietro</button>
-    <button class="skip-profile-link" onclick="skipProfile()">Salta il profilo per ora</button>
   </div>
 </div>
 
@@ -518,7 +500,6 @@ select option{background:#111827;color:#fff}
     <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 3 di 5</div>
     <div class="prog"><div class="progbar" style="width:60%"></div></div>
     <div class="h1" style="font-size:22px">Tempo e routine</div>
-    <div class="optional-note">Rispondi solo se vuoi: queste informazioni aiutano Persisto a suggerire task sostenibili nella tua giornata reale.</div>
   </div>
   <div class="scroll">
     <div class="field">
@@ -582,7 +563,6 @@ select option{background:#111827;color:#fff}
   <div class="bot">
     <button class="btn" onclick="nextDemo(3)">Avanti</button>
     <button class="btn-ghost" onclick="ss('demo2')">Indietro</button>
-    <button class="skip-profile-link" onclick="skipProfile()">Salta il profilo per ora</button>
   </div>
 </div>
 
@@ -596,7 +576,6 @@ select option{background:#111827;color:#fff}
     <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 4 di 5</div>
     <div class="prog"><div class="progbar" style="width:80%"></div></div>
     <div class="h1" style="font-size:22px">Corpo e mente</div>
-    <div class="optional-note">Anche qui non è obbligatorio completare tutto. Se una domanda è troppo personale, puoi lasciarla vuota.</div>
   </div>
   <div class="scroll">
     <div class="field">
@@ -693,7 +672,6 @@ select option{background:#111827;color:#fff}
   <div class="bot">
     <button class="btn" onclick="nextDemo(4)">Avanti</button>
     <button class="btn-ghost" onclick="ss('demo3')">Indietro</button>
-    <button class="skip-profile-link" onclick="skipProfile()">Salta il profilo per ora</button>
   </div>
 </div>
 
@@ -707,24 +685,23 @@ select option{background:#111827;color:#fff}
     <div class="step-indicator" style="margin-top:20px">Il tuo profilo — 5 di 5</div>
     <div class="prog"><div class="progbar" style="width:95%"></div></div>
     <div class="h1" style="font-size:22px">Il tuo contesto</div>
-    <div class="sub">Facoltativo, ma utile: bastano anche due righe sincere.</div>
+    <div class="sub">Scrivi liberamente, questa è la parte più importante.</div>
   </div>
   <div class="scroll">
     <div class="field">
       <div class="field-label">La tua situazione in questo momento</div>
-      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Racconta il contesto reale: che fase stai vivendo, cosa ti pesa, quanto tempo hai, quali responsabilità hai. Esempio: “lavoro tante ore, torno stanca, ho poco tempo e rimando sempre”.</div>
+      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Descrivi dove sei adesso: lavoro, famiglia, tempo che hai, cosa ti pesa di più. Più sei specifico/a, meglio Persisto costruisce il tuo percorso.</div>
       <textarea id="demo-situazione" rows="3"></textarea>
     </div>
     <div class="field">
       <div class="field-label">Cosa ti ha bloccato finora</div>
-      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Scrivi cosa di solito ti ferma: mancanza di tempo, paura, poca energia, confusione, disciplina, contesto familiare o lavorativo. Esempio: “parto bene ma dopo 3 giorni mollo”.</div>
+      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Hai già provato a cambiare qualcosa e hai mollato? Cosa ti spaventa di più? Cosa manca di solito? Non c'è risposta giusta — solo la tua verità.</div>
       <textarea id="demo-paure" rows="3"></textarea>
     </div>
   </div>
   <div class="bot">
     <button class="btn" onclick="saveProfile()">Salva il profilo</button>
     <button class="btn-ghost" onclick="ss('demo4')">Indietro</button>
-    <button class="skip-profile-link" onclick="skipProfile()">Salta il profilo per ora</button>
   </div>
 </div>
 
@@ -741,14 +718,14 @@ select option{background:#111827;color:#fff}
     <div class="h1">Su cosa vuoi lavorare?</div>
     <div class="sub">Scegli un'area di crescita.</div>
 
-    <!-- OBIETTIVO PERSONALIZZATO / PREMIUM -->
-    <div class="custom-goal-card" onclick="avviaObiettivoPremium()">
-      <div class="cg-icon">✨</div>
+    <!-- BANNER PREMIUM -->
+    <div onclick="avviaObiettivoPremium()" style="background:linear-gradient(135deg,#2A1408 0%,#1B1030 100%);border:1px solid #EA580C55;border-radius:16px;padding:16px 18px;margin-top:16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px;flex-shrink:0">✨</div>
       <div style="flex:1">
-        <div class="cg-title">Obiettivo personalizzato</div>
-        <div class="cg-sub">Scrivi cosa vuoi cambiare: Persisto prepara un percorso su misura invece di farti scegliere da una lista.</div>
+        <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Il percorso che nessun altro ha.</div>
+        <div style="font-size:12px;color:#C7D2E0;line-height:1.5">Persisto costruisce 30 giorni pensati solo per te, il tuo obiettivo e la tua vita.</div>
       </div>
-      <div class="cg-badge">Premium</div>
+      <div style="background:#EA580C;color:#0B1020;font-size:11px;font-weight:800;padding:6px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0">Scopri Premium</div>
     </div>
 
     <!-- SUGGERIMENTI PERSONALIZZATI -->
@@ -800,7 +777,6 @@ select option{background:#111827;color:#fff}
         <div class="acard-sub">Resilienza, cambiamento</div>
       </div>
     </div>
-    <div id="err-welcome"></div>
   </div>
 </div>
 
@@ -1255,8 +1231,8 @@ select option{background:#111827;color:#fff}
     </div>
     <div style="margin-top:20px">
       <div style="font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">✨ Premium</div>
-      <div class="h1" style="font-size:24px">Obiettivo personalizzato</div>
-      <div class="sub">Scrivi un obiettivo libero. Questa è la finestra dedicata agli obiettivi non presenti nei percorsi standard.</div>
+      <div class="h1" style="font-size:24px">Il percorso che nessun altro ha.</div>
+      <div class="sub">Descrivi il tuo obiettivo. Persisto costruisce 30 giorni esatti per te, basati sul tuo profilo e sulla tua vita reale.</div>
     </div>
     <div class="field" style="margin-top:8px">
       <div class="field-label">Cosa vuoi cambiare o raggiungere?</div>
@@ -1275,8 +1251,8 @@ select option{background:#111827;color:#fff}
     <div id="err-premium-obj"></div>
   </div>
   <div class="bot">
-    <button class="btn" onclick="avviaPremiumPercorso()">Continua con questo obiettivo</button>
-    <button class="btn-ghost" onclick="ss('welcome')" style="margin-top:8px">Torna ai percorsi standard</button>
+    <button class="btn" onclick="avviaPremiumPercorso()">Genera il mio percorso</button>
+    <button class="btn-ghost" onclick="mostraPremiumSheet()" style="margin-top:8px">Sblocca Premium prima →</button>
   </div>
 </div>
 
@@ -1514,9 +1490,6 @@ function ss(id) {
   if (!target) { console.error('ss(): screen non trovato: sc-' + id); return; }
   target.classList.add('active');
   target.style.display = 'flex';
-  target.scrollTop = 0;
-  var innerScroll = target.querySelector('.scroll');
-  if (innerScroll) innerScroll.scrollTop = 0;
   // nav
   var navScreens = ['home','reflection','abitudini','storico-profilo','progressi','edit-profile','tasks'];
   showNav(navScreens.indexOf(id) !== -1);
@@ -1665,7 +1638,7 @@ async function afterLogin() {
   if (S.user) aggiornaLastSeen(S.user.id);
   // 1. Controlla profilo demografico
   var {data: profilo} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
-  if (!profilo) {
+  if (!profilo || !profilo.eta) {
     ss('demo1');
     return;
   }
@@ -1792,56 +1765,9 @@ function nextDemo(step) {
   }
 }
 
-
-function raccogliDemoCorrente() {
-  // Raccoglie quello che l'utente ha compilato finora, senza obbligare nessun campo.
-  var el;
-  S.demoData.eta = CHIPS.eta || S.demoData.eta || '';
-  S.demoData.sesso = CHIPS.sesso || S.demoData.sesso || '';
-  el = document.getElementById('demo-luogo'); if (el) S.demoData.luogo = el.value.trim();
-  S.demoData.situazione_familiare = CHIPS.sentimentale || S.demoData.situazione_familiare || '';
-  S.demoData.figli_numero = CHIPS.figli || S.demoData.figli_numero || '';
-  el = document.getElementById('demo-figli-eta'); if (el) S.demoData.figli_eta = el.value.trim();
-  S.demoData.custody = CHIPS.custody || S.demoData.custody || '';
-  S.demoData.supporto_familiare = CHIPS.supporto || S.demoData.supporto_familiare || '';
-  S.demoData.carico = CHIPS.carico || S.demoData.carico || '';
-  el = document.getElementById('demo-lavoro'); if (el) S.demoData.lavoro_attuale = el.value.trim();
-  S.demoData.tipo_lavoro = CHIPS.tipolavoro || S.demoData.tipo_lavoro || '';
-  S.demoData.ore_lavoro_giorno = CHIPS.orelavoro || S.demoData.ore_lavoro_giorno || '';
-  S.demoData.luogo_lavoro = CHIPS.luogolavoro || S.demoData.luogo_lavoro || '';
-  S.demoData.reddito_tipo = CHIPS.reddito || S.demoData.reddito_tipo || '';
-  S.demoData.reddito_fascia = CHIPS.fascia || S.demoData.reddito_fascia || '';
-  S.demoData.soddisfazione_lavoro = CHIPS.soddisfazione || S.demoData.soddisfazione_lavoro || '';
-  S.demoData.energia_fine_giornata = CHIPS.energialavoro || S.demoData.energia_fine_giornata || '';
-  S.demoData.debiti = CHIPS.debiti || S.demoData.debiti || '';
-  S.demoData.business = CHIPS.business || S.demoData.business || '';
-  S.demoData.sveglia = CHIPS.sveglia || S.demoData.sveglia || '';
-  S.demoData.ora_nanna = CHIPS.nanna || S.demoData.ora_nanna || '';
-  S.demoData.tempo_libero_giorno = CHIPS.tempolibero || S.demoData.tempo_libero_giorno || '';
-  S.demoData.gestione_casa = CHIPS.casa || S.demoData.gestione_casa || '';
-  S.demoData.momento_solo = CHIPS.momentosolo || S.demoData.momento_solo || '';
-  S.demoData.weekend_lavoro = CHIPS.weekend || S.demoData.weekend_lavoro || '';
-  S.demoData.salute_generale = CHIPS.salute || S.demoData.salute_generale || '';
-  S.demoData.attivita_fisica = CHIPS.sport || S.demoData.attivita_fisica || '';
-  S.demoData.alimentazione = CHIPS.alimentazione || S.demoData.alimentazione || '';
-  S.demoData.limitazioni_fisiche = CHIPS.limitazioni || S.demoData.limitazioni_fisiche || '';
-  S.demoData.qualita_sonno = CHIPS.sonno || S.demoData.qualita_sonno || '';
-  S.demoData.gestione_stress = CHIPS.stress || S.demoData.gestione_stress || '';
-  S.demoData.energia_mentale = CHIPS.energiamente || S.demoData.energia_mentale || '';
-  S.demoData.organizzazione = CHIPS.organizzazione || S.demoData.organizzazione || '';
-  S.demoData.procrastinazione = CHIPS.procrastinazione || S.demoData.procrastinazione || '';
-  S.demoData.reazione_fallimenti = CHIPS.fallimenti || S.demoData.reazione_fallimenti || '';
-  el = document.getElementById('demo-situazione'); if (el) S.demoData.situazione_attuale = el.value.trim();
-  el = document.getElementById('demo-paure'); if (el) S.demoData.paure_cambiamento = el.value.trim();
-}
-
-async function skipProfile() {
-  raccogliDemoCorrente();
-  await saveProfile(true);
-}
-
-async function saveProfile(skipped) {
-  raccogliDemoCorrente();
+async function saveProfile() {
+  S.demoData.situazione_attuale = document.getElementById('demo-situazione').value.trim();
+  S.demoData.paure_cambiamento = document.getElementById('demo-paure').value.trim();
 
   var payload = {
     id: S.user.id,
@@ -1849,7 +1775,7 @@ async function saveProfile(skipped) {
     eta: S.demoData.eta,
     sesso: S.demoData.sesso,
     situazione_familiare: S.demoData.situazione_familiare,
-    figli_numero: S.demoData.figli_numero === '4+' ? 4 : (S.demoData.figli_numero ? parseInt(S.demoData.figli_numero) || null : null),
+    figli_numero: S.demoData.figli_numero ? parseInt(S.demoData.figli_numero) || null : null,
     figli_eta: S.demoData.figli_eta,
     convivente: S.demoData.situazione_familiare === 'coppia-convivente' || S.demoData.situazione_familiare === 'sposato',
     custody: S.demoData.custody,
@@ -2441,7 +2367,7 @@ async function startOnboarding() {
     tipoObiettivo: tipoScelto
   };
   ss('loading');
-  var errWelcome = document.getElementById('err-welcome'); if (errWelcome) errWelcome.innerHTML = '';
+  document.getElementById('err-welcome').innerHTML = '';
   try {
     var profCtx = buildProfileContext();
     var objCtx = 'Obiettivo: "' + S.ctx + '"\nCome vuole arrivarci: "' + S.objData.come + '"\nTentativo precedente: ' + S.objData.tentativo + (S.objData.bloccato ? ' — cosa l\'ha bloccato: "' + S.objData.bloccato + '"' : '') + '\nRisultato concreto: "' + S.objData.risultato + '"\nScadenza: ' + S.objData.scadenza;
@@ -2455,7 +2381,7 @@ async function startOnboarding() {
     showQ();
   } catch(e) {
     ss('welcome');
-    var errWelcome2 = document.getElementById('err-welcome'); if (errWelcome2) errWelcome2.innerHTML = '<div class="err">Connessione fallita. Riprova.</div>'; else alert('Connessione fallita. Riprova.');
+    document.getElementById('err-welcome').innerHTML = '<div class="err">Connessione fallita. Riprova.</div>';
   }
 }
 
@@ -2853,58 +2779,21 @@ function showTaskDetail(idx) {
 }
 
 function getActiveHabits() {
-  // Restituisce le abitudini attive per il giorno corrente.
-  // Compatibile sia con abitudini generate nei task JSON sia con abitudini fisse caricate dalla tabella Supabase.
+  // Restituisce le abitudini attive per il giorno corrente
   var giorno = S.giornoAttuale || 1;
   var attive = [];
-
   (S.tasks || []).forEach(function(t, idx) {
     if (t.type === 'habit' && t.habit_days) {
       var startDay = t.day || (idx + 1);
-      var endDay = startDay + Math.min(t.habit_days, 21) - 1;
+      var endDay = startDay + t.habit_days - 1;
+      // Attiva se siamo nel range ma NON è il giorno di inizio (quello è già il task principale)
       if (giorno > startDay && giorno <= endDay) {
-        attive.push({
-          task: t,
-          giornoCorrente: giorno - startDay + 1,
-          totale: Math.min(t.habit_days, 21),
-          source: 'task'
-        });
+        attive.push({task: t, giornoCorrente: giorno - startDay + 1, totale: t.habit_days});
       }
     }
   });
-
-  (S.abitudini || []).forEach(function(a) {
-    var startDay = a.dal_giorno || 1;
-    var totale = Math.min(a.durata_giorni || 7, 21);
-    var endDay = startDay + totale - 1;
-    var habitId = 'ab_' + a.id;
-    var stato = getStatoAbitudine(habitId, totale);
-    if (giorno >= startDay && giorno <= endDay && !stato.completata) {
-      attive.push({
-        task: {
-          type: 'habit',
-          habit_id: habitId,
-          habit_days: totale,
-          title: a.titolo,
-          description: a.descrizione || '',
-          why: a.perche || ''
-        },
-        giornoCorrente: giorno - startDay + 1,
-        totale: totale,
-        source: 'db'
-      });
-    }
-  });
-
-  var seen = {};
-  return attive.filter(function(h) {
-    var key = h.task.habit_id || h.task.title;
-    if (seen[key]) return false;
-    seen[key] = true;
-    return true;
-  });
+  return attive;
 }
-
 
 
 
@@ -2920,9 +2809,8 @@ async function avviaPremiumPercorso() {
     document.getElementById('err-premium-obj').innerHTML = '<div class="err">Scrivi il tuo obiettivo prima di continuare.</div>';
     return;
   }
-  S.ctx = obiettivo;
-  S.objData = { come: obiettivo, scadenza: CHIPS.premiumscadenza || 'non specificata', area: 'personalizzato', tipoObiettivo: 'personalizzato' };
-  document.getElementById('err-premium-obj').innerHTML = '<div class="err" style="border-color:#EA580C33;color:#C7D2E0;background:#1B2435">Obiettivo salvato. Per generare il percorso AI personalizzato devi sbloccare Premium.</div>';
+  // Per ora mostra il paywall
+  document.getElementById('err-premium-obj').innerHTML = '';
   mostraPremiumSheet();
 }
 
