@@ -109,6 +109,18 @@ select option{background:#111827;color:#fff}
 .today-why .tdesc{font-size:12px;line-height:1.55;color:#C7D2E0}.home-complete{margin-top:2px}
 .home-complete.done{background:transparent;color:#EA580C;border:1px solid #EA580C}
 
+
+/* HABITS UX */
+.habit-intro{background:#1B2435;border:1px solid #EA580C33;border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.habit-intro-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.habit-intro-text{font-size:12px;color:#C7D2E0;line-height:1.55}
+.habit-do-box{background:#0B1020;border:1px solid #2F3B52;border-radius:12px;padding:12px;margin:10px 0 12px}
+.habit-do-title{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;margin-bottom:6px}
+.habit-do-text{font-size:13px;color:#fff;line-height:1.55;white-space:pre-line}
+.habit-meta-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;color:#8FA0B8;margin:8px 0 10px}
+.habit-meta-row b{color:#C7D2E0}
+.habit-btn-sub{font-size:11px;color:#8FA0B8;text-align:center;margin-top:6px;line-height:1.35}
+
 /* BOTTOM NAV */
 .bnav{
   display:none;
@@ -2603,13 +2615,16 @@ function aggiornaHomeHabits() {
   var attive = getActiveHabits();
   if (!attive.length) { habitsEl.style.display = 'none'; return; }
   habitsEl.style.display = 'block';
-  var html = '<div class="tlabel" style="margin-bottom:8px">Da continuare oggi</div>';
+  var html = '<div class="tlabel" style="margin-bottom:8px">Abitudini da fare oggi</div>';
+  html += '<div class="tdesc" style="font-size:12px;margin-bottom:10px">Sono azioni ricorrenti: apri Abitudini per leggere cosa fare e segnare la spunta.</div>';
   attive.forEach(function(h) {
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1B2435">';
-    html += '<div style="font-size:13px;color:#fff">' + clean(h.task.title||'') + '</div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #1B2435;gap:12px">';
+    html += '<div><div style="font-size:13px;color:#fff;font-weight:700">' + clean(h.task.title||'') + '</div>';
+    html += '<div style="font-size:11px;color:#8FA0B8;margin-top:3px;line-height:1.4">Da completare nella scheda Abitudini</div></div>';
     html += '<div style="font-size:11px;color:#EA580C;white-space:nowrap;margin-left:12px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div>';
     html += '</div>';
   });
+  html += '<button class="btn-ghost" onclick="navTo(\'abitudini\')" style="margin-top:10px">Vai alle abitudini</button>';
   habitsEl.innerHTML = html;
 }
 
@@ -2789,69 +2804,87 @@ async function continuaAbitudine(habit_id) {
 }
 
 function loadAbitudini() {
+  var title = document.getElementById('abitudini-title');
+  var sub = document.getElementById('abitudini-sub');
+  if (title) title.textContent = 'Le tue abitudini';
+  if (sub) sub.textContent = 'Qui trovi le azioni da ripetere ogni giorno. Leggi “Cosa fare oggi”, poi premi Fatto oggi solo dopo averla fatta.';
+
   var list = document.getElementById('abitudini-list');
   if (!list) return;
   var habits = getAbitudiniDalPercorso();
   var oggi = oggiStr();
 
   if (!habits.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:#8FA0B8"><i class="ti ti-repeat" style="font-size:36px;display:block;margin-bottom:12px"></i>Nessuna abitudine attiva nel tuo percorso.</div>';
+    list.innerHTML = '<div class="habit-intro"><div class="habit-intro-title"><i class="ti ti-info-circle"></i> Nessuna abitudine attiva</div><div class="habit-intro-text">Le abitudini compaiono quando il percorso prevede un’azione da ripetere per più giorni. Per ora continua dal menu Task.</div></div>';
     return;
   }
 
   var html = '';
+  html += '<div class="habit-intro">';
+  html += '<div class="habit-intro-title"><i class="ti ti-repeat"></i> Come funziona questa schermata</div>';
+  html += '<div class="habit-intro-text">Ogni card è una micro-abitudine. Devi farla oggi, una volta, poi segnare la spunta. Il contatore indica quanti giorni l’hai mantenuta rispetto alla durata prevista.</div>';
+  html += '</div>';
+
   habits.forEach(function(h) {
     var stato = getStatoAbitudine(h.habit_id, h.habit_days);
     var spuntataOggi = stato.spunte.indexOf(oggi) !== -1;
-    // Controlla se ha saltato ieri
     var ieri = new Date(); ieri.setDate(ieri.getDate() - 1);
     var ieriStr = ieri.toISOString().slice(0, 10);
     var haSaltatoIeri = stato.spunte.length > 0 && stato.spunte.indexOf(ieriStr) === -1 && !stato.completata;
-    // Colore bordo
     var borderColor = stato.completata ? '#22c55e' : (spuntataOggi ? '#EA580C' : '#2F3B52');
+    var perc = Math.round((stato.fatte / stato.totale) * 100);
+    var cosaFare = clean(h.descrizione || 'Ripeti questa abitudine oggi e segnala la spunta solo dopo averla completata.');
 
     html += '<div class="tblock" style="border-color:' + borderColor + ';margin-bottom:12px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
-    html += '<div style="font-size:15px;font-weight:600;color:#fff;flex:1;margin-right:8px">' + clean(h.title) + '</div>';
+    html += '<div style="font-size:16px;font-weight:700;color:#fff;flex:1;margin-right:8px;line-height:1.35">' + clean(h.title) + '</div>';
     if (stato.completata) {
       html += '<div style="color:#22c55e;font-size:12px;font-weight:700;white-space:nowrap">✓ Completata</div>';
+    } else if (spuntataOggi) {
+      html += '<div style="color:#EA580C;font-size:12px;font-weight:700;white-space:nowrap">✓ Oggi fatta</div>';
     }
     html += '</div>';
 
-    // Barra progresso
-    var perc = Math.round((stato.fatte / stato.totale) * 100);
+    html += '<div class="habit-do-box">';
+    html += '<div class="habit-do-title">Cosa fare oggi</div>';
+    html += '<div class="habit-do-text">' + cosaFare + '</div>';
+    html += '</div>';
+
+    html += '<div class="habit-meta-row">';
+    html += '<span>Iniziata dal <b>giorno ' + (h.startDay || 1) + '</b></span>';
+    html += '<span>Durata: <b>' + stato.totale + ' giorni</b></span>';
+    html += '</div>';
+
     html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
-    html += '<div style="flex:1;background:#1B2435;border-radius:4px;height:6px"><div style="width:' + perc + '%;background:#EA580C;border-radius:4px;height:6px"></div></div>';
-    html += '<div style="font-size:12px;color:#8FA0B8;white-space:nowrap">' + stato.fatte + '/' + stato.totale + ' giorni</div>';
+    html += '<div style="flex:1;background:#0B1020;border:1px solid #2F3B52;border-radius:999px;height:8px;overflow:hidden"><div style="width:' + perc + '%;background:#EA580C;border-radius:999px;height:100%"></div></div>';
+    html += '<div style="font-size:12px;color:#C7D2E0;white-space:nowrap;font-weight:700">' + stato.fatte + '/' + stato.totale + '</div>';
     html += '</div>';
 
     if (!stato.completata) {
       if (!spuntataOggi) {
-        // Pulsante spunta oggi
-        html += '<button onclick="spuntaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:6px">&#10003; Fatto oggi</button>';
-        // Se ha saltato ieri, mostra opzioni
+        html += '<button onclick="spuntaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="width:100%;background:#EA580C;color:#0B1020;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:4px">✓ Ho fatto questa abitudine oggi</button>';
+        html += '<div class="habit-btn-sub">Premilo solo dopo aver completato l’azione descritta sopra.</div>';
         if (haSaltatoIeri && stato.spunte.length > 0) {
-          html += '<div style="display:flex;gap:8px">';
-          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">&#8635; Ricomincia</button>';
+          html += '<div style="display:flex;gap:8px;margin-top:10px">';
+          html += '<button onclick="ricominciaAbitudine(\'' + h.habit_id + '\',' + h.habit_days + ')" style="flex:1;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">↻ Ricomincia da zero</button>';
           html += '</div>';
         }
       } else {
-        // Già spuntata oggi
-        html += '<div style="text-align:center;padding:8px 0;color:#EA580C;font-size:13px;font-weight:600">✓ Fatto oggi</div>';
-        html += '<button onclick="rimuoviSpuntaAbitudine(\'' + h.habit_id + '\')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta</button>';
+        html += '<div style="text-align:center;padding:10px 0;color:#EA580C;font-size:13px;font-weight:700">✓ Segnata per oggi</div>';
+        html += '<button onclick="rimuoviSpuntaAbitudine(\'' + h.habit_id + '\')" style="width:100%;background:none;border:1px solid #2F3B52;color:#8FA0B8;border-radius:10px;padding:8px;font-size:12px;cursor:pointer;margin-top:4px">Annulla spunta di oggi</button>';
       }
+    } else {
+      html += '<div style="text-align:center;padding:10px 0;color:#22c55e;font-size:13px;font-weight:700">Abitudine completata: obiettivo raggiunto.</div>';
     }
 
     html += '</div>';
   });
 
-  // Riepilogo in fondo
   var completate = habits.filter(function(h){ return getStatoAbitudine(h.habit_id, h.habit_days).completata; }).length;
   html += '<div style="text-align:center;padding:16px 0;color:#8FA0B8;font-size:13px">' + completate + '/' + habits.length + ' abitudini completate</div>';
 
   list.innerHTML = html;
 }
-
 
 function toggleStoricoDetail(el) {
   var detail = el.querySelector('.storico-detail');
