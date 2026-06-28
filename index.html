@@ -217,6 +217,16 @@ select option{background:#111827;color:#fff}
 /* CORREZIONE TASK */
 .corr-panel{display:none;background:#1B2435;border:1px solid #2F3B52;border-radius:14px;padding:16px;margin-bottom:12px}
 .corr-panel.open{display:block}
+
+/* PREMIUM MODAL */
+.premium-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9000;display:flex;align-items:flex-end;justify-content:center}
+.premium-sheet{background:#111827;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.premium-tier{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.premium-tier:hover{border-color:#EA580C}
+.premium-tier.featured{border-color:#EA580C;background:#2A1408}
+.premium-tier-name{font-size:13px;font-weight:700;color:#EA580C;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.premium-tier-price{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+.premium-tier-desc{font-size:13px;color:#8FA0B8;line-height:1.5}
 #sc-reflection .center{padding-bottom:120px}
 </style>
 </head>
@@ -704,7 +714,18 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="h1">Su cosa vuoi lavorare?</div>
     <div class="sub">Scegli un'area di crescita.</div>
-    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+
+    <!-- BANNER PREMIUM -->
+    <div onclick="mostraPremiumSheet()" style="background:linear-gradient(135deg,#2A1408 0%,#1B1030 100%);border:1px solid #EA580C55;border-radius:16px;padding:16px 18px;margin-top:16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px">
+      <div style="font-size:28px;flex-shrink:0">✨</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Il percorso che nessun altro ha.</div>
+        <div style="font-size:12px;color:#C7D2E0;line-height:1.5">Persisto costruisce 30 giorni pensati solo per te, il tuo obiettivo e la tua vita.</div>
+      </div>
+      <div style="background:#EA580C;color:#0B1020;font-size:11px;font-weight:800;padding:6px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0">Scopri Premium</div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
       <div class="acard" onclick="selArea('Mente')">
         <i class="ti ti-brain"></i>
         <div class="acard-label">Mente</div>
@@ -720,10 +741,10 @@ select option{background:#111827;color:#fff}
         <div class="acard-label">Relazioni</div>
         <div class="acard-sub">Coppia, famiglia, amici</div>
       </div>
-      <div class="acard" onclick="selArea('Scopo')">
-        <i class="ti ti-compass"></i>
-        <div class="acard-label">Scopo</div>
-        <div class="acard-sub">Valori, visione, direzione</div>
+      <div class="acard" onclick="selArea('Autostima')">
+        <i class="ti ti-star"></i>
+        <div class="acard-label">Autostima</div>
+        <div class="acard-sub">Fiducia, confini, dialogo</div>
       </div>
       <div class="acard" onclick="selArea('Benessere')">
         <i class="ti ti-leaf"></i>
@@ -735,10 +756,10 @@ select option{background:#111827;color:#fff}
         <div class="acard-label">Emozioni</div>
         <div class="acard-sub">Gestire, capire, regolare</div>
       </div>
-      <div class="acard" onclick="selArea('Autostima')">
-        <i class="ti ti-star"></i>
-        <div class="acard-label">Autostima</div>
-        <div class="acard-sub">Fiducia, confini, dialogo</div>
+      <div class="acard" onclick="selArea('Scopo')">
+        <i class="ti ti-compass"></i>
+        <div class="acard-label">Scopo</div>
+        <div class="acard-sub">Valori, visione, direzione</div>
       </div>
       <div class="acard" onclick="selArea('Ripartenza')">
         <i class="ti ti-refresh"></i>
@@ -1129,6 +1150,62 @@ select option{background:#111827;color:#fff}
 </div>
 
 <!-- BOTTOM NAV — fisso in fondo alla phone -->
+<!-- MODALE ONBOARDING FREEMIUM (primo accesso) -->
+<div class="premium-overlay" id="freemium-modal" style="display:none">
+  <div class="premium-sheet">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:40px;margin-bottom:12px">🌱</div>
+      <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:8px">Benvenuto in Persisto</div>
+      <div style="font-size:14px;color:#C7D2E0;line-height:1.6">Cresci dell'1% ogni giorno.<br>Scegli come iniziare.</div>
+    </div>
+    <div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:16px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div style="font-size:20px">🆓</div>
+        <div style="font-weight:700;color:#fff;font-size:15px">Inizia gratis</div>
+      </div>
+      <div style="font-size:13px;color:#8FA0B8;line-height:1.6">4 percorsi da 30 giorni, subito disponibili. Nessuna carta richiesta.</div>
+    </div>
+    <div style="background:#2A1408;border:1px solid #EA580C55;border-radius:16px;padding:16px;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div style="font-size:20px">✨</div>
+        <div style="font-weight:700;color:#EA580C;font-size:15px">Premium — da €1.99</div>
+      </div>
+      <div style="font-size:13px;color:#C7D2E0;line-height:1.6">Tutti i 48 percorsi + il percorso costruito su misura solo per te. Il percorso che nessun altro ha.</div>
+    </div>
+    <button class="btn" onclick="chiudiFreemiumModal()">Inizia gratis</button>
+    <button onclick="chiudiFreemiumModal();mostraPremiumSheet();" style="width:100%;background:none;border:none;color:#EA580C;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;padding:8px">Scopri Premium →</button>
+  </div>
+</div>
+
+<!-- MODALE PREMIUM TIER -->
+<div class="premium-overlay" id="premium-sheet" style="display:none">
+  <div class="premium-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:800;color:#fff">Scegli il tuo piano</div>
+      <button onclick="chiudiPremiumSheet()" style="background:none;border:none;color:#8FA0B8;cursor:pointer;font-size:20px">✕</button>
+    </div>
+    <div class="premium-tier" onclick="alert('Prossimamente!')">
+      <div class="premium-tier-name">Singolo</div>
+      <div class="premium-tier-price">€1.99 <span style="font-size:14px;color:#8FA0B8;font-weight:400">una tantum</span></div>
+      <div class="premium-tier-desc">Sblocca 1 percorso a scelta tra i 48 disponibili.</div>
+    </div>
+    <div class="premium-tier featured" onclick="alert('Prossimamente!')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="premium-tier-name">All-in</div>
+        <div style="background:#EA580C;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px">PIÙ POPOLARE</div>
+      </div>
+      <div class="premium-tier-price">€19.99 <span style="font-size:14px;color:#8FA0B8;font-weight:400">una tantum</span></div>
+      <div class="premium-tier-desc">Tutti i 48 percorsi + percorso AI personalizzato. Per sempre.</div>
+    </div>
+    <div class="premium-tier" onclick="alert('Prossimamente!')">
+      <div class="premium-tier-name">Premium</div>
+      <div class="premium-tier-price">€4.99 <span style="font-size:14px;color:#8FA0B8;font-weight:400">/ mese</span></div>
+      <div class="premium-tier-desc">Tutti i 48 percorsi + percorso AI personalizzato. Aggiornamenti continui.</div>
+    </div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:#8FA0B8">Pagamenti sicuri. Nessun rinnovo automatico per i piani una tantum.</div>
+  </div>
+</div>
+
 <div class="bnav" id="bottom-nav">
   <div class="bnav-items">
     <button class="bnav-item" id="nav-home" onclick="navTo('home')">
@@ -1577,6 +1654,7 @@ async function afterLogin() {
     ss('home');
   } else {
     ss('welcome');
+    mostraFreemiumModalSeNecessario();
   }
 }
 
@@ -1943,7 +2021,36 @@ async function avviaPercorso(percorsoId) {
 }
 
 function mostraLock() {
-  alert('Questo percorso è disponibile con Persisto Premium. Prossimamente!');
+  mostraPremiumSheet();
+}
+
+function mostraPremiumSheet() {
+  var el = document.getElementById('premium-sheet');
+  if (el) el.style.display = 'flex';
+}
+
+function chiudiPremiumSheet() {
+  var el = document.getElementById('premium-sheet');
+  if (el) el.style.display = 'none';
+}
+
+function chiudiFreemiumModal() {
+  var el = document.getElementById('freemium-modal');
+  if (el) el.style.display = 'none';
+  // Salva che l'utente ha visto il modal
+  try { localStorage.setItem('persisto_onboarding_seen', '1'); } catch(e) {}
+}
+
+function mostraFreemiumModalSeNecessario() {
+  try {
+    var seen = localStorage.getItem('persisto_onboarding_seen');
+    if (!seen) {
+      setTimeout(function() {
+        var el = document.getElementById('freemium-modal');
+        if (el) el.style.display = 'flex';
+      }, 800);
+    }
+  } catch(e) {}
 }
 
 function onFreeText() {
