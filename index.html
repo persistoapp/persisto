@@ -1529,7 +1529,10 @@ async function afterLogin() {
       scadenza: obj.scadenza || 'non specificata'
     };
     S.profile = obj.profile_json || {};
-    S.tasks = obj.tasks_json || [];
+    S.tasks = (obj.tasks_json || []).map(function(t) {
+      if (t.habit_days && t.habit_days > 21) t.habit_days = 21;
+      return t;
+    });
     S.giorniCompletati = obj.giorni_completati || [];
     S.reflections = obj.reflections || {};
     S.abitudiniStato = obj.abitudini_stato || {};
