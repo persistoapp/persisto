@@ -1441,14 +1441,18 @@ async function doLogin() {
     document.getElementById('err-login').innerHTML = '<div class="err">' + error.message + '</div>';
     return;
   }
-  // Verifica limite dispositivi
-  var check = await verificaLimiteDispositivi(data.user.id);
-  if (!check.ok) {
-    _pendingLogin = { user: data.user, userId: data.user.id };
-    mostraErroreDispositivi(check.sessioni);
-    return;
+  // Verifica limite dispositivi (protetto: se la tabella non esiste ancora, si passa)
+  try {
+    var check = await verificaLimiteDispositivi(data.user.id);
+    if (!check.ok) {
+      _pendingLogin = { user: data.user, userId: data.user.id };
+      mostraErroreDispositivi(check.sessioni);
+      return;
+    }
+    await registraSessione(data.user.id);
+  } catch(e) {
+    console.warn('sessioni_attive non disponibile:', e.message);
   }
-  await registraSessione(data.user.id);
   S.user = data.user;
   await afterLogin();
 }
