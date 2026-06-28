@@ -226,6 +226,10 @@ select option{background:#111827;color:#fff}
       <div class="field-label">Password</div>
       <input type="password" id="login-pass" placeholder="••••••••">
     </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:4px;margin-bottom:2px">
+      <input type="checkbox" id="login-ricordami" checked style="width:16px;height:16px;accent-color:#EA580C;cursor:pointer;flex-shrink:0">
+      <label for="login-ricordami" style="font-size:13px;color:#C7D2E0;cursor:pointer">Ricordami su questo dispositivo</label>
+    </div>
     <div id="err-login"></div>
   </div>
   <div class="bot">
@@ -1138,6 +1142,93 @@ select option{background:#111827;color:#fff}
 const SUPABASE_URL = 'https://ssngfxdviefytqnzljmf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MhxlV9kHfukREFKcn2wBWg_mOxMlHxh';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const MAX_DISPOSITIVI = 2;
+
+function getDeviceToken() {
+  var token = localStorage.getItem('persisto_device_token');
+  if (!token) {
+    token = 'dt_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('persisto_device_token', token);
+  }
+  return token;
+}
+
+async function registraSessione(userId) {
+  var token = getDeviceToken();
+  var ora = new Date().toISOString();
+  // Elimina sessioni scadute (non viste da 30 giorni)
+  var scadenza = new Date();
+  scadenza.setDate(scadenza.getDate() - 30);
+  await sb.from('sessioni_attive').delete()
+    .eq('user_id', userId)
+    .lt('last_seen', scadenza.toISOString());
+  // Upsert sessione corrente
+  await sb.from('sessioni_attive').upsert({
+    user_id: userId,
+    device_token: token,
+    last_seen: ora,
+    created_at: ora
+  }, { onConflict: 'user_id,device_token' });
+}
+
+async function aggiornaLastSeen(userId) {
+  var token = getDeviceToken();
+  await sb.from('sessioni_attive').update({ last_seen: new Date().toISOString() })
+    .eq('user_id', userId).eq('device_token', token);
+}
+
+async function verificaLimiteDispositivi(userId) {
+  var token = getDeviceToken();
+  // Elimina sessioni scadute prima di contare
+  var scadenza = new Date();
+  scadenza.setDate(scadenza.getDate() - 30);
+  await sb.from('sessioni_attive').delete()
+    .eq('user_id', userId)
+    .lt('last_seen', scadenza.toISOString());
+  // Conta sessioni attive escluso il token corrente
+  var {data: sessioni} = await sb.from('sessioni_attive')
+    .select('*')
+    .eq('user_id', userId)
+    .neq('device_token', token)
+    .order('last_seen', { ascending: false });
+  if (!sessioni) return { ok: true };
+  if (sessioni.length >= MAX_DISPOSITIVI) {
+    return { ok: false, sessioni: sessioni };
+  }
+  return { ok: true };
+}
+
+async function disconnettiDispositivo(userId, deviceToken) {
+  await sb.from('sessioni_attive').delete()
+    .eq('user_id', userId).eq('device_token', deviceToken);
+}
+
+function mostraErroreDispositivi(sessioni) {
+  var html = '<div class="err" style="margin-top:10px">';
+  html += '<div style="font-weight:700;margin-bottom:8px">Hai raggiunto il limite di ' + MAX_DISPOSITIVI + ' dispositivi connessi.</div>';
+  html += '<div style="font-size:12px;margin-bottom:10px;color:#C7D2E0">Disconnetti un dispositivo per accedere:</div>';
+  sessioni.forEach(function(s, i) {
+    var data = new Date(s.last_seen).toLocaleDateString('it-IT', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2F3B52">';
+    html += '<span style="font-size:12px;color:#C7D2E0">Dispositivo ' + (i+1) + ' — ultimo accesso: ' + data + '</span>';
+    html += '<button onclick="disconnettiEAccedi('' + s.device_token + '')" style="background:#EA580C;color:#0B1020;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">Disconnetti</button>';
+    html += '</div>';
+  });
+  html += '</div>';
+  document.getElementById('err-login').innerHTML = html;
+}
+
+var _pendingLogin = null;
+
+async function disconnettiEAccedi(deviceToken) {
+  if (!_pendingLogin) return;
+  await disconnettiDispositivo(_pendingLogin.userId, deviceToken);
+  await registraSessione(_pendingLogin.userId);
+  S.user = _pendingLogin.user;
+  _pendingLogin = null;
+  document.getElementById('err-login').innerHTML = '';
+  await afterLogin();
+}
 
 // ─── STATO ──────────────────────────────────────────────────────────────────
 var ARCH = {
@@ -1350,6 +1441,14 @@ async function doLogin() {
     document.getElementById('err-login').innerHTML = '<div class="err">' + error.message + '</div>';
     return;
   }
+  // Verifica limite dispositivi
+  var check = await verificaLimiteDispositivi(data.user.id);
+  if (!check.ok) {
+    _pendingLogin = { user: data.user, userId: data.user.id };
+    mostraErroreDispositivi(check.sessioni);
+    return;
+  }
+  await registraSessione(data.user.id);
   S.user = data.user;
   await afterLogin();
 }
@@ -1371,12 +1470,18 @@ async function doRegister() {
 }
 
 async function doLogout() {
+  if (S.user) {
+    var token = getDeviceToken();
+    await sb.from('sessioni_attive').delete().eq('user_id', S.user.id).eq('device_token', token);
+  }
   await sb.auth.signOut();
   S.user = null; S.userProfile = null;
   ss('login');
 }
 
 async function afterLogin() {
+  // Aggiorna last_seen per questa sessione
+  if (S.user) aggiornaLastSeen(S.user.id);
   // 1. Controlla profilo demografico
   var {data: profilo} = await sb.from('profiles').select('*').eq('id', S.user.id).single();
   if (!profilo || !profilo.eta) {
@@ -1714,7 +1819,7 @@ async function selArea(area) {
     html += '<div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;opacity:' + opacity + '" ' + clickable + '>' +
       '<div style="flex:1">' +
         '<div style="font-weight:600;font-size:15px;color:#fff">' + p.titolo + '</div>' +
-        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px;line-height:1.5">' + (p.descrizione || '30 giorni') + '</div>' +
+        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px">' + (p.descrizione ? p.descrizione.substring(0, 70) + '...' : '30 giorni') + '</div>' +
       '</div>' +
       lockIcon +
       '</div>';
@@ -1737,7 +1842,6 @@ async function selArea(area) {
 }
 
 async function avviaPercorso(percorsoId) {
-  if (!confirm('Vuoi attivare questo percorso? Inizierà subito dal giorno 1.')) return;
   document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
 
   var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
