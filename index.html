@@ -2172,7 +2172,8 @@ async function avviaPercorso(percorsoId) {
   var t = tasks[0];
   if (t) {
     document.getElementById('task-title').textContent = t.title || '';
-    document.getElementById('task-desc').textContent = t.description || '';
+    document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+    document.getElementById('task-desc').textContent = formatDesc(t.description || '');
     document.getElementById('task-why').textContent = t.why || '';
   }
   aggiornaHome();
@@ -2599,7 +2600,8 @@ async function genProfile() {
     if (S.tasks[0]) {
       var t = S.tasks[0];
       document.getElementById('task-title').textContent = clean(t.title) || '';
-      document.getElementById('task-desc').textContent = clean(t.description) || '';
+      document.getElementById('task-desc').style.whiteSpace = 'pre-line';
+      document.getElementById('task-desc').textContent = formatDesc(t.description || '');
       document.getElementById('task-why').textContent = clean(t.why) || '';
     }
     aggiornaHome();
@@ -3077,6 +3079,19 @@ function aggiornaHomeHabits() {
   });
   html += '<button class="btn-ghost" onclick="navTo(\'abitudini\')" style="margin-top:10px">Vai alle abitudini</button>';
   habitsEl.innerHTML = html;
+}
+
+
+function formatDesc(text) {
+  if (!text) return '';
+  // Splitta sulle frasi (punto seguito da spazio e maiuscola, o punto finale)
+  var cleaned = clean(text);
+  // Prima metti accapo dove ci sono già (Passo N:)
+  cleaned = cleaned.replace(/Passo\s+(\d+):/g, '\nPasso $1:');
+  // Poi splitta le frasi normali su punto + spazio + maiuscola
+  cleaned = cleaned.replace(/\.\s+([A-ZÀ-Ú])/g, '.\n$1');
+  // Rimuovi spazi iniziali/finali per ogni riga
+  return cleaned.split('\n').map(function(l){ return l.trim(); }).filter(Boolean).join('\n');
 }
 
 function aggiornaHome() {
