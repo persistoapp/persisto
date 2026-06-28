@@ -2494,6 +2494,9 @@ function showQ() {
   document.getElementById('qans').value = '';
   document.getElementById('err-onb').innerHTML = '';
   document.getElementById('progbar').style.width = Math.round((S.currentQ / S.questions.length) * 100) + '%';
+  // Ultima domanda: cambia testo pulsante
+  var btn = document.querySelector('#sc-onboarding .btn');
+  if (btn) btn.textContent = (S.currentQ === S.questions.length - 1) ? 'Genera il percorso →' : 'Avanti';
 }
 
 async function nextQ() {
