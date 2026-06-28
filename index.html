@@ -1160,8 +1160,7 @@ var S = {
   dataUltimoExtra: '',
   dataUltimoTask: '',
   abitudiniStato: {},
-  giorniTotali: 0,
-  abitudini: []
+  giorniTotali: 0
 };
 
 var QUOTES = [
@@ -1410,12 +1409,6 @@ async function afterLogin() {
     S.giorniCompletati = obj.giorni_completati || [];
     S.reflections = obj.reflections || {};
     S.abitudiniStato = obj.abitudini_stato || {};
-
-    // Carica abitudini fisse del percorso
-    if (obj.percorso_id) {
-      var {data: abRiga} = await sb.from('abitudini').select('*').eq('percorso_id', obj.percorso_id).order('dal_giorno', {ascending: true});
-      S.abitudini = abRiga || [];
-    }
     S.taskExtraOggi = obj.task_extra_oggi || 0;
     S.dataUltimoExtra = obj.data_ultimo_extra || '';
     S.dataUltimoTask = obj.data_ultimo_task || '';
@@ -1721,7 +1714,7 @@ async function selArea(area) {
     html += '<div style="background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;opacity:' + opacity + '" ' + clickable + '>' +
       '<div style="flex:1">' +
         '<div style="font-weight:600;font-size:15px;color:#fff">' + p.titolo + '</div>' +
-        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px">' + (p.descrizione ? p.descrizione.substring(0, 70) + '...' : '30 giorni') + '</div>' +
+        '<div style="font-size:13px;color:#8FA0B8;margin-top:4px;line-height:1.5">' + (p.descrizione || '30 giorni') + '</div>' +
       '</div>' +
       lockIcon +
       '</div>';
@@ -1744,6 +1737,7 @@ async function selArea(area) {
 }
 
 async function avviaPercorso(percorsoId) {
+  if (!confirm('Vuoi attivare questo percorso? Inizierà subito dal giorno 1.')) return;
   document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
 
   var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
@@ -1776,10 +1770,6 @@ async function avviaPercorso(percorsoId) {
   S.abitudiniStato = {};
   S.dataUltimoTask = '';
   S.dataUltimoExtra = '';
-
-  // Carica abitudini fisse del percorso
-  var {data: abitudiniRows} = await sb.from('abitudini').select('*').eq('percorso_id', percorsoId).order('dal_giorno', {ascending: true});
-  S.abitudini = abitudiniRows || [];
 
   // Salva su Supabase
   if (S.user) {
@@ -2592,20 +2582,26 @@ function loadProgressi() {
 // ─── ABITUDINI ──────────────────────────────────────────────────────────────
 
 function getAbitudiniDalPercorso() {
-  // Legge le abitudini fisse da S.abitudini (tabella Supabase)
-  // Mostra solo quelle il cui dal_giorno <= giornoAttuale
+  // Estrae le abitudini già sbloccate (startDay <= giornoAttuale)
+  var habits = [];
   var giornoCorrente = S.giornoAttuale || 1;
-  return (S.abitudini || []).filter(function(a) {
-    return a.dal_giorno <= giornoCorrente;
-  }).map(function(a) {
-    return {
-      habit_id: 'ab_' + a.id,
-      title: a.titolo,
-      descrizione: a.descrizione,
-      habit_days: a.durata_giorni,
-      startDay: a.dal_giorno
-    };
+  (S.tasks || []).forEach(function(t) {
+    if (t.type === 'habit' && t.habit_id) {
+      var startDay = t.day || 1;
+      // Mostra solo se l'utente ha raggiunto o superato il giorno di questa abitudine
+      if (startDay > giornoCorrente) return;
+      var exists = habits.some(function(h){ return h.habit_id === t.habit_id; });
+      if (!exists) {
+        habits.push({
+          habit_id: t.habit_id,
+          title: t.title,
+          habit_days: t.habit_days || 7,
+          startDay: startDay
+        });
+      }
+    }
   });
+  return habits;
 }
 
 function getStatoAbitudine(habit_id, habit_days) {
