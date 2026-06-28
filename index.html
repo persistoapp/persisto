@@ -1289,7 +1289,7 @@ select option{background:#111827;color:#fff}
     </div>
     <div style="font-size:13px;color:#8FA0B8;margin-bottom:20px;line-height:1.5">Persisto analizzerà il tuo profilo e il tuo obiettivo per costruire 30 giorni pensati esattamente per te.</div>
 
-    <div class="premium-tier featured" onclick="alert('Prossimamente — pagamento in arrivo!')">
+    <div class="premium-tier featured" onclick="chiudiPremiumAISheet();genProfile();">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="premium-tier-name">All-in</div>
         <div style="background:#EA580C;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px">MIGLIORE</div>
@@ -1298,7 +1298,7 @@ select option{background:#111827;color:#fff}
       <div class="premium-tier-desc">Tutti i 48 percorsi fissi + percorso AI personalizzato. Per sempre, senza rinnovi.</div>
     </div>
 
-    <div class="premium-tier" onclick="alert('Prossimamente — pagamento in arrivo!')">
+    <div class="premium-tier" onclick="chiudiPremiumAISheet();genProfile();">
       <div class="premium-tier-name">Premium mensile</div>
       <div class="premium-tier-price">€4.99 <span style="font-size:14px;color:#8FA0B8;font-weight:400">/ mese</span></div>
       <div class="premium-tier-desc">Tutti i 48 percorsi + percorso AI personalizzato. Aggiornamenti continui inclusi.</div>
@@ -2506,7 +2506,8 @@ async function nextQ() {
   S.answers.push({q: S.questions[S.currentQ], a: a});
   S.currentQ++;
   if (S.currentQ < S.questions.length) { showQ(); return; }
-  await genProfile();
+  // Tutte le domande completate — mostra paywall prima di generare
+  mostraPremiumAISheet();
 }
 
 async function genProfile() {
