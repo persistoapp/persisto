@@ -1846,6 +1846,7 @@ async function selArea(area) {
 }
 
 async function avviaPercorso(percorsoId) {
+  if (!confirm('Vuoi attivare questo percorso? Inizierà subito dal giorno 1.')) return;
   document.getElementById('percorsi-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--fg2)">Caricamento percorso...</div>';
 
   var {data: percorso} = await sb.from('percorsi').select('*').eq('id', percorsoId).single();
