@@ -86,7 +86,7 @@ select option{background:#111827;color:#fff}
 .home-kicker{font-size:12px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:24px}
 .home-title{font-size:28px;font-weight:800;line-height:1.1;color:#fff;margin:8px 0 8px;letter-spacing:-0.8px}
 .home-sub{font-size:13px;color:#C7D2E0;line-height:1.55;margin-bottom:8px}
-.home-scroll{padding-top:16px}
+.home-scroll{padding-top:16px;overflow-y:auto;flex:1}
 .goal-card{background:linear-gradient(180deg,#1B2435 0%,#101a2c 100%);border:1px solid #EA580C33;border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
 .goal-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
 .goal-label{font-size:10px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
@@ -219,8 +219,8 @@ select option{background:#111827;color:#fff}
 .corr-panel.open{display:block}
 
 /* PREMIUM MODAL */
-.premium-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9000;display:flex;align-items:flex-end;justify-content:center}
-.premium-sheet{background:#111827;border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.premium-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+.premium-sheet{background:#111827;border-radius:24px;padding:28px 24px 32px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
 .premium-tier{background:#1B2435;border:1px solid #2F3B52;border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
 .premium-tier:hover{border-color:#EA580C}
 .premium-tier.featured{border-color:#EA580C;background:#2A1408}
@@ -409,7 +409,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field" id="field-orelavoro">
-      <div class="field-label">Ore di lavoro al giorno (in media)</div>
+      <div class="field-label">Ore di lavoro al giorno (in media) <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-orelavoro">
         <div class="chip" onclick="selChip('orelavoro','meno4',this)">Meno di 4</div>
         <div class="chip" onclick="selChip('orelavoro','4-6',this)">4–6 ore</div>
@@ -419,7 +419,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field" id="field-luogolavoro">
-      <div class="field-label">Dove lavori</div>
+      <div class="field-label">Dove lavori <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-luogolavoro">
         <div class="chip" onclick="selChip('luogolavoro','casa',this)">Da casa</div>
         <div class="chip" onclick="selChip('luogolavoro','ufficio',this)">In ufficio</div>
@@ -437,7 +437,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field" id="field-fascia">
-      <div class="field-label">Fascia di reddito mensile attuale</div>
+      <div class="field-label">Fascia di reddito mensile attuale <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-fascia">
         <div class="chip" onclick="selChip('fascia','0',this)">0 / non lavoro</div>
         <div class="chip" onclick="selChip('fascia','sotto1000',this)">Sotto 1.000€</div>
@@ -448,7 +448,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field" id="field-soddisfazione">
-      <div class="field-label">Soddisfazione del lavoro attuale</div>
+      <div class="field-label">Soddisfazione del lavoro attuale <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-soddisfazione">
         <div class="chip" onclick="selChip('soddisfazione','no',this)">Per niente</div>
         <div class="chip" onclick="selChip('soddisfazione','poco',this)">Poco</div>
@@ -457,7 +457,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field" id="field-energialavoro">
-      <div class="field-label">Energia a fine giornata lavorativa</div>
+      <div class="field-label">Energia a fine giornata lavorativa <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-energia-lavoro">
         <div class="chip" onclick="selChip('energialavoro','a-pezzi',this)">A pezzi, zero energie</div>
         <div class="chip" onclick="selChip('energialavoro','stanco',this)">Stanco ma funziono</div>
@@ -466,7 +466,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Pressioni finanziarie attive</div>
+      <div class="field-label">Pressioni finanziarie attive <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-debiti">
         <div class="chip" onclick="selChip('debiti','no',this)">No, situazione stabile</div>
         <div class="chip" onclick="selChip('debiti','leggero',this)">Qualche preoccupazione</div>
@@ -474,7 +474,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Hai già un business o vuoi crearne uno?</div>
+      <div class="field-label">Hai già un business o vuoi crearne uno? <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-business">
         <div class="chip" onclick="selChip('business','no',this)">No e non mi interessa</div>
         <div class="chip" onclick="selChip('business','voglio',this)">Voglio crearne uno</div>
@@ -607,7 +607,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Limitazioni fisiche che condizionano la vita</div>
+      <div class="field-label">Limitazioni fisiche che condizionano la vita <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-limitazioni">
         <div class="chip" onclick="selChip('limitazioni','no',this)">Nessuna</div>
         <div class="chip" onclick="selChip('limitazioni','lievi',this)">Qualcosa di lieve</div>
@@ -624,7 +624,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Come gestisci lo stress</div>
+      <div class="field-label">Come gestisci lo stress <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-stress">
         <div class="chip" onclick="selChip('stress','male',this)">Male, mi travolge</div>
         <div class="chip" onclick="selChip('stress','tengo-duro',this)">Tengo duro ma fatico</div>
@@ -633,7 +633,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Energia mentale in questo periodo</div>
+      <div class="field-label">Energia mentale in questo periodo <span style="color:#8FA0B8;font-weight:400;font-size:10px">(facoltativo)</span></div>
       <div class="chips" id="chips-energiamente">
         <div class="chip" onclick="selChip('energiamente','esaurita',this)">Esaurita</div>
         <div class="chip" onclick="selChip('energiamente','bassa',this)">Bassa</div>
@@ -689,11 +689,13 @@ select option{background:#111827;color:#fff}
   </div>
   <div class="scroll">
     <div class="field">
-      <div class="field-label">La tua situazione attuale in 2-3 righe</div>
+      <div class="field-label">La tua situazione in questo momento</div>
+      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Descrivi dove sei adesso: lavoro, famiglia, tempo che hai, cosa ti pesa di più. Più sei specifico/a, meglio Persisto costruisce il tuo percorso.</div>
       <textarea id="demo-situazione" rows="3"></textarea>
     </div>
     <div class="field">
-      <div class="field-label">Le tue paure vere rispetto al cambiamento</div>
+      <div class="field-label">Cosa ti ha bloccato finora</div>
+      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Hai già provato a cambiare qualcosa e hai mollato? Cosa ti spaventa di più? Cosa manca di solito? Non c'è risposta giusta — solo la tua verità.</div>
       <textarea id="demo-paure" rows="3"></textarea>
     </div>
   </div>
@@ -717,7 +719,7 @@ select option{background:#111827;color:#fff}
     <div class="sub">Scegli un'area di crescita.</div>
 
     <!-- BANNER PREMIUM -->
-    <div onclick="mostraPremiumSheet()" style="background:linear-gradient(135deg,#2A1408 0%,#1B1030 100%);border:1px solid #EA580C55;border-radius:16px;padding:16px 18px;margin-top:16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px">
+    <div onclick="avviaObiettivoPremium()" style="background:linear-gradient(135deg,#2A1408 0%,#1B1030 100%);border:1px solid #EA580C55;border-radius:16px;padding:16px 18px;margin-top:16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px">
       <div style="font-size:28px;flex-shrink:0">✨</div>
       <div style="flex:1">
         <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Il percorso che nessun altro ha.</div>
@@ -726,6 +728,13 @@ select option{background:#111827;color:#fff}
       <div style="background:#EA580C;color:#0B1020;font-size:11px;font-weight:800;padding:6px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0">Scopri Premium</div>
     </div>
 
+    <!-- SUGGERIMENTI PERSONALIZZATI -->
+    <div id="welcome-suggerimenti" style="margin-bottom:12px;display:none">
+      <div style="font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px">Suggeriti per te</div>
+      <div id="suggerimenti-list"></div>
+    </div>
+
+    <div style="font-size:11px;color:#8FA0B8;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px">Tutte le aree</div>
     <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
       <div class="acard" onclick="selArea('Mente')">
         <i class="ti ti-brain"></i>
@@ -1212,6 +1221,41 @@ select option{background:#111827;color:#fff}
   </div>
 </div>
 
+<!-- OBIETTIVO PERSONALIZZATO PREMIUM -->
+<div class="screen" id="sc-obiettivo-premium">
+  <div class="s-pad">
+    <div class="topbar">
+      <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-arrow-left"></i></button>
+      <div class="logo">Per<span>sisto</span></div>
+      <div style="width:36px"></div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-size:11px;color:#EA580C;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">✨ Premium</div>
+      <div class="h1" style="font-size:24px">Il percorso che nessun altro ha.</div>
+      <div class="sub">Descrivi il tuo obiettivo. Persisto costruisce 30 giorni esatti per te, basati sul tuo profilo e sulla tua vita reale.</div>
+    </div>
+    <div class="field" style="margin-top:8px">
+      <div class="field-label">Cosa vuoi cambiare o raggiungere?</div>
+      <div style="font-size:12px;color:#8FA0B8;margin-bottom:8px;line-height:1.5">Sii specifico: non "voglio stare meglio" ma "voglio smettere di procrastinare al lavoro" o "voglio correre 5km senza fermarmi".</div>
+      <textarea id="premium-obiettivo" rows="4" style="width:100%;background:#1B2435;border:1px solid #2F3B52;border-radius:12px;padding:14px;font-size:14px;color:#fff;font-family:inherit;resize:none;outline:none;line-height:1.6"></textarea>
+    </div>
+    <div class="field">
+      <div class="field-label">Entro quando?</div>
+      <div class="chips" id="chips-premium-scadenza">
+        <div class="chip" onclick="selChip('premiumscadenza','1mese',this)">1 mese</div>
+        <div class="chip" onclick="selChip('premiumscadenza','3mesi',this)">3 mesi</div>
+        <div class="chip" onclick="selChip('premiumscadenza','6mesi',this)">6 mesi</div>
+        <div class="chip" onclick="selChip('premiumscadenza','1anno',this)">1 anno</div>
+      </div>
+    </div>
+    <div id="err-premium-obj"></div>
+  </div>
+  <div class="bot">
+    <button class="btn" onclick="avviaPremiumPercorso()">Genera il mio percorso</button>
+    <button class="btn-ghost" onclick="mostraPremiumSheet()" style="margin-top:8px">Sblocca Premium prima →</button>
+  </div>
+</div>
+
 <div class="bnav" id="bottom-nav">
   <div class="bnav-items">
     <button class="bnav-item" id="nav-home" onclick="navTo('home')">
@@ -1669,6 +1713,7 @@ async function afterLogin() {
   } else {
     ss('welcome');
     mostraFreemiumModalSeNecessario();
+    populaSuggerimenti();
   }
 }
 
@@ -1781,6 +1826,7 @@ async function saveProfile() {
   } else {
     ss('welcome');
     mostraFreemiumModalSeNecessario();
+    populaSuggerimenti();
   }
 }
 
@@ -2696,6 +2742,28 @@ function showTaskList() {
     html += '<div class="tdesc" style="font-size:12px">' + clean(desc) + '</div>';
     html += '</div>';
   });
+
+  // Abitudini attive sotto i task
+  var oggiStrH = new Date().toISOString().slice(0, 10);
+  var attiveHabits = typeof getActiveHabits === 'function' ? getActiveHabits() : [];
+  if (attiveHabits.length > 0) {
+    html += '<div class="tblock" style="border-color:#EA580C22;margin-top:4px">';
+    html += '<div class="tlabel" style="margin-bottom:10px">Abitudini di oggi</div>';
+    attiveHabits.forEach(function(h) {
+      var stato = typeof getStatoAbitudine === 'function' ? getStatoAbitudine(h.task.habit_id, h.task.habit_days) : {spunte:[], completata:false};
+      var fattaOggi = stato.spunte && stato.spunte.indexOf(oggiStrH) !== -1;
+      var checkColor = fattaOggi ? '#22c55e' : '#2F3B52';
+      var checkIcon = fattaOggi ? '&#10003;' : '&#9675;';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1B2435;gap:12px;cursor:pointer" onclick="navTo(\'abitudini\')">';
+      html += '<div style="flex:1"><div style="font-size:13px;color:#fff;font-weight:600">' + clean(h.task.title||'') + '</div>';
+      html += '<div style="font-size:11px;color:#8FA0B8;margin-top:2px">Giorno ' + h.giornoCorrente + '/' + h.totale + '</div></div>';
+      html += '<div style="width:28px;height:28px;border-radius:50%;border:2px solid ' + checkColor + ';display:flex;align-items:center;justify-content:center;color:' + checkColor + ';font-size:14px;flex-shrink:0">' + checkIcon + '</div>';
+      html += '</div>';
+    });
+    html += '<button onclick="navTo(\'abitudini\')" style="width:100%;background:none;border:none;color:#EA580C;font-size:13px;cursor:pointer;padding:10px 0 0;text-align:left">Gestisci abitudini →</button>';
+    html += '</div>';
+  }
+
   list.innerHTML = html;
 }
 
@@ -2725,6 +2793,92 @@ function getActiveHabits() {
     }
   });
   return attive;
+}
+
+
+
+
+function avviaObiettivoPremium() {
+  // Controlla se utente è premium (per ora sempre mostra la schermata)
+  ss('obiettivo-premium');
+}
+
+async function avviaPremiumPercorso() {
+  var obiettivo = document.getElementById('premium-obiettivo').value.trim();
+  if (!obiettivo) {
+    document.getElementById('err-premium-obj').innerHTML = '<div class="err">Scrivi il tuo obiettivo prima di continuare.</div>';
+    return;
+  }
+  // Per ora mostra il paywall
+  document.getElementById('err-premium-obj').innerHTML = '';
+  mostraPremiumSheet();
+}
+
+function populaSuggerimenti() {
+  var el = document.getElementById('welcome-suggerimenti');
+  var list = document.getElementById('suggerimenti-list');
+  if (!el || !list || !S.userProfile) return;
+  var suggeriti = getSuggerimentiPercorsi();
+  if (!suggeriti.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  var html = '';
+  suggeriti.forEach(function(s) {
+    var FREE_IDS = [1, 7, 13, 31];
+    var isFree = FREE_IDS.indexOf(s.numero) !== -1;
+    var lockHtml = isFree ? '' : ' <span style="font-size:10px;color:#EA580C">✨ Premium</span>';
+    html += '<div style="background:#1B2435;border:1px solid #EA580C33;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="selArea(\'' + s.area + '\')">';
+    html += '<div style="flex:1">';
+    html += '<div style="font-size:14px;font-weight:700;color:#fff">' + s.titolo + lockHtml + '</div>';
+    html += '<div style="font-size:12px;color:#8FA0B8;margin-top:2px">' + s.desc + '</div>';
+    html += '</div>';
+    html += '<i class="ti ti-chevron-right" style="color:#EA580C;font-size:16px"></i>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function getSuggerimentiPercorsi() {
+  var p = S.userProfile || {};
+  var suggeriti = [];
+  
+  // Logica di suggerimento basata sul profilo
+  if (p.energia_mentale === 'esaurita' || p.energia_mentale === 'bassa') {
+    suggeriti.push({area:'Mente', titolo:"Gestione dell'Ansia", desc:'Per chi si sente sopraffatto', numero:3});
+    suggeriti.push({area:'Benessere', titolo:'Riposo e Recupero', desc:'Ricarica le energie', numero:26});
+  }
+  if (p.procrastinazione === 'sempre' || p.procrastinazione === 'spesso') {
+    suggeriti.push({area:'Mente', titolo:'Abitudini Cognitive', desc:'Cambia i pattern mentali', numero:4});
+    suggeriti.push({area:'Lavoro', titolo:'Organizzazione del Lavoro', desc:'Struttura la tua giornata', numero:7});
+  }
+  if (p.soddisfazione_lavoro === 'no' || p.soddisfazione_lavoro === 'poco') {
+    suggeriti.push({area:'Lavoro', titolo:'Crescita Professionale', desc:'Costruisci il prossimo passo', numero:12});
+    suggeriti.push({area:'Scopo', titolo:'Direzione di Vita', desc:'Trova la tua rotta', numero:20});
+  }
+  if (p.reazione_fallimenti === 'mi-crollo' || p.reazione_fallimenti === 'ci-metto') {
+    suggeriti.push({area:'Autostima', titolo:'Autostima Operativa', desc:'Costruisci fiducia concreta', numero:31});
+    suggeriti.push({area:'Ripartenza', titolo:'Fallimento e Ripartenza', desc:'Trasforma gli stop in slancio', numero:45});
+  }
+  if (p.gestione_stress === 'male' || p.gestione_stress === 'tengo-duro') {
+    suggeriti.push({area:'Mente', titolo:"Gestione dell'Ansia", desc:'Gestisci la pressione', numero:3});
+    suggeriti.push({area:'Emozioni', titolo:'Consapevolezza Emotiva', desc:'Conosci le tue emozioni', numero:37});
+  }
+  
+  // Default se nessuna regola si attiva
+  if (!suggeriti.length) {
+    suggeriti = [
+      {area:'Mente', titolo:'Chiarezza Mentale', desc:'Il punto di partenza ideale', numero:1},
+      {area:'Autostima', titolo:'Autostima Operativa', desc:'La base di tutto il resto', numero:31},
+      {area:'Lavoro', titolo:'Organizzazione del Lavoro', desc:'Più risultati, meno stress', numero:7}
+    ];
+  }
+  
+  // Deduplica e prendi solo i primi 3
+  var seen = {};
+  var unici = [];
+  suggeriti.forEach(function(s) {
+    if (!seen[s.numero]) { seen[s.numero] = true; unici.push(s); }
+  });
+  return unici.slice(0, 3);
 }
 
 function aggiornaHomeHabits() {
