@@ -242,11 +242,11 @@ select option{background:#111827;color:#fff}
     <div class="sub">Accedi per continuare il tuo percorso.</div>
     <div class="field">
       <div class="field-label">Email</div>
-      <input type="email" id="login-email" placeholder="la tua@email.com">
+      <input type="email" id="login-email">
     </div>
     <div class="field">
       <div class="field-label">Password</div>
-      <input type="password" id="login-pass" placeholder="••••••••">
+      <input type="password" id="login-pass">
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:4px;margin-bottom:2px">
       <input type="checkbox" id="login-ricordami" checked style="width:16px;height:16px;accent-color:#EA580C;cursor:pointer;flex-shrink:0">
@@ -269,11 +269,11 @@ select option{background:#111827;color:#fff}
     <div class="sub">Inizia il tuo percorso di crescita.</div>
     <div class="field">
       <div class="field-label">Email</div>
-      <input type="email" id="reg-email" placeholder="la tua@email.com">
+      <input type="email" id="reg-email">
     </div>
     <div class="field">
       <div class="field-label">Password</div>
-      <input type="password" id="reg-pass" placeholder="minimo 6 caratteri">
+      <input type="password" id="reg-pass">
     </div>
     <div id="err-register"></div>
   </div>
@@ -327,7 +327,7 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="field">
       <div class="field-label">Dove vivi</div>
-      <input type="text" id="demo-luogo" placeholder="Es: Roma, Milano, piccola città...">
+      <input type="text" id="demo-luogo">
     </div>
     <div class="field">
       <div class="field-label">Situazione sentimentale</div>
@@ -351,7 +351,7 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="field" id="field-figli-eta" style="display:none">
       <div class="field-label">Età dei figli (approssimativa)</div>
-      <input type="text" id="demo-figli-eta" placeholder="Es: 3, 7, 15 anni">
+      <input type="text" id="demo-figli-eta">
     </div>
     <div class="field" id="field-figli-custody" style="display:none">
       <div class="field-label">I figli vivono con te</div>
@@ -370,7 +370,7 @@ select option{background:#111827;color:#fff}
       </div>
     </div>
     <div class="field">
-      <div class="field-label">Persone a carico oltre ai figli</div>
+      <div class="field-label">Persone a carico oltre ai figli (se ne hai)</div>
       <div class="chips" id="chips-carico">
         <div class="chip" onclick="selChip('carico','no',this)">No</div>
         <div class="chip" onclick="selChip('carico','si',this)">Sì (genitori, parenti)</div>
@@ -396,7 +396,7 @@ select option{background:#111827;color:#fff}
   <div class="scroll">
     <div class="field">
       <div class="field-label">Che lavoro fai</div>
-      <input type="text" id="demo-lavoro" placeholder="Es: closing sales, insegnante, imprenditrice...">
+      <input type="text" id="demo-lavoro">
     </div>
     <div class="field">
       <div class="field-label">Tipo di rapporto lavorativo</div>
@@ -408,7 +408,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('tipolavoro','studente',this)">Studente</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-orelavoro">
       <div class="field-label">Ore di lavoro al giorno (in media)</div>
       <div class="chips" id="chips-orelavoro">
         <div class="chip" onclick="selChip('orelavoro','meno4',this)">Meno di 4</div>
@@ -418,7 +418,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('orelavoro','piu10',this)">Più di 10</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-luogolavoro">
       <div class="field-label">Dove lavori</div>
       <div class="chips" id="chips-luogolavoro">
         <div class="chip" onclick="selChip('luogolavoro','casa',this)">Da casa</div>
@@ -427,7 +427,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('luogolavoro','giro',this)">In giro / trasferte</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-reddito">
       <div class="field-label">Reddito</div>
       <div class="chips" id="chips-reddito">
         <div class="chip" onclick="selChip('reddito','fisso',this)">Fisso</div>
@@ -436,7 +436,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('reddito','nessuno',this)">Nessuno al momento</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-fascia">
       <div class="field-label">Fascia di reddito mensile attuale</div>
       <div class="chips" id="chips-fascia">
         <div class="chip" onclick="selChip('fascia','0',this)">0 / non lavoro</div>
@@ -447,7 +447,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('fascia','oltre10000',this)">Oltre 10.000€</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-soddisfazione">
       <div class="field-label">Soddisfazione del lavoro attuale</div>
       <div class="chips" id="chips-soddisfazione">
         <div class="chip" onclick="selChip('soddisfazione','no',this)">Per niente</div>
@@ -456,7 +456,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('soddisfazione','molto',this)">Molto</div>
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="field-energialavoro">
       <div class="field-label">Energia a fine giornata lavorativa</div>
       <div class="chips" id="chips-energia-lavoro">
         <div class="chip" onclick="selChip('energialavoro','a-pezzi',this)">A pezzi, zero energie</div>
@@ -547,6 +547,7 @@ select option{background:#111827;color:#fff}
         <div class="chip" onclick="selChip('momentosolo','mattina',this)">Mattina presto</div>
         <div class="chip" onclick="selChip('momentosolo','pausa',this)">Pausa pranzo</div>
         <div class="chip" onclick="selChip('momentosolo','sera',this)">Sera tardi</div>
+        <div class="chip" onclick="selChip('momentosolo','tuttoilgiorno',this)">Tutto il giorno</div>
         <div class="chip" onclick="selChip('momentosolo','nessuno',this)">Quasi mai</div>
       </div>
     </div>
@@ -689,11 +690,11 @@ select option{background:#111827;color:#fff}
   <div class="scroll">
     <div class="field">
       <div class="field-label">La tua situazione attuale in 2-3 righe</div>
-      <textarea id="demo-situazione" rows="3" placeholder="Es: lavoro 10h al giorno, ho 4 figli, zero tempo per me, il caos è la mia normalità..."></textarea>
+      <textarea id="demo-situazione" rows="3"></textarea>
     </div>
     <div class="field">
       <div class="field-label">Le tue paure vere rispetto al cambiamento</div>
-      <textarea id="demo-paure" rows="3" placeholder="Es: ho paura di iniziare e mollare di nuovo, di non avere tempo, di deludere me stessa..."></textarea>
+      <textarea id="demo-paure" rows="3"></textarea>
     </div>
   </div>
   <div class="bot">
@@ -801,7 +802,7 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="field">
       <div class="field-label" id="obj-come-label">Descrivilo con parole tue</div>
-      <textarea id="obj-come" rows="3" placeholder=""></textarea>
+      <textarea id="obj-come" rows="3"></textarea>
     </div>
     <div class="field">
       <div class="field-label">Hai già provato? Come è andata?</div>
@@ -814,11 +815,11 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="field" id="field-cosa-bloccato" style="display:none">
       <div class="field-label">Cosa ti ha bloccato</div>
-      <textarea id="obj-bloccato" rows="2" placeholder="Sii onesta, non fare la versione bella..."></textarea>
+      <textarea id="obj-bloccato" rows="2"></textarea>
     </div>
     <div class="field">
       <div class="field-label" id="obj-risultato-label">Risultato concreto che definisce il successo</div>
-      <input type="text" id="obj-risultato" placeholder="">
+      <input type="text" id="obj-risultato">
     </div>
     <div class="field">
       <div class="field-label">Entro quando</div>
@@ -854,7 +855,7 @@ select option{background:#111827;color:#fff}
     <div class="prog"><div class="progbar" id="progbar" style="width:0%"></div></div>
     <div class="qnum" id="qnum">Domanda 1 di 3</div>
     <div class="qtext" id="qtext"></div>
-    <textarea id="qans" rows="4" placeholder="Scrivi qui..."></textarea>
+    <textarea id="qans" rows="4"></textarea>
     <div id="err-onb"></div>
   </div>
   <div class="bot">
@@ -1003,7 +1004,7 @@ select option{background:#111827;color:#fff}
       <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Cosa hai fatto esattamente?</div>
       <div style="font-size:13px;color:#C7D2E0;margin-bottom:16px">Scrivi liberamente — queste note le ritrovi nello storico.</div>
       <div class="field">
-        <textarea id="refl-text" rows="5" placeholder="Es: ho identificato 3 abitudini notturne, ho scelto di togliere il telefono dalla camera..."></textarea>
+        <textarea id="refl-text" rows="5"></textarea>
       </div>
     </div>
   </div>
@@ -1060,7 +1061,7 @@ select option{background:#111827;color:#fff}
     <!-- PANNELLO CORREZIONE -->
     <div class="corr-panel" id="corr-panel">
       <div class="field-label" style="margin-bottom:8px">Cosa non va con questo task?</div>
-      <textarea id="corr-text" rows="3" placeholder="Es: non posso farlo perché..."></textarea>
+      <textarea id="corr-text" rows="3"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px">
         <button class="btn" style="flex:1;padding:12px;font-size:14px" onclick="correggiTask()">Rigenera task</button>
         <button class="btn-ghost" style="flex:1;margin-top:0;padding:12px;font-size:14px" onclick="chiudiCorr()">Annulla</button>
@@ -1478,6 +1479,14 @@ function selChip(key, val, el) {
     var hadTry = val === 'provato-male' || val === 'provato-parziale';
     document.getElementById('field-cosa-bloccato').style.display = hadTry ? 'block' : 'none';
   }
+  if (key === 'tipolavoro') {
+    var noWork = val === 'disoccupato' || val === 'studente';
+    var workFields = ['field-orelavoro','field-luogolavoro','field-reddito','field-fascia','field-soddisfazione','field-energialavoro'];
+    workFields.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = noWork ? 'none' : 'block';
+    });
+  }
 }
 
 async function callAI(system, userMsg) {
@@ -1759,20 +1768,14 @@ async function saveProfile() {
     return;
   }
   S.userProfile = payload;
-  // Se c'è già un obiettivo attivo, torna in home, altrimenti vai alla welcome
+  // Dopo salvataggio profilo: sempre in welcome per scegliere il percorso
+  // (se ha già un obiettivo attivo, afterLogin lo manda in home direttamente)
   if (S.tasks && S.tasks.length > 0) {
     aggiornaHome();
     ss('home');
   } else {
-    sb.from('obiettivi').select('tasks_json').eq('user_id', S.user.id).limit(1).single().then(function(res) {
-      if (res.data && res.data.tasks_json && res.data.tasks_json.length > 0) {
-        S.tasks = res.data.tasks_json;
-        aggiornaHome();
-        ss('home');
-      } else {
-        ss('welcome');
-      }
-    });
+    ss('welcome');
+    mostraFreemiumModalSeNecessario();
   }
 }
 
