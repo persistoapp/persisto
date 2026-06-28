@@ -2739,7 +2739,7 @@ function getAbitudiniDalPercorso() {
       habit_id: 'ab_' + a.id,
       title: a.titolo,
       descrizione: a.descrizione,
-      habit_days: a.durata_giorni,
+      habit_days: Math.min(a.durata_giorni || 7, 21),
       startDay: a.dal_giorno
     };
   });
