@@ -1899,6 +1899,7 @@ async function avviaPercorso(percorsoId) {
       giorni_completati: [],
       percorso_id: percorsoId
     }).select().single();
+    if (ins.error) { alert('Errore salvataggio percorso: ' + ins.error.message); return; }
     if (ins.data) S.objId = ins.data.id;
   }
 
