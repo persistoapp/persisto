@@ -2950,9 +2950,28 @@ async function avviaPremiumPercorso() {
     return;
   }
   S.ctx = obiettivo;
-  S.objData = { come: obiettivo, scadenza: CHIPS.premiumscadenza || 'non specificata', area: 'personalizzato', tipoObiettivo: 'personalizzato' };
+  S.objData = { come: obiettivo, scadenza: CHIPS['premiumscadenza'] || 'non specificata', area: 'personalizzato', tipoObiettivo: 'personalizzato', risultato: obiettivo };
   document.getElementById('err-premium-obj').innerHTML = '';
-  mostraPremiumAISheet();
+  // Avvia le domande AI usando il contesto già salvato
+  await avviaDomandePremiium();
+}
+
+async function avviaDomandePremiium() {
+  ss('loading');
+  try {
+    var profCtx = buildProfileContext();
+    var objCtx = 'Obiettivo: "' + S.ctx + '"\nScadenza: ' + S.objData.scadenza;
+    var sys = 'Sei un coach diretto e chirurgico. Genera ESATTAMENTE 3 domande brevi e specifiche per capire il punto di partenza REALE di questa persona rispetto al suo obiettivo.\n\nREGOLE:\n- Domande contestualizzate all\'obiettivo specifico\n- NON chiedere cose già note dal profilo demografico\n- Domande concrete sulla situazione attuale\n- Brevi, dirette, una cosa sola per domanda\n\nRispondi SOLO con JSON: {\"questions\":[\"q1\",\"q2\",\"q3\"]}\n\nPROFILO PERSONA:\n' + profCtx;
+    var raw = await callAI(sys, objCtx);
+    var p = safeJSON(raw);
+    S.questions = p.questions.slice(0, 3);
+    S.answers = [];
+    S.currentQ = 0;
+    showQ();
+  } catch(e) {
+    ss('obiettivo-premium');
+    document.getElementById('err-premium-obj').innerHTML = '<div class="err">Connessione fallita. Riprova.</div>';
+  }
 }
 
 function mostraPremiumAISheet() {
