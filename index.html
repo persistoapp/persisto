@@ -2884,7 +2884,7 @@ function showTaskList() {
 function showTaskDetail(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  var df = formatDesc(t.description || '');
   document.getElementById('task-desc').style.whiteSpace = 'pre-line';
   document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
@@ -3577,7 +3577,7 @@ async function loadTaskTab() {
 function apriTask(idx) {
   var t = S.tasks[idx] || {};
   document.getElementById('task-title').textContent = clean(t.title || '');
-  var df = clean(t.description || '').replace(/Passo\s+(\d+):/g, '\nPasso $1:').trim();
+  var df = formatDesc(t.description || '');
   document.getElementById('task-desc').style.whiteSpace = 'pre-line';
   document.getElementById('task-desc').textContent = df;
   document.getElementById('task-why').textContent = clean(t.why || '');
