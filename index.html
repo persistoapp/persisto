@@ -739,7 +739,7 @@ select option{background:#111827;color:#fff}
 
 <!-- SELEZIONE PERCORSO -->
 <div class="screen" id="sc-percorsi">
-  <div class="s-pad">
+  <div class="s-pad" style="padding-bottom:0">
     <div class="topbar">
       <button class="icon-btn" onclick="ss('welcome')"><i class="ti ti-arrow-left"></i></button>
       <div class="logo">Per<span>sisto</span></div>
@@ -747,7 +747,9 @@ select option{background:#111827;color:#fff}
     </div>
     <div class="h1" id="percorsi-area-title">Mente</div>
     <div class="sub">Scegli il percorso da 30 giorni.</div>
-    <div id="percorsi-list" style="margin-top:16px;display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+  <div class="scroll" style="padding-top:8px">
+    <div id="percorsi-list" style="display:flex;flex-direction:column;gap:12px"></div>
     <div id="err-percorsi"></div>
   </div>
 </div>
@@ -1616,6 +1618,8 @@ async function saveProfile() {
     figli_numero: S.demoData.figli_numero ? parseInt(S.demoData.figli_numero) || null : null,
     figli_eta: S.demoData.figli_eta,
     convivente: S.demoData.situazione_familiare === 'coppia-convivente' || S.demoData.situazione_familiare === 'sposato',
+    custody: S.demoData.custody,
+    carico: S.demoData.carico,
     supporto_familiare: S.demoData.supporto_familiare,
     lavoro_attuale: S.demoData.lavoro_attuale,
     tipo_lavoro: S.demoData.tipo_lavoro,
@@ -1701,6 +1705,7 @@ function goToEditFull() {
     }
     preselChip('supporto', p.supporto_familiare);
     preselChip('custody', p.custody);
+    preselChip('carico', p.carico);
     preselChip('debiti', p.debiti === true || p.debiti === 'si' ? 'si' : (p.debiti === 'leggero' ? 'leggero' : 'no'));
     if (p.luogo) document.getElementById('demo-luogo').value = p.luogo || '';
     // step 2
